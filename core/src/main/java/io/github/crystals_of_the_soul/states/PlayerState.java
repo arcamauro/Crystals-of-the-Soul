@@ -1,0 +1,16 @@
+package io.github.crystals_of_the_soul.states;
+
+public class PlayerState {
+    public float x, y;          // position
+    public int health;
+    public int maxHealth;
+    public boolean canAttack;   // false for Player 1 with Blue crystal
+    public boolean canSpare;    // false for Player 1 with Red crystal
+
+    public PlayerState() {
+        health = 100;
+        maxHealth = 100;
+        canAttack = true;
+        canSpare = true;
+    }
+}
