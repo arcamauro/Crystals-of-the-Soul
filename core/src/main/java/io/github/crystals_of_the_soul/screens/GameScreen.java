@@ -127,9 +127,16 @@ public class GameScreen implements Screen {
 
         ScreenUtils.clear(Color.DARK_GRAY);
 
+        // Temporary debug — remove before final submission
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             state.currentFloor++;
+            if (state.currentFloor == 2) {
+                state.killCount = 0;
+                state.spareCount = 5;
+                state.assignCrystal();
+            }
             SaveManager.autoSave(state);
+            Gdx.app.log("DEBUG", "Floor: " + state.currentFloor);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {

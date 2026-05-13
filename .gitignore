@@ -156,7 +156,8 @@ Thumbs.db
 /assets/assets.txt
 
 # Save Files
-assets/saves/
+assets/saves/autosave.json
+assets/saves/manualsave.json
 
 ## Special cases:
 
