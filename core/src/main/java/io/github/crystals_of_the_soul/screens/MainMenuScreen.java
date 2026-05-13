@@ -15,16 +15,26 @@ import com.badlogic.gdx.Gdx;
 import io.github.crystals_of_the_soul.Main;
 import io.github.crystals_of_the_soul.save.SaveManager;
 
+/**
+ * Schermata del menu principale. Permette al giocatore di iniziare una nuova partita, continuare una partita salvata o uscire dal gioco.
+ */
 public class MainMenuScreen implements Screen {
 
-    private final Main game;
-    private Stage stage;
-    private Skin skin;
+    private final Main game; // Reference al gioco principale per poter cambiare schermata
+    private Stage stage; // Stage per gestire la UI
+    private Skin skin; // Skin per lo stile dei componenti UI
 
+    /**
+     * Costruttore. Riceve una reference al gioco principale per poter cambiare schermata.
+     * @param game
+     */
     public MainMenuScreen(Main game) {
         this.game = game;
     }
 
+    /**
+     * Inizializza la schermata del menu principale, creando i pulsanti e il layout.
+     */
     @Override
     public void show() {
         stage = new Stage(new ScreenViewport());
@@ -72,6 +82,11 @@ public class MainMenuScreen implements Screen {
         stage.addActor(table);
     }
 
+    /**
+     * Ciclo di rendering principale. 
+     * Aggiorna la scena e disegna i componenti UI.
+     * @param delta
+     */
     @Override
     public void render(float delta) {
         ScreenUtils.clear(Color.BLACK);
@@ -79,6 +94,11 @@ public class MainMenuScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * Aggiorna la viewport quando la finestra viene ridimensionata.
+     * @param width
+     * @param height
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
@@ -88,6 +108,10 @@ public class MainMenuScreen implements Screen {
     @Override public void pause() {}
     @Override public void resume() {}
 
+
+    /**
+     * Libera le risorse utilizzate dalla schermata.
+     */
     @Override
     public void dispose() {
         stage.dispose();

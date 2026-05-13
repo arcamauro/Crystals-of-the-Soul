@@ -8,12 +8,16 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import io.github.crystals_of_the_soul.Main;
 import io.github.crystals_of_the_soul.states.GameState;
 
+/**
+ * Schermata di caricamento. Mostra una barra di progresso durante il caricamento delle risorse necessarie per il gioco.
+ * Se viene fornito un GameState salvato, lo passa alla schermata di gioco una volta completato il caricamento.
+ */
 public class LoadingScreen implements Screen {
 
-    private final Main game;
-    private final AssetManager assets;
-    private final GameState savedState; // null = new game
-    private ShapeRenderer shapeRenderer;
+    private final Main game; // Reference al gioco principale per poter cambiare schermata
+    private final AssetManager assets; // AssetManager per gestire il caricamento delle risorse
+    private final GameState savedState; // GameState salvato da caricare, se presente
+    private ShapeRenderer shapeRenderer; // ShapeRenderer per disegnare la barra di progresso
 
     public LoadingScreen(Main game) {
         this(game, null);
@@ -31,6 +35,11 @@ public class LoadingScreen implements Screen {
         // assets.load("map/level1.tmx", TiledMap.class);
     }
 
+    /**
+     * Ciclo di rendering principale. 
+     * Aggiorna il progresso del caricamento e disegna la barra di progresso.
+     * @param delta
+     */
     @Override
     public void render(float delta) {
         assets.update();
@@ -56,6 +65,9 @@ public class LoadingScreen implements Screen {
     @Override public void resume() {}
     @Override public void resize(int width, int height) {}
 
+    /**
+     * Libera le risorse utilizzate dalla schermata.
+     */
     @Override
     public void dispose() {
         shapeRenderer.dispose();
