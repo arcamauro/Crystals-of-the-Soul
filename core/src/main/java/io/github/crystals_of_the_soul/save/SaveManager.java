@@ -32,6 +32,7 @@ public class SaveManager {
     public static void autoSave(GameState state) {
         state.savedAt = System.currentTimeMillis();
         save(state, AUTO_SAVE_PATH);
+        Gdx.app.log("SaveManager", "saved at floor " + state.currentFloor);
     }
 
     /** Salva manualmente lo stato di gioco. 
@@ -40,6 +41,7 @@ public class SaveManager {
     public static void manualSave(GameState state) {
         state.savedAt = System.currentTimeMillis();
         save(state, MANUAL_SAVE_PATH);
+        Gdx.app.log("SaveManager", "saved at floor " + state.currentFloor);
     }
 
     /**
@@ -88,7 +90,6 @@ public class SaveManager {
             FileHandle file = Gdx.files.local(path);
             String serialized = json.toJson(state);
             file.writeString(serialized, false);
-            Gdx.app.log("SaveManager", "Saved successfully to " + path);
         } catch (Exception e) {
             Gdx.app.error("SaveManager", "Failed to save to " + path + ": " + e.getMessage());
         }
