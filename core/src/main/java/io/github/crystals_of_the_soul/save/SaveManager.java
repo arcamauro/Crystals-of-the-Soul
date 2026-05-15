@@ -84,27 +84,48 @@ public class SaveManager {
         return Gdx.files.local(MANUAL_SAVE_PATH).exists();
     }
 
-    // --- Helpers per il salvataggio ---
     private static void save(GameState state, String path) {
         try {
             FileHandle file = Gdx.files.local(path);
             String serialized = json.toJson(state);
+
+            // Write the save file
             file.writeString(serialized, false);
+
+            // Write the hash alongside it
+            String hash = SaveIntegrity.generateHash(serialized);
+            Gdx.files.local(path + ".hash").writeString(hash, false);
+
+            Gdx.app.log("SaveManager", "Saved to " + path + " with integrity hash");
         } catch (Exception e) {
             Gdx.app.error("SaveManager", "Failed to save to " + path + ": " + e.getMessage());
         }
     }
 
-    // --- Helpers per il caricamento dello stato ---
     private static GameState load(String path) {
         try {
             FileHandle file = Gdx.files.local(path);
             if (!file.exists()) return null;
 
-            GameState state = json.fromJson(GameState.class, file);
+            String content = file.readString();
+
+            // Verify integrity before deserializing
+            FileHandle hashFile = Gdx.files.local(path + ".hash");
+            if (hashFile.exists()) {
+                String expectedHash = hashFile.readString();
+                if (!SaveIntegrity.verify(content, expectedHash)) {
+                    Gdx.app.error("SaveManager", "Integrity check FAILED for " + path + " — possible tampering");
+                    return null;
+                }
+                Gdx.app.log("SaveManager", "Integrity check passed for " + path);
+            } else {
+                Gdx.app.log("SaveManager", "No hash file found for " + path + " — skipping integrity check");
+            }
+
+            GameState state = json.fromJson(GameState.class, content);
 
             if (!isValid(state)) {
-                Gdx.app.error("SaveManager", "Save file at " + path + " failed validation");
+                Gdx.app.error("SaveManager", "Validation failed for " + path);
                 return null;
             }
 
