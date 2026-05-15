@@ -1,9 +1,10 @@
 {
     "activeFile": "maps/lvl2.tmx",
     "expandedProjectPaths": [
-        "maps",
+        "tilestes",
         "tilestes/prima",
-        "."
+        ".",
+        "maps"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
