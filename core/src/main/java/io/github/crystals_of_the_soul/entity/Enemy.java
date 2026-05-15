@@ -4,12 +4,17 @@ public class Enemy {
 
     private float x;
     private float y;
-
+    private int hp = 50;
     public Enemy(float x, float y) {
         this.x = x;
         this.y = y;
     }
-
+    public void takeDamage(int damage) {
+        hp -= damage;
+    }
+    public int getHp() {
+        return hp;
+    }
     public float getX() {
         return x;
     }
