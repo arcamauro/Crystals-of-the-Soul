@@ -53,7 +53,6 @@ public class SaveManager {
         GameState manual = load(MANUAL_SAVE_PATH);
 
         if (auto == null && manual == null) {
-            // Both corrupt or missing — start fresh
             Gdx.app.log("SaveManager", "No valid save found, starting new game");
             return GameState.createNew();
         }
@@ -84,15 +83,17 @@ public class SaveManager {
         return Gdx.files.local(MANUAL_SAVE_PATH).exists();
     }
 
+    /**
+     * Salva lo stato di gioco in un file specificato, con generazione di un hash per l'integrità dei dati.
+     * @param state
+     * @param path
+     */
     private static void save(GameState state, String path) {
         try {
             FileHandle file = Gdx.files.local(path);
             String serialized = json.toJson(state);
 
-            // Write the save file
             file.writeString(serialized, false);
-
-            // Write the hash alongside it
             String hash = SaveIntegrity.generateHash(serialized);
             Gdx.files.local(path + ".hash").writeString(hash, false);
 
@@ -102,6 +103,10 @@ public class SaveManager {
         }
     }
 
+    /**
+     * Carica lo stato di gioco da un file specificato, con verifica dell'integrità tramite hash SHA-256.
+     * @param path
+     */
     private static GameState load(String path) {
         try {
             FileHandle file = Gdx.files.local(path);
@@ -109,7 +114,6 @@ public class SaveManager {
 
             String content = file.readString();
 
-            // Verify integrity before deserializing
             FileHandle hashFile = Gdx.files.local(path + ".hash");
             if (hashFile.exists()) {
                 String expectedHash = hashFile.readString();
@@ -143,7 +147,7 @@ public class SaveManager {
         if (state == null) return false;
         if (state.currentFloor < 0 || state.currentFloor > 5) return false;
         if (state.killCount < 0 || state.spareCount < 0) return false;
-        if (state.player1 == null) return false;
+        if (state.getPlayer1() == null) return false;
         if (state.playTime < 0) return false;
         return true;
     }

@@ -10,16 +10,20 @@ public class GameState {
     public int spareCount;
 
     // --- Crystal ---
-    public CrystalType crystal;
+    private CrystalType crystal;
 
     // --- Players ---
-    public PlayerState player1;
-    public Player2State player2; // null until floor 2
+    private PlayerState player1;
+    private Player2State player2;
 
     // --- Session ---
     public float playTime;
     public long savedAt;
 
+    /**
+     * Crea un nuovo stato di gioco con valori iniziali predefiniti.
+     * @return
+     */
     public static GameState createNew() {
         GameState state = new GameState();
         state.currentFloor = 0;
@@ -33,6 +37,9 @@ public class GameState {
         return state;
     }
 
+    /**
+     * Assegna un cristallo al giocatore in base ai valori di uccisioni e risparmi.
+     */
     public void assignCrystal() {
         // Determine crystal
         if (killCount > 0 && spareCount == 0) {
@@ -43,7 +50,7 @@ public class GameState {
             crystal = CrystalType.GREEN;
         }
 
-        // Spawn Player 2 with matching class
+        // --- Generazione del giocatore 2 in base al cristallo assegnato e modifiche alle azioni eseguibili dal giocatore 1 ---
         switch (crystal) {
             case RED:
                 player2 = Player2State.create(Player2Class.ASSASSIN);
@@ -61,5 +68,42 @@ public class GameState {
         com.badlogic.gdx.Gdx.app.log("GameState", "Crystal assigned: " + crystal);
         com.badlogic.gdx.Gdx.app.log("GameState", "Player 2 spawned as: " + player2.playerClass);
         com.badlogic.gdx.Gdx.app.log("GameState", "Player 1 canAttack: " + player1.canAttack + " canSpare: " + player1.canSpare);
+    }
+
+    /**
+     * Metodo di supporto che verifica se il cristallo è stato assegnato
+     */
+    public boolean hasCrystal() {
+        return crystal != null;
+    }
+
+    /**
+     * Metodo di supporto che verifica se il secondo giocatore è stato generato
+     */
+    public boolean hasPlayer2() {
+        return player2 != null;
+    }
+
+    /**
+     * Restituisce il tipo di cristallo assegnato in base alle scelte morali del giocatore.
+     */
+    public CrystalType getCrystal() {
+        return crystal;
+    }
+
+    /**
+     * Restituisce lo stato del primo giocatore, sempre presente.
+     *
+     */
+    public PlayerState getPlayer1() {
+        return player1;
+    }
+
+    /**
+     * Restituisce lo stato del secondo giocatore, se presente. Può essere null se il cristallo non è ancora stato assegnato o se siamo al primo piano.
+     * @return
+     */
+    public Player2State getPlayer2() {
+        return player2;
     }
 }
