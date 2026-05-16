@@ -71,6 +71,26 @@ public class GameState {
     }
 
     /**
+     * Determina il finale del gioco in base al cristallo assegnato e ai contatori morali.
+     */
+    public EndingType determineEnding() {
+        if (!hasCrystal()) return null;
+
+        switch (crystal) {
+            case RED:
+                return EndingType.HERO;
+            case BLUE:
+                return EndingType.GUARDIAN;
+            case GREEN:
+                if(killCount > spareCount) return EndingType.WANDERER;
+                if(spareCount > killCount) return EndingType.CITIZEN;
+                return EndingType.CHOICE; // killCount == spareCount
+            default:
+                return null;
+        }
+    }
+
+    /**
      * Metodo di supporto che verifica se il cristallo è stato assegnato
      */
     public boolean hasCrystal() {
