@@ -16,6 +16,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
@@ -31,7 +32,9 @@ public class Main extends ApplicationAdapter {
     Player player;
     InputHandler input;
     ShapeRenderer shape;
-    Enemy enemy;
+
+    Array<Enemy> enemies;
+    Enemy currentEnemy;
 
     Rectangle attackButton;
     Rectangle talkButton;
@@ -46,7 +49,11 @@ public class Main extends ApplicationAdapter {
         shape = new ShapeRenderer();
         batch = new SpriteBatch();
         image = new Texture("libgdx.png");
-        enemy = new Enemy(300, 200);
+        enemies = new Array<>();
+
+        enemies.add(new Enemy(300, 200));
+        enemies.add(new Enemy(500, 300));
+        enemies.add(new Enemy(700, 150));
         attackButton = new Rectangle(100, 50, 150, 60);
         talkButton = new Rectangle(300, 50, 150, 60);
         batch = new SpriteBatch();
@@ -84,19 +91,25 @@ public class Main extends ApplicationAdapter {
 
         player.update(dir.x, dir.y, delta);
 
-        float distance = Vector2.dst(
-            player.getX(),
-            player.getY(),
-            enemy.getX(),
-            enemy.getY()
-        );
+        for (Enemy enemy : enemies) {
 
-        if (distance < 50) {
-            System.out.println("Premi E per interagire");
+            float distance = Vector2.dst(
+                player.getX(),
+                player.getY(),
+                enemy.getX(),
+                enemy.getY()
+            );
 
-            if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            if (distance < 50) {
 
-                inBattle = true;
+                System.out.println("Premi E per interagire");
+
+                if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+
+                    currentEnemy = enemy;
+
+                    inBattle = true;
+                }
             }
         }
 
@@ -104,10 +117,14 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // disegna player
+        // disegna player e nemici
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.rect(player.getX(), player.getY(), 32, 32); // quadrato
-        shape.rect(enemy.getX(), enemy.getY(), 32, 32);
+
+        for (Enemy enemy : enemies) {
+
+            shape.rect(enemy.getX(), enemy.getY(), 32, 32);
+        }
         shape.end();
 
     }
@@ -158,12 +175,25 @@ public class Main extends ApplicationAdapter {
 
                 if (playerTurn) {
 
-                    enemy.takeDamage(10);
+                    currentEnemy.takeDamage(10);
 
-                    System.out.println("Enemy HP: " + enemy.getHp());
+                    System.out.println("Enemy HP: " + currentEnemy.getHp());
 
+                    if (currentEnemy.getHp() <= 0) {
+
+                        enemies.removeValue(currentEnemy, true);
+
+                        currentEnemy = null;
+
+                        inBattle = false;
+
+                        playerTurn = true;
+
+                        System.out.println("Nemico sconfitto!");
+                    }
                     endPlayerTurn();
                 }
+
             }
 
             // PARLA

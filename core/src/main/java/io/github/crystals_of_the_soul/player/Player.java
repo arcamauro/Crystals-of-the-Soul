@@ -15,7 +15,11 @@ public class Player {
         y += dy * speed * delta;
     }
     public void takeDamage(int damage) {
+
         hp -= damage;
+
+        if (hp < 0)
+            hp = 0;
     }
     public int getHp() {
         return hp;
