@@ -11,12 +11,15 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.crystals_of_the_soul.input.InputHandler;
 import io.github.crystals_of_the_soul.player.Player;
 import io.github.crystals_of_the_soul.entity.Enemy;
+import io.github.crystals_of_the_soul.entity.Item;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.graphics.Color;
+import io.github.crystals_of_the_soul.inventory.Inventory;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
@@ -39,6 +42,8 @@ public class Main extends ApplicationAdapter {
     Rectangle attackButton;
     Rectangle talkButton;
     BitmapFont font;
+
+    Array<Item> items;
    // SpriteBatch batch;
 
     //fine prova
@@ -54,6 +59,10 @@ public class Main extends ApplicationAdapter {
         enemies.add(new Enemy(300, 200));
         enemies.add(new Enemy(500, 300));
         enemies.add(new Enemy(700, 150));
+        items = new Array<>();
+
+        items.add(new Item(200, 400, "Pozione"));
+        items.add(new Item(600, 250, "Pozione 2"));
         attackButton = new Rectangle(100, 50, 150, 60);
         talkButton = new Rectangle(300, 50, 150, 60);
         batch = new SpriteBatch();
@@ -80,6 +89,31 @@ public class Main extends ApplicationAdapter {
 
     private void renderWorld()
     {
+        updatePlayer();
+
+        handleInventoryInput();
+
+        handleEnemyInteraction();
+
+        clearScreen();
+
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+
+        renderPlayer();
+
+        renderEnemies();
+
+        Item collectedItem = renderItems();
+
+        shape.end();
+
+        if (collectedItem != null) {
+
+            items.removeValue(collectedItem, true);
+        }
+        shape.setColor(Color.WHITE);
+    }
+    private void updatePlayer() {
 
         float delta = Gdx.graphics.getDeltaTime();
 
@@ -87,9 +121,13 @@ public class Main extends ApplicationAdapter {
         float dy = input.getDy();
 
         Vector2 dir = new Vector2(dx, dy);
-        if (dir.len() > 0) dir.nor();
+
+        if (dir.len() > 0)
+            dir.nor();
 
         player.update(dir.x, dir.y, delta);
+    }
+    private void handleEnemyInteraction() {
 
         for (Enemy enemy : enemies) {
 
@@ -112,28 +150,106 @@ public class Main extends ApplicationAdapter {
                 }
             }
         }
+    }
+    private void clearScreen() {
 
-        // pulizia schermo
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    }
+    private void renderPlayer() {
 
-        // disegna player e nemici
-        shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.rect(player.getX(), player.getY(), 32, 32); // quadrato
+        shape.setColor(Color.WHITE);
+
+        shape.rect(player.getX(), player.getY(), 32, 32);
+    }
+    private void renderEnemies() {
 
         for (Enemy enemy : enemies) {
 
+            float distance = Vector2.dst(
+                player.getX(),
+                player.getY(),
+                enemy.getX(),
+                enemy.getY()
+            );
+
+            if (distance < 50) {
+
+                shape.setColor(Color.RED);
+
+            } else {
+
+                shape.setColor(Color.WHITE);
+            }
+
             shape.rect(enemy.getX(), enemy.getY(), 32, 32);
         }
-        shape.end();
+    }
+    private Item renderItems() {
 
+        Item collectedItem = null;
+
+        for (Item item : items) {
+
+            float distance = Vector2.dst(
+                player.getX(),
+                player.getY(),
+                item.getX(),
+                item.getY()
+            );
+
+            if (distance < 50) {
+
+                shape.setColor(Color.YELLOW);
+
+                System.out.println("Premi E per raccogliere");
+
+                if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+
+                    System.out.println("Hai raccolto: " + item.getName());
+                    player.getInventory().addItem(item);
+
+                    player.getInventory().printInventory();
+                    collectedItem = item;
+                }
+
+            } else {
+
+                shape.setColor(Color.GREEN);
+            }
+
+            shape.rect(item.getX(), item.getY(), 24, 24);
+        }
+
+        if (collectedItem != null) {
+
+            return collectedItem;
+        }
+
+        return null;
     }
     private void renderBattle() {
+        clearBattleScreen();
+
+        renderBattleScene();
+
+        renderBattleUI();
+
+        handleBattleInput();
+
+        handleEnemyTurn();
+    }
+
+    private void clearBattleScreen() {
 
         Gdx.gl.glClearColor(0.2f, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    }
+    private void renderBattleScene() {
 
         shape.begin(ShapeRenderer.ShapeType.Filled);
+
+        shape.setColor(Color.WHITE);
 
         // player
         shape.rect(100, 200, 64, 64);
@@ -149,7 +265,7 @@ public class Main extends ApplicationAdapter {
             attackButton.height
         );
 
-// bottone PARLA
+        // bottone PARLA
         shape.rect(
             talkButton.x,
             talkButton.y,
@@ -158,51 +274,81 @@ public class Main extends ApplicationAdapter {
         );
 
         shape.end();
+    }
+    private void renderBattleUI() {
 
         batch.begin();
 
         font.draw(batch, "ATTACCA", 130, 85);
         font.draw(batch, "PARLA", 340, 85);
 
+        font.draw(batch,
+            "Player HP: " + player.getHp(),
+            50,
+            450
+        );
+
+        if (currentEnemy != null) {
+
+            font.draw(batch,
+                "Enemy HP: " + currentEnemy.getHp(),
+                450,
+                450
+            );
+        }
+
         batch.end();
+    }
+    private void handleBattleInput() {
+
         if (Gdx.input.justTouched()) {
 
             float mouseX = Gdx.input.getX();
             float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
-            // ATTACCA
-            if (attackButton.contains(mouseX, mouseY)) {
+            handleAttackButton(mouseX, mouseY);
 
-                if (playerTurn) {
+            handleTalkButton(mouseX, mouseY);
+        }
+    }
+    private void handleAttackButton(float mouseX, float mouseY) {
 
-                    currentEnemy.takeDamage(10);
+        if (attackButton.contains(mouseX, mouseY)) {
 
-                    System.out.println("Enemy HP: " + currentEnemy.getHp());
+            if (playerTurn) {
 
-                    if (currentEnemy.getHp() <= 0) {
+                currentEnemy.takeDamage(10);
 
-                        enemies.removeValue(currentEnemy, true);
+                System.out.println("Enemy HP: " + currentEnemy.getHp());
 
-                        currentEnemy = null;
+                if (currentEnemy.getHp() <= 0) {
 
-                        inBattle = false;
+                    enemies.removeValue(currentEnemy, true);
 
-                        playerTurn = true;
+                    currentEnemy = null;
 
-                        System.out.println("Nemico sconfitto!");
-                    }
-                    endPlayerTurn();
+                    inBattle = false;
+
+                    playerTurn = true;
+
+                    System.out.println("Nemico sconfitto!");
                 }
 
-            }
-
-            // PARLA
-            if (talkButton.contains(mouseX, mouseY)) {
-
-                System.out.println("PARLA!");
                 endPlayerTurn();
             }
         }
+    }
+    private void handleTalkButton(float mouseX, float mouseY) {
+
+        if (talkButton.contains(mouseX, mouseY)) {
+
+            System.out.println("PARLA!");
+
+            endPlayerTurn();
+        }
+    }
+    private void handleEnemyTurn() {
+
         if (!playerTurn && !enemyHasAttacked) {
 
             player.takeDamage(5);
@@ -214,10 +360,18 @@ public class Main extends ApplicationAdapter {
             playerTurn = true;
         }
     }
-
     private void endPlayerTurn() {
 
         playerTurn = false;
         enemyHasAttacked = false;
+    }
+    private void handleInventoryInput() {
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+
+            player.getInventory().usePotion(player);
+
+            System.out.println("Player HP: " + player.getHp());
+        }
     }
 }
