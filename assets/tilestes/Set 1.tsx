@@ -372,36 +372,12 @@
    <wangtile tileid="283" wangid="1,0,1,0,1,0,0,0"/>
   </wangset>
   <wangset name="Muro Grosso" type="mixed" tile="201">
-   <wangcolor name="Grosso" color="#ff0000" tile="-1" probability="1"/>
-   <wangtile tileid="200" wangid="1,1,1,1,0,1,1,1"/>
+   <wangcolor name="" color="#ff0000" tile="-1" probability="1"/>
    <wangtile tileid="201" wangid="1,1,0,0,0,1,1,1"/>
    <wangtile tileid="202" wangid="1,1,0,0,0,0,0,1"/>
    <wangtile tileid="203" wangid="1,1,1,1,0,0,0,1"/>
-   <wangtile tileid="204" wangid="0,1,0,0,0,1,1,1"/>
-   <wangtile tileid="205" wangid="1,1,0,0,0,0,0,1"/>
-   <wangtile tileid="206" wangid="1,1,0,0,0,0,0,1"/>
-   <wangtile tileid="207" wangid="1,1,1,1,0,0,0,1"/>
-   <wangtile tileid="208" wangid="1,1,0,0,0,1,1,1"/>
-   <wangtile tileid="209" wangid="0,1,0,0,0,0,0,1"/>
-   <wangtile tileid="210" wangid="1,1,0,0,0,0,0,1"/>
-   <wangtile tileid="211" wangid="1,1,1,1,0,0,0,1"/>
-   <wangtile tileid="228" wangid="0,1,1,1,0,1,1,1"/>
    <wangtile tileid="229" wangid="0,0,0,0,0,1,1,1"/>
    <wangtile tileid="231" wangid="0,1,1,1,0,0,0,0"/>
-   <wangtile tileid="232" wangid="0,1,0,0,0,1,1,1"/>
-   <wangtile tileid="233" wangid="0,0,0,0,0,0,0,1"/>
-   <wangtile tileid="234" wangid="0,1,0,0,0,0,0,0"/>
-   <wangtile tileid="235" wangid="0,1,1,1,0,0,0,1"/>
-   <wangtile tileid="236" wangid="0,0,0,0,0,1,1,1"/>
-   <wangtile tileid="237" wangid="0,1,1,1,0,0,0,1"/>
-   <wangtile tileid="239" wangid="0,1,1,1,0,0,0,0"/>
-   <wangtile tileid="260" wangid="1,1,1,1,1,1,1,1"/>
-   <wangtile tileid="261" wangid="0,0,0,0,0,1,1,1"/>
-   <wangtile tileid="262" wangid="0,1,1,1,0,0,0,0"/>
-   <wangtile tileid="263" wangid="0,1,1,1,0,1,1,1"/>
-   <wangtile tileid="264" wangid="0,0,0,0,0,1,1,1"/>
-   <wangtile tileid="266" wangid="0,1,0,0,0,1,1,1"/>
-   <wangtile tileid="267" wangid="0,1,1,1,0,0,0,0"/>
   </wangset>
  </wangsets>
 </tileset>

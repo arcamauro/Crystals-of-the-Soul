@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="16" height="27" tilewidth="16" tileheight="16" infinite="1" nextlayerid="9" nextobjectid="1">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="16" height="27" tilewidth="16" tileheight="16" infinite="1" nextlayerid="11" nextobjectid="2">
  <tileset firstgid="1" source="../tilestes/Set 1.tsx"/>
  <tileset firstgid="561" source="../tilestes/Torch Yellow L.tsx"/>
  <tileset firstgid="569" source="../tilestes/Torch Yellow R.tsx"/>
@@ -44,6 +44,14 @@
 </chunk>
    </data>
   </layer>
+  <objectgroup id="9" name="porta0">
+   <object id="1" name="porta0" x="135" y="175" width="34" height="17">
+    <properties>
+     <property name="destinazione" value="lvl0_1"/>
+     <property name="type" value="porta"/>
+    </properties>
+   </object>
+  </objectgroup>
   <layer id="7" name="dec" width="16" height="27">
    <data encoding="csv">
     <chunk x="0" y="0" width="16" height="16">
