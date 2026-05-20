@@ -1,10 +1,10 @@
 {
-    "activeFile": "maps/lvl4_r.tmx",
+    "activeFile": "maps/lvl3_r.tmx",
     "expandedProjectPaths": [
-        ".",
         "maps",
+        "tilestes",
         "tilestes/prima",
-        "tilestes"
+        "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -46,27 +46,75 @@
             }
         },
         "maps/lvl1_0.tmx": {
-            "scale": 1,
-            "selectedLayer": 0,
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 4,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 52.5,
-                "y": 0.5
+                "x": 229.75,
+                "y": 98.375
             }
         },
         "maps/lvl1_1.tmx": {
-            "scale": 4,
-            "selectedLayer": 2,
+            "expandedObjectLayers": [
+                4,
+                6
+            ],
+            "scale": 3,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 241.75,
-                "y": -161.875
+                "x": 368,
+                "y": 88.49999999999999
             }
         },
         "maps/lvl2.tmx": {
-            "scale": 4,
-            "selectedLayer": 4,
+            "scale": 3,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 85.375,
-                "y": -227.625
+                "x": 94.99999999999999,
+                "y": -92.16666666666666
+            }
+        },
+        "maps/lvl3_b - Copia (2).tmx": {
+            "scale": 1.1244140624999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -128.06670140698282,
+                "y": 255.6887267674136
+            }
+        },
+        "maps/lvl3_b.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": -336,
+                "y": 39.75
+            }
+        },
+        "maps/lvl3_r.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 55.999999999999986,
+                "y": 39.833333333333314
+            }
+        },
+        "maps/lvl3_v.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": -336,
+                "y": 39.5
             }
         },
         "maps/lvl4.tmx": {
@@ -147,7 +195,7 @@
         },
         "tilestes/Set 1.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 3,
+            "scaleInDock": 2,
             "scaleInEditor": 5.5
         },
         "tilestes/TX Props.tsx": {
@@ -210,8 +258,8 @@
             }
         },
         "tilestes/cristalli.tsx": {
-            "scaleInDock": 3,
-            "scaleInEditor": 5.5
+            "scaleInDock": 2,
+            "scaleInEditor": 2
         },
         "tilestes/dec.tsx": {
             "scaleInDock": 1,
@@ -291,7 +339,7 @@
             }
         },
         "tilestes/tileset_full.tsx": {
-            "scaleInDock": 5.5,
+            "scaleInDock": 3,
             "scaleInEditor": 5.5
         },
         "tilestes/trap_animation.tsx": {
@@ -315,25 +363,26 @@
         "tilestes/Set 1.tsx",
         "tilestes/tileset_full.tsx",
         "tilestes/cristalli.tsx",
-        "maps/lvl4_v.tmx",
-        "maps/lvl4_b.tmx",
-        "maps/lvl4_r.tmx"
+        "maps/lvl1_0.tmx",
+        "maps/lvl3_b.tmx",
+        "maps/lvl3_r.tmx",
+        "maps/lvl3_v.tmx"
     ],
     "project": "CrystalsMaps.tiled-project",
     "property.type": "string",
     "recentFiles": [
-        "maps/lvl0.tmx",
-        "maps/lvl0_1.tmx",
-        "maps/lvl2.tmx",
-        "maps/lvl4_b.tmx",
-        "maps/lvl4_v.tmx",
-        "maps/lvl5_b.tmx",
-        "maps/lvl5_r.tmx",
-        "maps/lvl5_v.tmx",
-        "maps/lvl4_r.tmx",
         "tilestes/Set 1.tsx",
         "tilestes/tileset_full.tsx",
-        "tilestes/cristalli.tsx"
+        "tilestes/cristalli.tsx",
+        "maps/lvl1_0.tmx",
+        "maps/lvl3_b.tmx",
+        "maps/lvl3_v.tmx",
+        "maps/lvl3_r.tmx",
+        "maps/lvl3_b - Copia (2).tmx",
+        "maps/lvl1_1.tmx",
+        "maps/lvl2.tmx",
+        "maps/lvl0.tmx",
+        "maps/lvl0_1.tmx"
     ],
     "resizeMap.removeObjects": true,
     "tileset.lastUsedFormat": "tsx",
