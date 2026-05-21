@@ -1,0 +1,397 @@
+{
+    "activeFile": "maps/lvl3_r.tmx",
+    "expandedProjectPaths": [
+        "maps",
+        "tilestes",
+        "tilestes/prima",
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        ":/automap-tiles.tsx": {
+            "scaleInDock": 1
+        },
+        "maps/Set 1.tsx": {
+            "scaleInDock": 1
+        },
+        "maps/lvl0.tmx": {
+            "expandedGroupLayers": [
+                8
+            ],
+            "expandedObjectLayers": [
+                8,
+                9
+            ],
+            "scale": 3,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 100.33333333333331,
+                "y": 182.16666666666669
+            }
+        },
+        "maps/lvl0_1.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 148.83333333333331,
+                "y": 149.16666666666669
+            }
+        },
+        "maps/lvl1.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 154.83333333333331,
+                "y": 200.49999999999997
+            }
+        },
+        "maps/lvl1_0.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 4,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 229.75,
+                "y": 98.375
+            }
+        },
+        "maps/lvl1_1.tmx": {
+            "expandedObjectLayers": [
+                4,
+                6
+            ],
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 368,
+                "y": 88.49999999999999
+            }
+        },
+        "maps/lvl2.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 94.99999999999999,
+                "y": -92.16666666666666
+            }
+        },
+        "maps/lvl3_b - Copia (2).tmx": {
+            "scale": 1.1244140624999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -128.06670140698282,
+                "y": 255.6887267674136
+            }
+        },
+        "maps/lvl3_b.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": -336,
+                "y": 39.75
+            }
+        },
+        "maps/lvl3_r.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 55.999999999999986,
+                "y": 39.833333333333314
+            }
+        },
+        "maps/lvl3_v.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": -336,
+                "y": 39.5
+            }
+        },
+        "maps/lvl4.tmx": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 265.5,
+                "y": 400.5
+            }
+        },
+        "maps/lvl4_b.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 256.1666666666667,
+                "y": 220.16666666666669
+            }
+        },
+        "maps/lvl4_r.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 300.33333333333337,
+                "y": 272.33333333333337
+            }
+        },
+        "maps/lvl4_v.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 329,
+                "y": 366.33333333333337
+            }
+        },
+        "maps/lvl5_b.tmx": {
+            "scale": 3.16171875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -76.38250555967383,
+                "y": 113.7039782554979
+            }
+        },
+        "maps/lvl5_r.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -102.5,
+                "y": 108.83333333333331
+            }
+        },
+        "maps/lvl5_v.tmx": {
+            "scale": 3.16171875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -85.23844823325919,
+                "y": 114.96911292315295
+            }
+        },
+        "maps/scaleUP.tmx": {
+            "scale": 4,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -3.75,
+                "y": 32.625
+            }
+        },
+        "tilestes/CARTELLI.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 5.5
+        },
+        "tilestes/Pavimento0.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilestes/Pavimento01.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilestes/Set 1.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 2,
+            "scaleInEditor": 5.5
+        },
+        "tilestes/TX Props.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 3,
+            "scaleInEditor": 4
+        },
+        "tilestes/TX Tileset Grass.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "tilestes/TX Tileset Stone Ground.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "tilestes/Torch Yellow L.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
+        },
+        "tilestes/Torch Yellow R.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
+        },
+        "tilestes/Torch Yellow.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 8
+        },
+        "tilestes/Vase Shine Anim.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "tilestes/Wall Tiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "tilestes/Water.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
+        },
+        "tilestes/acqua.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 8
+        },
+        "tilestes/all-assets-preview.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "tilestes/altare.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "tilestes/bho.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -502,
+                "y": -6.5
+            }
+        },
+        "tilestes/cristalli.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 2
+        },
+        "tilestes/dec.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "tilestes/fire_animation.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "tilestes/fire_animation2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "tilestes/kenney_1-bit-pack/Tilemap/sample_fantasy.tmx": {
+            "scale": 1.7255859375,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 384.21731748726654,
+                "y": 192.10865874363327
+            }
+        },
+        "tilestes/kenney_1-bit-pack/Tilemap/tileset_colored.tsx": {
+            "scaleInDock": 1
+        },
+        "tilestes/lvl0.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -388.99999999999994,
+                "y": -10.833333333333343
+            }
+        },
+        "tilestes/lvl1.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -29,
+                "y": 111.25
+            }
+        },
+        "tilestes/lvl5.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1.25,
+                "y": 71.25
+            }
+        },
+        "tilestes/pav.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 0.5
+        },
+        "tilestes/pavimento01.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilestes/portale.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "tilestes/prima/Wall Tiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilestes/prima/walls_floor.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
+        },
+        "tilestes/scaleUP.tmx": {
+            "scale": 11,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -1.1818181818181799,
+                "y": 0.5909090909090864
+            }
+        },
+        "tilestes/tileset_full.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 5.5
+        },
+        "tilestes/trap_animation.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "tilestes/walls_floor.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        }
+    },
+    "frame.defaultDuration": 100,
+    "last.externalTilesetPath": "C:/Users/giann/Documents/GitHub/rpg_iss/assets/tilestes",
+    "last.imagePath": "C:/Users/giann/Documents/GitHub/rpg_iss/assets/tilestes/CUORE/Tilesets",
+    "map.fixedSize": false,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 37,
+    "openFiles": [
+        "tilestes/Set 1.tsx",
+        "tilestes/tileset_full.tsx",
+        "tilestes/cristalli.tsx",
+        "maps/lvl1_0.tmx",
+        "maps/lvl3_b.tmx",
+        "maps/lvl3_r.tmx",
+        "maps/lvl3_v.tmx"
+    ],
+    "project": "CrystalsMaps.tiled-project",
+    "property.type": "string",
+    "recentFiles": [
+        "tilestes/Set 1.tsx",
+        "tilestes/tileset_full.tsx",
+        "tilestes/cristalli.tsx",
+        "maps/lvl1_0.tmx",
+        "maps/lvl3_b.tmx",
+        "maps/lvl3_v.tmx",
+        "maps/lvl3_r.tmx",
+        "maps/lvl3_b - Copia (2).tmx",
+        "maps/lvl1_1.tmx",
+        "maps/lvl2.tmx",
+        "maps/lvl0.tmx",
+        "maps/lvl0_1.tmx"
+    ],
+    "resizeMap.removeObjects": true,
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 0,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    },
+    "tileset.transparentColor": "#000000",
+    "tileset.type": 0,
+    "tileset.useTransparentColor": true
+}
