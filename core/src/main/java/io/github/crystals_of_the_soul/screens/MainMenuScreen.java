@@ -58,11 +58,11 @@ public class MainMenuScreen implements Screen {
         });
 
         TextButton continueBtn = new TextButton("Continue", skin);
-        continueBtn.setDisabled(!SaveManager.anySaveExists());
+        continueBtn.setDisabled(!SaveManager.getInstance().anySaveExists());
         continueBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LoadingScreen(game, SaveManager.loadMostRecent()));
+                game.setScreen(new LoadingScreen(game, SaveManager.getInstance().loadMostRecent()));
             }
         });
 

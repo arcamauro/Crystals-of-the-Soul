@@ -93,7 +93,7 @@ public class GameScreen implements Screen {
         saveBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                SaveManager.manualSave(state);
+                SaveManager.getInstance().manualSave(state);
                 saveConfirmLabel.setVisible(true);
             }
         });
@@ -164,7 +164,7 @@ public class GameScreen implements Screen {
                 state.spareCount = 5;
                 state.assignCrystal();
             }
-            SaveManager.autoSave(state);
+            SaveManager.getInstance().autoSave(state);
             Gdx.app.log("DEBUG", "Floor: " + state.currentFloor);
         }
 

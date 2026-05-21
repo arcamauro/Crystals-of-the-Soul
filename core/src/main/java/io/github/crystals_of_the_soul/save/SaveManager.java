@@ -8,47 +8,61 @@ import io.github.crystals_of_the_soul.states.GameState;
 import io.github.crystals_of_the_soul.states.PlayerState;
 
 /**
- * Classe che gestisce il salvataggio e il caricamento dello stato di gioco, con supporto per salvataggi automatici e manuali.
- * Implementa anche la validazione dei dati per prevenire errori di caricamento da file corrotti o modificati manualmente. 
- * Utilizza JSON per la serializzazione, con una struttura semplice e facilmente estendibile per future aggiunte allo stato di gioco. 
+ *Classe che gestisce il salvataggio e il caricamento dello stato di gioco, con supporto per salvataggi automatici e manuali.
+ * Implementa anche la validazione dei dati per prevenire errori di caricamento da file corrotti o modificati manualmente.
+ * Utilizza JSON per la serializzazione, con una struttura semplice e facilmente estendibile per future aggiunte allo stato di gioco.
  * Fornisce metodi per verificare l'esistenza dei salvataggi e per caricare lo stato più recente tra autosave e manual save.
  */
 public class SaveManager {
 
+    private static SaveManager instance;
+
     private static final String AUTO_SAVE_PATH = "saves/autosave.json";
     private static final String MANUAL_SAVE_PATH = "saves/manualsave.json";
 
-    private static final Json json = new Json();
-    static {
+    private final Json json;
+
+    private SaveManager() {
+        json = new Json();
         json.setOutputType(JsonWriter.OutputType.json);
         json.setUsePrototypes(false);
         json.addClassTag("PlayerState", PlayerState.class);
     }
 
     /**
-     * Salva automaticamente lo stato di gioco. 
-     * @param state
+     * Restituisce l'istanza unica di SaveManager.
+     * La crea al primo accesso.
      */
-    public static void autoSave(GameState state) {
-        state.savedAt = System.currentTimeMillis();
-        save(state, AUTO_SAVE_PATH);
-        Gdx.app.log("SaveManager", "saved at floor " + state.currentFloor);
-    }
-
-    /** Salva manualmente lo stato di gioco. 
-     * @param state
-     */
-    public static void manualSave(GameState state) {
-        state.savedAt = System.currentTimeMillis();
-        save(state, MANUAL_SAVE_PATH);
-        Gdx.app.log("SaveManager", "saved at floor " + state.currentFloor);
+    public static SaveManager getInstance() {
+        if (instance == null) {
+            instance = new SaveManager();
+        }
+        return instance;
     }
 
     /**
-     * Carica lo stato di gioco più recente tra autosave e manual save. 
-     * Se entrambi sono corrotti o mancanti, restituisce un nuovo stato di gioco.
+     * Salvataggio automatico — chiamato ad ogni cambio di piano.
      */
-    public static GameState loadMostRecent() {
+    public void autoSave(GameState state) {
+        state.savedAt = System.currentTimeMillis();
+        save(state, AUTO_SAVE_PATH);
+        Gdx.app.log("SaveManager", "Auto saved at floor " + state.currentFloor);
+    }
+
+    /**
+     * Salvataggio manuale — chiamato dal giocatore tramite il menu di pausa.
+     */
+    public void manualSave(GameState state) {
+        state.savedAt = System.currentTimeMillis();
+        save(state, MANUAL_SAVE_PATH);
+        Gdx.app.log("SaveManager", "Manual saved at floor " + state.currentFloor);
+    }
+
+    /**
+     * Carica il salvataggio più recente tra automatico e manuale.
+     * Se entrambi sono corrotti, restituisce un nuovo GameState.
+     */
+    public GameState loadMostRecent() {
         GameState auto = load(AUTO_SAVE_PATH);
         GameState manual = load(MANUAL_SAVE_PATH);
 
@@ -69,45 +83,43 @@ public class SaveManager {
     }
 
     /**
-     * Questa serie di metodi permette di verificare se esistono salvataggi validi.
+     * Verifica se esiste almeno un salvataggio valido.
      */
-    public static boolean anySaveExists() {
+    public boolean anySaveExists() {
         return autoSaveExists() || manualSaveExists();
     }
 
-    public static boolean autoSaveExists() {
+    /**
+     * Verifica se esiste un salvataggio automatico.
+     */
+    public boolean autoSaveExists() {
         return Gdx.files.local(AUTO_SAVE_PATH).exists();
     }
 
-    public static boolean manualSaveExists() {
+    /**
+     * Verifica se esiste un salvataggio manuale.
+     */
+    public boolean manualSaveExists() {
         return Gdx.files.local(MANUAL_SAVE_PATH).exists();
     }
 
-    /**
-     * Salva lo stato di gioco in un file specificato, con generazione di un hash per l'integrità dei dati.
-     * @param state
-     * @param path
-     */
-    private static void save(GameState state, String path) {
+    // --- Internal helpers ---
+
+    private void save(GameState state, String path) {
         try {
             FileHandle file = Gdx.files.local(path);
             String serialized = json.toJson(state);
-
             file.writeString(serialized, false);
-            String hash = SaveIntegrity.generateHash(serialized);
-            Gdx.files.local(path + ".hash").writeString(hash, false);
-
-            Gdx.app.log("SaveManager", "Saved to " + path + " with integrity hash");
+            Gdx.files.local(path + ".hash").writeString(
+                SaveIntegrity.generateHash(serialized), false
+            );
+            Gdx.app.log("SaveManager", "Saved successfully to " + path);
         } catch (Exception e) {
             Gdx.app.error("SaveManager", "Failed to save to " + path + ": " + e.getMessage());
         }
     }
 
-    /**
-     * Carica lo stato di gioco da un file specificato, con verifica dell'integrità tramite hash SHA-256.
-     * @param path
-     */
-    private static GameState load(String path) {
+    private GameState load(String path) {
         try {
             FileHandle file = Gdx.files.local(path);
             if (!file.exists()) return null;
@@ -118,12 +130,10 @@ public class SaveManager {
             if (hashFile.exists()) {
                 String expectedHash = hashFile.readString();
                 if (!SaveIntegrity.verify(content, expectedHash)) {
-                    Gdx.app.error("SaveManager", "Integrity check FAILED for " + path + " — possible tampering");
+                    Gdx.app.error("SaveManager", "Integrity check FAILED for " + path);
                     return null;
                 }
                 Gdx.app.log("SaveManager", "Integrity check passed for " + path);
-            } else {
-                Gdx.app.log("SaveManager", "No hash file found for " + path + " — skipping integrity check");
             }
 
             GameState state = json.fromJson(GameState.class, content);
@@ -142,8 +152,11 @@ public class SaveManager {
         }
     }
 
-    // --- Validation ---
-    private static boolean isValid(GameState state) {
+    /**
+     * Metodo che verifica la validità del salvataggio caricato
+     *
+     */
+    private boolean isValid(GameState state) {
         if (state == null) return false;
         if (state.currentFloor < 0 || state.currentFloor > 5) return false;
         if (state.killCount < 0 || state.spareCount < 0) return false;
