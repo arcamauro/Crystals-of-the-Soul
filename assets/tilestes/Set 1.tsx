@@ -5,8 +5,8 @@
  <tile id="33">
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="0.0909091" width="2.18182" height="15.9091"/>
-   <object id="2" x="-0.181818" y="-0.181818" width="16.6364" height="3.09091"/>
-   <object id="3" x="13" y="13.9091" width="3.27273" height="2"/>
+   <object id="2" x="-0.181818" y="-0.181818" width="16.1581" height="3.17787"/>
+   <object id="3" x="13" y="13.9091" width="2.96023" height="2"/>
   </objectgroup>
  </tile>
  <tile id="34">
