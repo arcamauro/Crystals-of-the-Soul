@@ -9,17 +9,15 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.crystals_of_the_soul.input.InputHandler;
-//import io.github.crystals_of_the_soul.player.Player;
+import io.github.crystals_of_the_soul.player.Player;
 
 public class Main extends Game {
 
     public SpriteBatch batch;
 
-    //prova
     Player player;
     InputHandler input;
     ShapeRenderer shape;
-    //fine prova
     @Override
     public void create() {
         player = new Player(100, 100);
