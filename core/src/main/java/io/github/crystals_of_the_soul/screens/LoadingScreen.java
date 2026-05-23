@@ -5,6 +5,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import io.github.crystals_of_the_soul.Main;
 import io.github.crystals_of_the_soul.states.GameState;
 
@@ -32,11 +34,26 @@ public class LoadingScreen implements Screen {
     @Override
     public void show() {
         shapeRenderer = new ShapeRenderer();
-        // assets.load("map/level1.tmx", TiledMap.class);
+
+        assets.setLoader(TiledMap.class, new TmxMapLoader());
+
+        assets.load("maps/lvl0.tmx", TiledMap.class);
+        assets.load("maps/lvl1_0.tmx", TiledMap.class);
+        assets.load("maps/lvl1_1.tmx", TiledMap.class);
+        assets.load("maps/lvl2.tmx", TiledMap.class);
+        assets.load("maps/lvl3_b.tmx", TiledMap.class);
+        assets.load("maps/lvl3_r.tmx", TiledMap.class);
+        assets.load("maps/lvl3_v.tmx", TiledMap.class);
+        assets.load("maps/lvl4_b.tmx", TiledMap.class);
+        assets.load("maps/lvl4_r.tmx", TiledMap.class);
+        assets.load("maps/lvl4_v.tmx", TiledMap.class);
+        assets.load("maps/lvl5_b.tmx", TiledMap.class);
+        assets.load("maps/lvl5_r.tmx", TiledMap.class);
+        assets.load("maps/lvl5_v.tmx", TiledMap.class);
     }
 
     /**
-     * Ciclo di rendering principale. 
+     * Ciclo di rendering principale.
      * Aggiorna il progresso del caricamento e disegna la barra di progresso.
      * @param delta
      */

@@ -126,4 +126,29 @@ public class GameState {
     public Player2State getPlayer2() {
         return player2;
     }
+    /**
+     * Restituisce il percorso della mappa corrispondente al piano
+     * e al cristallo attivo. Usato da GameScreen per caricare la mappa corretta.
+     */
+    public String getCurrentMapPath() {
+        switch (currentFloor) {
+            case 0: return "maps/lvl0.tmx";
+            case 1: return "maps/lvl1_0.tmx"; // section 0 by default
+            case 2: return "maps/lvl2.tmx";
+            case 3: return "maps/lvl3_" + crystalSuffix() + ".tmx";
+            case 4: return "maps/lvl4_" + crystalSuffix() + ".tmx";
+            case 5: return "maps/lvl5_" + crystalSuffix() + ".tmx";
+            default: return "maps/lvl0.tmx";
+        }
+    }
+
+    private String crystalSuffix() {
+        if (!hasCrystal()) return "v"; // default to green if somehow missing
+        switch (crystal) {
+            case RED:   return "r";
+            case GREEN: return "v";
+            case BLUE:  return "b";
+            default:    return "v";
+        }
+    }
 }
