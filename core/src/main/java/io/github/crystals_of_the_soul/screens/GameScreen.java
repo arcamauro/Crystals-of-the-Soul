@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -16,16 +17,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.crystals_of_the_soul.Main;
+import io.github.crystals_of_the_soul.entity.Enemy;
 import io.github.crystals_of_the_soul.input.InputHandler;
 import io.github.crystals_of_the_soul.player.Player;
 import io.github.crystals_of_the_soul.save.SaveManager;
 import io.github.crystals_of_the_soul.states.GameState;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+
 public class GameScreen implements Screen {
 
     private final Main game;
@@ -42,12 +43,26 @@ public class GameScreen implements Screen {
     private InputHandler inputHandler;
     private ShapeRenderer shapeRenderer;
 
+    // Enemies
+    private Array<Enemy> enemies;
+    private Enemy currentEnemy;
+
+    // Battle state
+    private boolean inBattle = false;
+    private boolean playerTurn = true;
+    private boolean enemyHasAttacked = false;
+
     // UI
     private Stage stage;
     private Skin skin;
     private Table pauseTable;
-    private boolean paused = false;
+    private Table battleTable;
+    private Table hudTable;
+    private Label enemyHpLabel;
+    private Label playerHpLabel;
+    private Label interactLabel;
     private Label saveConfirmLabel;
+    private boolean paused = false;
 
     public GameScreen(Main game, AssetManager assets) {
         this.game = game;
@@ -63,15 +78,12 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        // Camera
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        // Map
         map = assets.get(state.getCurrentMapPath(), TiledMap.class);
         mapRenderer = new OrthogonalTiledMapRenderer(map);
 
-        // Player — spawn at center of screen for now
         player = new Player(
             state.getPlayer1().x != 0 ? state.getPlayer1().x : 100,
             state.getPlayer1().y != 0 ? state.getPlayer1().y : 100
@@ -79,52 +91,195 @@ public class GameScreen implements Screen {
         inputHandler = new InputHandler();
         shapeRenderer = new ShapeRenderer();
 
-        // UI
+        enemies = new Array<>();
+        enemies.add(new Enemy(300, 200));
+        enemies.add(new Enemy(500, 300));
+        enemies.add(new Enemy(200, 400));
+
         stage = new Stage(new ScreenViewport());
         skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
+
         buildPauseMenu();
+        buildBattleUI();
+        buildHud();
+
         stage.addActor(pauseTable);
+        stage.addActor(battleTable);
+        stage.addActor(hudTable);
+
         pauseTable.setVisible(false);
+        battleTable.setVisible(false);
+        interactLabel.setVisible(false);
+    }
+
+    private void buildHud() {
+        hudTable = new Table();
+        hudTable.setFillParent(true);
+        hudTable.top().left().pad(10);
+
+        playerHpLabel = new Label("HP: " + player.getHp(), skin);
+        interactLabel = new Label("Premi E per interagire", skin);
+
+        hudTable.add(playerHpLabel).row();
+        hudTable.add(interactLabel);
+    }
+
+    private void buildBattleUI() {
+        battleTable = new Table();
+        battleTable.setFillParent(true);
+        battleTable.center();
+
+        enemyHpLabel = new Label("Nemico HP: 50", skin);
+
+        TextButton attackBtn = new TextButton("Attacca", skin);
+        attackBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (playerTurn && inBattle) {
+                    onAttack();
+                }
+            }
+        });
+
+        TextButton talkBtn = new TextButton("Parla", skin);
+        talkBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (playerTurn && inBattle) {
+                    onTalk();
+                }
+            }
+        });
+
+        battleTable.add(enemyHpLabel).padBottom(40).row();
+        battleTable.add(attackBtn).width(200).height(50).padBottom(20).row();
+        battleTable.add(talkBtn).width(200).height(50);
+    }
+
+    /**
+     * Gestisce l'attacco del giocatore al nemico.
+     * Se il nemico viene sconfitto, incrementa il contatore delle uccisioni.
+     */
+    private void onAttack() {
+        currentEnemy.takeDamage(10);
+        enemyHpLabel.setText("Nemico HP: " + currentEnemy.getHp());
+        Gdx.app.log("Battle", "Enemy HP: " + currentEnemy.getHp());
+
+        if (currentEnemy.getHp() <= 0) {
+            state.killCount++;
+            Gdx.app.log("Battle", "Enemy killed. Total kills: " + state.killCount);
+            enemies.removeValue(currentEnemy, true);
+            exitBattle();
+        } else {
+            endPlayerTurn();
+        }
+    }
+
+    /**
+     * funzione che gestisce il risparmio tramite dialogo
+     * Se il nemico viene risparmiato, incrementa il contatore dei risparmi
+    */
+    private void onTalk() {
+        state.spareCount++;
+        Gdx.app.log("Battle", "Enemy spared. Total spares: " + state.spareCount);
+        enemies.removeValue(currentEnemy, true);
+        exitBattle();
+    }
+
+    private void endPlayerTurn() {
+        playerTurn = false;
+        enemyHasAttacked = false;
+    }
+
+    private void exitBattle() {
+        inBattle = false;
+        currentEnemy = null;
+        playerTurn = true;
+        enemyHasAttacked = false;
+        battleTable.setVisible(false);
+        Gdx.input.setInputProcessor(null);
     }
 
     @Override
     public void render(float delta) {
-        if (!paused) {
-            state.playTime += delta;
-
-            // Update player
-            float dx = inputHandler.getDx();
-            float dy = inputHandler.getDy();
-            player.update(dx, dy, delta);
-
-            // Sync player position back to GameState
-            state.getPlayer1().x = player.getX();
-            state.getPlayer1().y = player.getY();
-
-            // Camera follows player
-            camera.position.set(player.getX(), player.getY(), 0);
-            camera.update();
-        }
-
         ScreenUtils.clear(Color.BLACK);
 
-        // Render map
-        mapRenderer.setView(camera);
-        mapRenderer.render();
+        if (!paused) {
+            if (inBattle) {
+                renderBattle();
+            } else {
+                renderWorld(delta);
+            }
+        }
 
-        // Render player as square placeholder
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.rect(player.getX(), player.getY(), 32, 32);
-        shapeRenderer.end();
-
-        // ESC to pause
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             togglePause();
         }
 
-        // Temporary debug
+        stage.act(delta);
+        stage.draw();
+    }
+
+    private void renderWorld(float delta) {
+        state.playTime += delta;
+
+        float dx = inputHandler.getDx();
+        float dy = inputHandler.getDy();
+        Vector2 dir = new Vector2(dx, dy);
+        if (dir.len() > 0) dir.nor();
+        player.update(dir.x, dir.y, delta);
+
+        state.getPlayer1().x = player.getX();
+        state.getPlayer1().y = player.getY();
+
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
+
+        mapRenderer.setView(camera);
+        mapRenderer.render();
+
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // Player
+        shapeRenderer.setColor(Color.WHITE);
+        shapeRenderer.rect(player.getX(), player.getY(), 32, 32);
+
+        // Nemici
+        shapeRenderer.setColor(Color.RED);
+        for (Enemy enemy : enemies) {
+            shapeRenderer.rect(enemy.getX(), enemy.getY(), 32, 32);
+        }
+
+        shapeRenderer.end();
+
+        // HUD update della vuta
+        playerHpLabel.setText("HP: " + player.getHp());
+
+        // Controllo della prossimità ai nemici
+        boolean nearEnemy = false;
+        for (Enemy enemy : enemies) {
+            float distance = Vector2.dst(
+                player.getX(), player.getY(),
+                enemy.getX(), enemy.getY()
+            );
+            if (distance < 60) {
+                nearEnemy = true;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                    currentEnemy = enemy;
+                    inBattle = true;
+                    playerTurn = true;
+                    enemyHasAttacked = false;
+                    enemyHpLabel.setText("Nemico HP: " + currentEnemy.getHp());
+                    battleTable.setVisible(true);
+                    Gdx.input.setInputProcessor(stage);
+                }
+                break;
+            }
+        }
+        interactLabel.setVisible(nearEnemy);
+
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             state.currentFloor++;
             if (state.currentFloor == 2) {
@@ -133,17 +288,24 @@ public class GameScreen implements Screen {
             }
             SaveManager.getInstance().autoSave(state);
             Gdx.app.log("DEBUG", "Floor: " + state.currentFloor);
-
-            // Load new map for the new floor
             map = assets.get(state.getCurrentMapPath(), TiledMap.class);
             mapRenderer.getMap().dispose();
             mapRenderer = new OrthogonalTiledMapRenderer(map);
         }
-
-        stage.act(delta);
-        stage.draw();
     }
 
+    private void renderBattle() {
+        // Turno nemico
+        if (!playerTurn && !enemyHasAttacked) {
+            player.takeDamage(5);
+            playerHpLabel.setText("HP: " + player.getHp());
+            Gdx.app.log("Battle", "Player HP: " + player.getHp());
+            enemyHasAttacked = true;
+            playerTurn = true;
+        }
+    }
+
+    // funzione che crea il menù di pausa
     private void buildPauseMenu() {
         pauseTable = new Table();
         pauseTable.setFillParent(true);
