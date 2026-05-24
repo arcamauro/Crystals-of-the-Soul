@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="13" height="17" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="2">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="13" height="17" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="4">
  <tileset firstgid="1" source="../tilestes/Set 1.tsx"/>
  <tileset firstgid="561" source="../tilestes/Torch Yellow L.tsx"/>
  <tileset firstgid="569" source="../tilestes/Torch Yellow R.tsx"/>
- <group id="8" name="Group Layer 1" locked="1">
+ <group id="8" name="Group Layer 1">
   <layer id="1" name="base" width="13" height="17" offsetx="-0.5" offsety="0">
    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -26,10 +26,17 @@
 </data>
   </layer>
   <objectgroup id="9" name="porta0">
-   <object id="1" name="porta0" x="87" y="31" width="34" height="17">
+   <object id="1" name="porta0" x="86" y="32" width="34" height="16">
     <properties>
      <property name="destinazione" value="lvl0_1"/>
      <property name="type" value="porta"/>
+    </properties>
+   </object>
+  </objectgroup>
+  <objectgroup id="11" name="Start">
+   <object id="3" name="Start0" x="96" y="144" width="16" height="16">
+    <properties>
+     <property name="type" value="startPoint"/>
     </properties>
    </object>
   </objectgroup>

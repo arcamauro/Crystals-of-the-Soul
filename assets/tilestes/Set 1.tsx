@@ -375,6 +375,41 @@
    <object id="1" x="0.363636" y="0" width="2.72727" height="16.0909"/>
   </objectgroup>
  </tile>
+ <tile id="455">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="16" height="13"/>
+  </objectgroup>
+ </tile>
+ <tile id="456">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="6" width="16" height="10"/>
+  </objectgroup>
+ </tile>
+ <tile id="457">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="9" width="16" height="7"/>
+  </objectgroup>
+ </tile>
+ <tile id="483">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="11" width="16" height="5"/>
+  </objectgroup>
+ </tile>
+ <tile id="484">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="9" width="16" height="7"/>
+  </objectgroup>
+ </tile>
+ <tile id="485">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="6" width="16" height="10"/>
+  </objectgroup>
+ </tile>
+ <tile id="486">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="3" width="16" height="13"/>
+  </objectgroup>
+ </tile>
  <tile id="537">
   <objectgroup draworder="index" id="2">
    <object id="1" x="1" y="0" width="14" height="16"/>
