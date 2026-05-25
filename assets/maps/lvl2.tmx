@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="16" height="24" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="26">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="16" height="24" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="28">
  <tileset firstgid="1" source="../tilestes/Set 1.tsx"/>
  <tileset firstgid="561" source="../tilestes/altare.tsx"/>
  <tileset firstgid="817" source="../tilestes/cristalli.tsx"/>
@@ -69,6 +69,22 @@
   <object id="23" name="topV" gid="1411" x="240" y="192" width="16" height="16"/>
   <object id="24" name="botV" gid="1443" x="240" y="208" width="16" height="16"/>
  </objectgroup>
+ <objectgroup id="10" name="start">
+  <object id="26" name="Start2" x="64" y="288" width="16" height="16">
+   <properties>
+    <property name="type" value="startPoint"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="11" name="Porta3">
+  <object id="27" name="Porta3" x="69" y="48" width="22" height="16">
+   <properties>
+    <property name="condition" value="boss_sconfitto"/>
+    <property name="dest" value="lvl3"/>
+    <property name="type" value="porta"/>
+   </properties>
+  </object>
+ </objectgroup>
  <layer id="6" name="cancello" width="16" height="24">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -90,7 +106,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,3221225929,3221225929,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
