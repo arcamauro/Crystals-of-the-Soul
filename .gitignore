@@ -157,6 +157,7 @@ Thumbs.db
 
 # Save Files
 assets/saves/*.json
+assets/saves/*.json.hash
 
 ## Special cases:
 
