@@ -19,12 +19,22 @@ public class GameState {
     // --- Session ---
     public float playTime;
     public long savedAt;
+    public String playerName;
 
     /**
      * Crea un nuovo stato di gioco con valori iniziali predefiniti.
      * @return
      */
     public static GameState createNew() {
+        return createNew("Player");
+    }
+
+    /**
+     * Crea un nuovo stato di gioco con il nome del giocatore specificato.
+     * @param playerName nome scelto dal giocatore
+     * @return
+     */
+    public static GameState createNew(String playerName) {
         GameState state = new GameState();
         state.currentFloor = 0;
         state.killCount = 0;
@@ -34,6 +44,7 @@ public class GameState {
         state.player2 = null;
         state.playTime = 0f;
         state.savedAt = 0L;
+        state.playerName = (playerName != null && !playerName.trim().isEmpty()) ? playerName.trim() : "Player";
         return state;
     }
 

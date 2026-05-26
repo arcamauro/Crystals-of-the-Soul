@@ -146,8 +146,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         float newX = player.getX() + dir.x * 200 * delta;
         float newY = player.getY() + dir.y * 200 * delta;
-        if (!collisionManager.wouldCollide(newX, player.getY(), 32, 32)) player.update(dir.x, 0, delta);
-        if (!collisionManager.wouldCollide(player.getX(), newY, 32, 32)) player.update(0, dir.y, delta);
+        if (!collisionManager.wouldCollide(newX, player.getY(), 16, 16)) player.update(dir.x, 0, delta);
+        if (!collisionManager.wouldCollide(player.getX(), newY, 16, 16)) player.update(0, dir.y, delta);
 
         state.getPlayer1().x = player.getX();
         state.getPlayer1().y = player.getY();
@@ -161,7 +161,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.rect(player.getX(), player.getY(), 32, 32);
+        shapeRenderer.rect(player.getX(), player.getY(), 16, 16);
         shapeRenderer.setColor(Color.RED);
         for (Enemy enemy : enemies) {
             shapeRenderer.rect(enemy.getX(), enemy.getY(), 32, 32);

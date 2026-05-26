@@ -53,7 +53,7 @@ public class MainMenuScreen implements Screen {
         newGameBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LoadingScreen(game));
+                game.setScreen(new NewGameScreen(game));
             }
         });
 

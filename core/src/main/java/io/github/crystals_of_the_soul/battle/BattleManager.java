@@ -1,5 +1,4 @@
 package io.github.crystals_of_the_soul.battle;
-
 import com.badlogic.gdx.Gdx;
 import io.github.crystals_of_the_soul.entity.Boss;
 import io.github.crystals_of_the_soul.entity.Enemy;
