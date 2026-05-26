@@ -45,6 +45,7 @@ public class GameState {
         state.playTime = 0f;
         state.savedAt = 0L;
         state.playerName = (playerName != null && !playerName.trim().isEmpty()) ? playerName.trim() : "Player";
+        com.badlogic.gdx.Gdx.app.log("GameState", "New game started with playerName: " + state.playerName);
         return state;
     }
 
