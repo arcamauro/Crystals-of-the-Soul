@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="20" height="11" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="5">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="20" height="11" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="14">
  <tileset firstgid="1" source="../tilestes/tileset_full.tsx"/>
  <tileset firstgid="401" source="../tilestes/Set 1.tsx"/>
  <tileset firstgid="961" source="../tilestes/Torch Yellow L.tsx"/>
@@ -65,18 +65,53 @@
 </data>
  </layer>
  <objectgroup id="3" name="start">
-  <object id="4" name="Start" x="32" y="112" width="16" height="16">
-   <properties>
-    <property name="type" value="startPoint"/>
-   </properties>
+  <object id="5" name="Start" type="Start" x="48" y="118.5">
+   <point/>
   </object>
  </objectgroup>
  <objectgroup id="5" name="Ponte">
-  <object id="2" name="ponte1_0" x="277" y="96" width="28" height="16">
+  <object id="2" name="ponte1_0" type="Portale" x="277" y="96" width="28" height="16">
    <properties>
     <property name="destinazione" value="lvl1_1"/>
-    <property name="type" value="porta"/>
+    <property name="type" value="ponte"/>
    </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="8" name="NPC">
+  <object id="6" name="primo" type="NPC" x="39" y="55.5">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="10" name="secondo" type="NPC" x="154" y="27.5">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="11" name="terzo" type="NPC" x="267.25" y="62.75">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="12" name="guardia1" type="NPC" x="206.5" y="107.5">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="13" name="guardia2" type="NPC" x="269.75" y="107.5">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
+   <point/>
   </object>
  </objectgroup>
  <layer id="2" name="ponte" width="20" height="11">
