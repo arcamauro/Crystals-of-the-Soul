@@ -2,34 +2,34 @@ package io.github.crystals_of_the_soul.states;
 
 public enum EndingType {
     HERO(
-        "Redenzione",
-        "Hai espiato le tue colpe e quelle degli altri esiliati. " +
-        "Il dungeon si apre davanti a te e il tuo villaggio ti accoglie come eroe. " +
-        "Le anime liberate ti seguono verso la luce."
+        "Redemption",
+        "You have atoned for your sins and those of the other exiles. " +
+        "The dungeon opens before you and your village welcomes you as a hero. " +
+        "The freed souls follow you toward the light."
     ),
     CITIZEN(
-        "Ritorno",
-        "Hai superato il dungeon con saggezza. " +
-        "Torni al tuo villaggio, non come eroe, ma come uomo comune. " +
-        "Nessuno ricorderà il tuo nome, ma tu sai cosa hai fatto."
+        "Return",
+        "You have overcome the dungeon with wisdom. " +
+        "You return to your village, not as a hero, but as a common man. " +
+        "No one will remember your name, but you know what you have done."
     ),
     WANDERER(
-        "Esilio",
-        "Hai lasciato troppe ombre nel dungeon. " +
-        "Le porte del villaggio restano chiuse per te. " +
-        "Vagherai tra i piani del dungeon per l'eternità, né vivo né morto."
+        "Exile",
+        "You have left too many shadows in the dungeon. " +
+        "The village gates remain closed to you. " +
+        "You will wander through the dungeon's floors for eternity, neither alive nor dead."
     ),
     GUARDIAN(
-        "Il Nuovo Guardiano",
-        "Sei diventato ciò che temevi di più. " +
-        "Il dungeon ti ha consumato e ora sei tu il suo guardiano. " +
-        "Nessuno uscirà finché ci sei tu."
+        "The New Guardian",
+        "You have become what you feared the most. " +
+        "The dungeon has consumed you and now you are its guardian. " +
+        "No one will leave as long as you are here."
     ),
     CHOICE(
-        "Il Bivio",
-        "Il tuo cammino è stato equo — tante vite spezzate, tante risparmiate. " +
-        "Il dungeon ti offre una scelta: tornare al mondo che ti ha esiliato, " +
-        "o restare come guardiano di queste anime dimenticate."
+        "The Crossroads",
+        "Your path has been balanced, as many lives broken as spared. " +
+        "The dungeon offers you a choice: return to the world that exiled you, " +
+        "or remain as the guardian of these forgotten souls."
     );
 
     private final String title;
