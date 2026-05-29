@@ -168,3 +168,4 @@ assets/saves/*.json.hash
 **/resource-config.json
 assets/CrystalsMaps.tiled-session
 assets/Crystals_Of_The_Souls.tiled-session
+*.tiled-session

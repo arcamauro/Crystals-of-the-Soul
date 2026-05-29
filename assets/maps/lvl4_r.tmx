@@ -47,7 +47,7 @@
 </data>
  </layer>
  <objectgroup id="5" name="Boss">
-  <object id="3" name="miniBoss" type="NPC" x="240" y="160">
+  <object id="3" name="miniBoss" type="NPC" x="240" y="176">
    <properties>
     <property name="isMiniBoss" type="bool" value="true"/>
    </properties>

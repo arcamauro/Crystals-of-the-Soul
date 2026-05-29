@@ -71,7 +71,7 @@
 </data>
  </layer>
  <objectgroup id="2" name="start">
-  <object id="4" name="startlvl3_r" type="Start" x="440" y="47">
+  <object id="4" name="startlvl3_r" type="Start" x="440" y="62.3333">
    <point/>
   </object>
  </objectgroup>
