@@ -66,6 +66,7 @@ public class GameState {
         switch (crystal) {
             case RED:
                 player2 = Player2State.create(Player2Class.ASSASSIN);
+                player1.canTalk = false;
                 player1.canSpare = false;
                 break;
             case GREEN:
@@ -90,9 +91,9 @@ public class GameState {
 
         switch (crystal) {
             case RED:
-                return EndingType.HERO;
-            case BLUE:
                 return EndingType.GUARDIAN;
+            case BLUE:
+                return EndingType.HERO;
             case GREEN:
                 if(killCount > spareCount) return EndingType.WANDERER;
                 if(spareCount > killCount) return EndingType.CITIZEN;

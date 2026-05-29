@@ -13,6 +13,10 @@ public class NormalEnemy extends Enemy {
         super(x, y, 50);
     }
 
+    public NormalEnemy(float x, float y, int maxHp) {
+        super(x, y, maxHp);
+    }
+
     @Override
     public void onAttack() {
         takeDamage(10);

@@ -34,6 +34,9 @@ public class GameHud {
     private Label enemyHpLabel;
     private Label dialogueLabel;
 
+    private TextButton attackBtn;
+    private TextButton talkBtn;
+
     private boolean paused = false;
 
     public GameHud(int initialHp, Callbacks callbacks) {
@@ -68,13 +71,13 @@ public class GameHud {
     private void buildBattleUI(final Callbacks callbacks) {
         battleTable = new Table();
         battleTable.setFillParent(true);
-        battleTable.center();
+        battleTable.bottom();
 
         dialogueLabel = new Label("", skin);
         dialogueLabel.setWrap(true);
         enemyHpLabel = new Label("", skin);
 
-        TextButton attackBtn = new TextButton("Attacca", skin);
+        attackBtn = new TextButton("Attacca", skin);
         attackBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -82,7 +85,7 @@ public class GameHud {
             }
         });
 
-        TextButton talkBtn = new TextButton("Parla", skin);
+        talkBtn = new TextButton("Parla", skin);
         talkBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -90,10 +93,10 @@ public class GameHud {
             }
         });
 
-        battleTable.add(dialogueLabel).width(400).padBottom(20).row();
-        battleTable.add(enemyHpLabel).padBottom(40).row();
-        battleTable.add(attackBtn).width(200).height(50).padBottom(20).row();
-        battleTable.add(talkBtn).width(200).height(50);
+        battleTable.add(dialogueLabel).width(500).padBottom(10).colspan(2).row();
+        battleTable.add(enemyHpLabel).padBottom(15).colspan(2).row();
+        battleTable.add(attackBtn).width(200).height(50).padRight(20).padBottom(20);
+        battleTable.add(talkBtn).width(200).height(50).padBottom(20);
     }
 
     private void buildPauseMenu(final Callbacks callbacks) {
@@ -145,6 +148,14 @@ public class GameHud {
         pauseTable.add(menuBtn).width(200).height(50).padBottom(15).row();
         pauseTable.add(exitBtn).width(200).height(50).padBottom(20).row();
         pauseTable.add(saveConfirmLabel);
+    }
+
+    public void setAttackEnabled(boolean enabled) {
+        attackBtn.setVisible(enabled);
+    }
+
+    public void setTalkEnabled(boolean enabled) {
+        talkBtn.setVisible(enabled);
     }
 
     public void showBattle() {

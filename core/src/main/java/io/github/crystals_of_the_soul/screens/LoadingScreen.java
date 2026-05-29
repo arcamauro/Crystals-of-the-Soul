@@ -38,6 +38,7 @@ public class LoadingScreen implements Screen {
         assets.setLoader(TiledMap.class, new TmxMapLoader());
 
         assets.load("maps/lvl0.tmx", TiledMap.class);
+        assets.load("maps/lvl0_1.tmx", TiledMap.class);
         assets.load("maps/lvl1_0.tmx", TiledMap.class);
         assets.load("maps/lvl1_1.tmx", TiledMap.class);
         assets.load("maps/lvl2.tmx", TiledMap.class);

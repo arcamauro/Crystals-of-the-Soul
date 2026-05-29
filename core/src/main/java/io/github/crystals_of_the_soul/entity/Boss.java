@@ -36,9 +36,9 @@ public class Boss extends Enemy {
                 return new Boss(x, y, BossType.GUARDIAN, 250);
             case 5:
                 switch (crystal) {
-                    case RED:   return new Boss(x, y, BossType.MIRROR_RED, 999);
+                    case RED:   return new Boss(x, y, BossType.MIRROR_BLUE, 150);
                     case GREEN: return new Boss(x, y, BossType.MIRROR_GREEN, 180);
-                    case BLUE:  return new Boss(x, y, BossType.MIRROR_BLUE, 999);
+                    case BLUE:  return new Boss(x, y, BossType.MIRROR_RED, 999);
                 }
             default:
                 return new Boss(x, y, BossType.ARCHER, 120);
@@ -68,6 +68,7 @@ public class Boss extends Enemy {
                 takeDamage(10);
                 break;
             case MIRROR_BLUE:
+                takeDamage(hp);
                 break;
         }
         dialogueIndex++;
@@ -86,9 +87,9 @@ public class Boss extends Enemy {
             case ARCHER:      return hp <= 0;
             case PROTECTOR:   return talkCount >= 5;
             case GUARDIAN:    return talkCount >= 3 && attackCount >= 3;
-            case MIRROR_RED:  return talkCount >= 2 && attackCount >= 1 && talkCount < attackCount + 3;
+            case MIRROR_RED:   return talkCount >= 7;
             case MIRROR_GREEN: return hp <= 0;
-            case MIRROR_BLUE: return talkCount >= 7;
+            case MIRROR_BLUE:  return hp <= 0;
             default:          return hp <= 0;
         }
     }
@@ -213,4 +214,9 @@ public class Boss extends Enemy {
     }
 
     public BossType getType() { return type; }
+
+    /** True when RED player's deceptive dialogue phase ends and only attack remains. */
+    public boolean isTalkFinalPhase() {
+        return type == BossType.MIRROR_BLUE && dialogueIndex >= 4;
+    }
 }

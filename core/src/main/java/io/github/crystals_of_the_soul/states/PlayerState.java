@@ -5,12 +5,14 @@ public class PlayerState {
     public int health;
     public int maxHealth;
     public boolean canAttack;   // false for Player 1 with Blue crystal
+    public boolean canTalk;     // false for Player 1 with Red crystal (except vs MIRROR_RED)
     public boolean canSpare;    // false for Player 1 with Red crystal
 
     public PlayerState() {
         health = 100;
         maxHealth = 100;
         canAttack = true;
+        canTalk = true;
         canSpare = true;
     }
 }
