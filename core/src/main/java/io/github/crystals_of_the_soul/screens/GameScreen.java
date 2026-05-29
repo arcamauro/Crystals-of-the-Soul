@@ -304,15 +304,19 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
     @Override
     public void onEnemyKilled(Enemy enemy) {
-        state.killCount++;
-        Gdx.app.log("Battle", "Enemy killed. Total kills: " + state.killCount);
+        if (state.currentFloor >= 1) {
+            state.killCount++;
+            Gdx.app.log("Battle", "Enemy killed. Total kills: " + state.killCount);
+        }
         enemies.removeValue(enemy, true);
     }
 
     @Override
     public void onEnemySpared(Enemy enemy) {
-        state.spareCount++;
-        Gdx.app.log("Battle", "Enemy spared. Total spares: " + state.spareCount);
+        if (state.currentFloor >= 1) {
+            state.spareCount++;
+            Gdx.app.log("Battle", "Enemy spared. Total spares: " + state.spareCount);
+        }
         enemies.removeValue(enemy, true);
     }
 
