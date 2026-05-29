@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="10" height="14" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="5">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="10" height="14" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="7">
  <tileset firstgid="1" source="../tilestes/tileset_full.tsx"/>
  <tileset firstgid="401" source="../tilestes/cristalli.tsx"/>
- <layer id="1" name="base" width="10" height="14">
+ <tileset firstgid="1169" source="../tilestes/CARTELLI.tsx"/>
+ <layer id="1" name="base" width="10" height="14" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,
 0,321,322,322,322,322,322,322,324,0,
@@ -21,10 +22,8 @@
 </data>
  </layer>
  <objectgroup id="3" name="start">
-  <object id="1" name="start" x="64" y="160" width="16" height="16">
-   <properties>
-    <property name="type" value="startPoint"/>
-   </properties>
+  <object id="6" name="start" type="Start" x="80" y="176">
+   <point/>
   </object>
  </objectgroup>
  <objectgroup id="4" name="finale_v">
@@ -39,18 +38,26 @@
   <data encoding="csv">
 0,0,0,418,419,419,420,0,0,0,
 0,0,0,481,482,483,485,0,0,0,
-0,0,0,481,482,483,485,0,0,0,
+0,0,1401,481,482,483,485,1401,0,0,
+0,0,1404,0,0,0,0,1404,0,0,
+0,0,0,0,0,0,1418,0,0,0,
+0,0,1418,0,358,355,0,1418,0,0,
+0,0,0,0,355,357,0,0,0,0,
+0,0,1418,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,1071,1072,0,0,0,0,
+0,0,0,1418,0,0,0,1418,0,0,
+0,0,1404,0,0,0,0,1404,0,0,
+0,0,2147483993,0,1071,1072,1418,345,0,0,
 0,0,0,0,1103,1104,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0
+0,379,380,380,380,380,380,380,381,0
 </data>
  </layer>
+ <objectgroup id="5" name="Boss">
+  <object id="5" name="Boss" type="NPC" x="80" y="96">
+   <properties>
+    <property name="isBoss" type="bool" value="true"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
 </map>
