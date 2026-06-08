@@ -14,7 +14,6 @@ dependencies {
   api "com.github.tommyettinger:gand:$gandVersion"
   api "com.github.tommyettinger:gdcrux:$gdcruxVersion"
   api "org.mini2Dx:universal-tween-engine:$universalTweenVersion"
-
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }

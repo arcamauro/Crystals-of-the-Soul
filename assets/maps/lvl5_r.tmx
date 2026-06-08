@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="10" height="14" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="6">
+ <tileset firstgid="1" source="../tilestes/tileset_full.tsx"/>
+ <tileset firstgid="401" source="../tilestes/cristalli.tsx"/>
+ <layer id="1" name="base" width="10" height="14">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
+0,81,82,82,82,82,82,82,84,0,
+0,97,98,98,98,98,98,98,106,0,
+0,97,98,98,98,98,98,98,106,0,
+0,97,98,98,98,98,98,98,106,0,
+0,97,98,98,98,98,98,98,106,0,
+0,97,98,98,98,98,98,98,106,0,
+0,97,98,98,98,98,98,98,106,0,
+0,97,98,98,98,98,98,98,106,0,
+0,97,98,98,98,98,98,98,106,0,
+0,97,98,98,98,98,98,98,106,0,
+0,97,98,98,98,98,98,98,106,0,
+0,3221225556,2684354666,2684354666,2684354666,2684354666,2684354666,2684354666,2684354644,0,
+0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="start">
+  <object id="5" name="start" type="Start" x="80" y="176">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="4" name="finale_r">
+  <object id="3" name="finale_r" x="48" y="32" width="64" height="16">
+   <properties>
+    <property name="condition" value="boss_sconfitto"/>
+    <property name="type" value="portaF"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer id="2" name="porta" width="10" height="14">
+  <data encoding="csv">
+0,0,0,418,419,419,420,0,0,0,
+0,0,83,481,482,483,485,86,0,0,
+0,113,119,481,482,483,485,119,3221225585,0,
+0,0,99,119,0,135,0,3221225571,0,0,
+0,0,3221225587,0,135,0,0,2684354678,3221225585,0,
+0,0,135,135,118,3221225587,0,119,3221225585,0,
+0,113,0,135,115,118,119,135,3221225585,0,
+0,113,118,0,0,135,135,3221225571,0,0,
+0,113,119,119,0,0,135,131,0,0,
+0,113,135,119,0,2684354659,0,119,3221225585,0,
+0,113,0,115,2684354659,0,119,135,3221225585,0,
+0,113,135,135,1071,1072,135,117,3221225585,0,
+0,0,0,1610612849,1103,1104,0,1610612849,0,0,
+0,139,140,140,140,140,140,140,141,0
+</data>
+ </layer>
+ <objectgroup id="5" name="Boss">
+  <object id="4" name="Boss" type="NPC" x="80" y="96">
+   <properties>
+    <property name="isBoss" type="bool" value="true"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+</map>

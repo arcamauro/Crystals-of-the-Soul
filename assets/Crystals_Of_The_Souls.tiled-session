@@ -1,0 +1,226 @@
+{
+    "activeFile": "maps/lvl5_v.tmx",
+    "expandedProjectPaths": [
+        "maps",
+        ".",
+        "tilestes"
+    ],
+    "fileStates": {
+        "maps/lvl0.tmx": {
+            "expandedGroupLayers": [
+                8
+            ],
+            "scale": 2.954014598540146,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 103.92636520879665,
+                "y": 152.165801828515
+            }
+        },
+        "maps/lvl0_1.tmx": {
+            "expandedObjectLayers": [
+                7,
+                9,
+                8,
+                6
+            ],
+            "scale": 3,
+            "selectedLayer": 8,
+            "viewCenter": {
+                "x": 60.999999999999986,
+                "y": 68.83333333333331
+            }
+        },
+        "maps/lvl1_0.tmx": {
+            "expandedObjectLayers": [
+                8,
+                3,
+                5
+            ],
+            "scale": 4,
+            "selectedLayer": 6,
+            "viewCenter": {
+                "x": 48,
+                "y": 118.625
+            }
+        },
+        "maps/lvl1_1.tmx": {
+            "expandedObjectLayers": [
+                12,
+                6
+            ],
+            "scale": 4,
+            "selectedLayer": 8,
+            "viewCenter": {
+                "x": 362.25,
+                "y": 153.125
+            }
+        },
+        "maps/lvl2.tmx": {
+            "expandedObjectLayers": [
+                17
+            ],
+            "scale": 5.5,
+            "selectedLayer": 12,
+            "viewCenter": {
+                "x": 80,
+                "y": 96.09090909090908
+            }
+        },
+        "maps/lvl3_b.tmx": {
+            "expandedObjectLayers": [
+                7,
+                2
+            ],
+            "scale": 3,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 503.99999999999994,
+                "y": 192.49999999999997
+            }
+        },
+        "maps/lvl3_r.tmx": {
+            "expandedObjectLayers": [
+                4,
+                2
+            ],
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 439.99999999999994,
+                "y": 46.833333333333314
+            }
+        },
+        "maps/lvl3_v.tmx": {
+            "expandedObjectLayers": [
+                6,
+                2
+            ],
+            "scale": 1,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 410,
+                "y": 158.5
+            }
+        },
+        "maps/lvl4_b.tmx": {
+            "expandedObjectLayers": [
+                3,
+                5
+            ],
+            "scale": 5.5,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 272,
+                "y": 160.09090909090907
+            }
+        },
+        "maps/lvl4_r.tmx": {
+            "expandedObjectLayers": [
+                5
+            ],
+            "scale": 8,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 250.125,
+                "y": 165.5625
+            }
+        },
+        "maps/lvl4_v.tmx": {
+            "expandedObjectLayers": [
+                5
+            ],
+            "scale": 2,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 230,
+                "y": 278.25
+            }
+        },
+        "maps/lvl5_b.tmx": {
+            "expandedObjectLayers": [
+                4,
+                3
+            ],
+            "scale": 4,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 85,
+                "y": 106.375
+            }
+        },
+        "maps/lvl5_r.tmx": {
+            "expandedObjectLayers": [
+                3,
+                5
+            ],
+            "scale": 3.613392857142857,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 79.98023227081791,
+                "y": 95.89325426241663
+            }
+        },
+        "maps/lvl5_v.tmx": {
+            "expandedObjectLayers": [
+                3,
+                5
+            ],
+            "scale": 3.613392857142857,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 71.95453422288116,
+                "y": 168.12453669384732
+            }
+        },
+        "tilestes/CARTELLI.tsx": {
+            "scaleInDock": 1
+        },
+        "tilestes/Set 1.tsx": {
+            "scaleInDock": 1
+        },
+        "tilestes/Torch Yellow L.tsx": {
+            "scaleInDock": 1
+        },
+        "tilestes/Torch Yellow R.tsx": {
+            "scaleInDock": 1
+        },
+        "tilestes/altare.tsx": {
+            "scaleInDock": 1
+        },
+        "tilestes/cristalli.tsx": {
+            "scaleInDock": 1
+        },
+        "tilestes/tileset_full.tsx": {
+            "scaleInDock": 1
+        }
+    },
+    "openFiles": [
+        "maps/lvl3_b.tmx",
+        "maps/lvl3_r.tmx",
+        "maps/lvl3_v.tmx",
+        "maps/lvl4_b.tmx",
+        "maps/lvl2.tmx",
+        "maps/lvl4_r.tmx",
+        "maps/lvl4_v.tmx",
+        "maps/lvl5_b.tmx",
+        "maps/lvl5_r.tmx",
+        "maps/lvl5_v.tmx"
+    ],
+    "project": "Crystals_Of_The_Souls.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "maps/lvl3_b.tmx",
+        "maps/lvl3_r.tmx",
+        "maps/lvl3_v.tmx",
+        "maps/lvl4_b.tmx",
+        "maps/lvl2.tmx",
+        "maps/lvl4_r.tmx",
+        "maps/lvl4_v.tmx",
+        "maps/lvl5_b.tmx",
+        "maps/lvl5_r.tmx",
+        "maps/lvl5_v.tmx",
+        "maps/lvl1_1.tmx",
+        "maps/lvl1_0.tmx"
+    ]
+}
