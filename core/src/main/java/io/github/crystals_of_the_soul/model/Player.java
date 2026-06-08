@@ -1,6 +1,5 @@
 
 package io.github.crystals_of_the_soul.model;
-import io.github.crystals_of_the_soul.inventory.Inventory;
 
 public class Player {
     private float x, y;

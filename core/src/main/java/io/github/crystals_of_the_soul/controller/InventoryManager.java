@@ -1,6 +1,6 @@
 package io.github.crystals_of_the_soul.controller;
 
-import io.github.crystals_of_the_soul.inventory.InventoryUiObserver;
+import io.github.crystals_of_the_soul.view.InventoryUiObserver;
 import io.github.crystals_of_the_soul.model.Player;
 import io.github.crystals_of_the_soul.view.GameHud;
 
