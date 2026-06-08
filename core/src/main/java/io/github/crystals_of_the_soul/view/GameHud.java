@@ -37,6 +37,9 @@ public class GameHud {
     private TextButton attackBtn;
     private TextButton talkBtn;
 
+    private Label notificationLabel;
+    private float notificationTimer;
+
     private boolean paused = false;
 
     public GameHud(int initialHp, Callbacks callbacks) {
@@ -66,8 +69,19 @@ public class GameHud {
 
         hudTable.add(playerHpLabel).row();
         hudTable.add(interactLabel);
-    }
 
+        notificationLabel = new Label("", skin);
+        notificationLabel.setVisible(false);
+
+        hudTable.add(notificationLabel).padTop(10).row();
+    }
+    public void showNotification(String text) {
+
+        notificationLabel.setText(text);
+        notificationLabel.setVisible(true);
+
+        notificationTimer = 2f;
+    }
     private void buildBattleUI(final Callbacks callbacks) {
         battleTable = new Table();
         battleTable.setFillParent(true);
@@ -197,12 +211,24 @@ public class GameHud {
         pauseTable.setVisible(false);
         saveConfirmLabel.setVisible(false);
     }
+    private void updateNotifications(float delta) {
 
+        if (notificationTimer <= 0) {
+            return;
+        }
+
+        notificationTimer -= delta;
+
+        if (notificationTimer <= 0) {
+
+            notificationLabel.setVisible(false);
+        }
+    }
     public boolean isPaused() { return paused; }
 
     public Stage getStage() { return stage; }
 
-    public void act(float delta) { stage.act(delta); }
+    public void act(float delta) {updateNotifications(delta); stage.act(delta); }
 
     public void draw() { stage.draw(); }
 

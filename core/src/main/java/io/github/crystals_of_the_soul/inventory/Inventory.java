@@ -2,8 +2,8 @@ package io.github.crystals_of_the_soul.inventory;
 
 import com.badlogic.gdx.utils.Array;
 
-import io.github.crystals_of_the_soul.entity.Item;
-import io.github.crystals_of_the_soul.player.Player;
+import io.github.crystals_of_the_soul.model.entity.Item;
+import io.github.crystals_of_the_soul.model.Player;
 public class Inventory {
 
     private Array<Item> items;
@@ -39,11 +39,12 @@ public class Inventory {
 
         for (Item item : items) {
 
-            if(observer != null) {
-                observer.onItemUsed(item);
-            }
+
             if (item.getName().contains("Pozione")) {
 
+                if(observer != null) {
+                    observer.onItemUsed(item);
+                }
                 player.heal(20);
 
                 items.removeValue(item, true);

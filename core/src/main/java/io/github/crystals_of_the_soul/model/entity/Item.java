@@ -1,4 +1,4 @@
-package io.github.crystals_of_the_soul.entity;
+package io.github.crystals_of_the_soul.model.entity;
 
 public class Item {
 

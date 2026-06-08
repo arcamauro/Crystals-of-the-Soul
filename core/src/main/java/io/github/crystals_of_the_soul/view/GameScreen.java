@@ -14,9 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import io.github.crystals_of_the_soul.Main;
-import io.github.crystals_of_the_soul.controller.BattleManager;
-import io.github.crystals_of_the_soul.controller.CollisionManager;
-import io.github.crystals_of_the_soul.controller.InputHandler;
+import io.github.crystals_of_the_soul.controller.*;
 import io.github.crystals_of_the_soul.model.Boss;
 import io.github.crystals_of_the_soul.model.Enemy;
 import io.github.crystals_of_the_soul.model.GameState;
@@ -25,6 +23,7 @@ import io.github.crystals_of_the_soul.model.Player;
 import io.github.crystals_of_the_soul.model.SaveManager;
 import io.github.crystals_of_the_soul.model.boss.BossFactory;
 import io.github.crystals_of_the_soul.model.boss.MirrorBlueBoss;
+import io.github.crystals_of_the_soul.model.entity.Item;
 
 public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callbacks {
 
@@ -47,6 +46,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
     private float portalCooldown = 0f;
 
+    private InventoryManager inventoryManager;
+    private ItemManager itemManager;
     public GameScreen(Main game, AssetManager assets) {
         this.game = game;
         this.assets = assets;
@@ -82,6 +83,11 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         battleManager = new BattleManager(this);
         hud = new GameHud(player.getHp(), this);
+        initializeInventoryManager();
+        itemManager = new ItemManager(
+            player,
+            hud
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -138,8 +144,30 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     // -------------------------------------------------------------------------
     // Rendering
     // -------------------------------------------------------------------------
+    private void renderItems() {
+
+        for (Item item : itemManager.getItems()) {
+
+            if (itemManager.isNear(item)) {
+
+                shapeRenderer.setColor(Color.YELLOW);
+
+            } else {
+
+                shapeRenderer.setColor(Color.GREEN);
+            }
+
+            shapeRenderer.rect(
+                item.getX(),
+                item.getY(),
+                16,
+                16
+            );
+        }
+    }
 
     private void renderWorld(float delta) {
+
         state.playTime += delta;
 
         float dx = inputHandler.getDx();
@@ -175,6 +203,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         for (Enemy enemy : enemies) {
             shapeRenderer.rect(enemy.getX(), enemy.getY(), 32, 32);
         }
+        renderItems();
         shapeRenderer.end();
 
         hud.updatePlayerHp(player.getHp());
@@ -191,7 +220,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             }
         }
         hud.setInteractVisible(nearEnemy);
-
+        itemManager.update();
+        inventoryManager.update();
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             advanceFloor();
         }
@@ -238,7 +268,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         collisionManager.load(map);
 
         Vector2 floorSpawn = collisionManager.getPlayerSpawn(map);
-        player = new Player(floorSpawn.x, floorSpawn.y);
+        //player = new Player(floorSpawn.x, floorSpawn.y);
+        player.setPosition(floorSpawn.x, floorSpawn.y);
         state.getPlayer1().x = floorSpawn.x;
         state.getPlayer1().y = floorSpawn.y;
 
@@ -377,6 +408,15 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     // Helpers
     // -------------------------------------------------------------------------
 
+    private void initializeInventoryManager() {
+
+
+        inventoryManager = new InventoryManager(
+            player,
+            hud,
+            inputHandler
+        );
+    }
     private void checkPortals() {
         Rectangle playerRect = new Rectangle(player.getX(), player.getY(), 16, 16);
         for (CollisionManager.Portal portal : collisionManager.getPortals()) {
@@ -420,7 +460,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         collisionManager.load(map);
 
         Vector2 spawnPos = collisionManager.getPlayerSpawn(map);
-        player = new Player(spawnPos.x, spawnPos.y);
+        player.setPosition(spawnPos.x, spawnPos.y);
         state.getPlayer1().x = spawnPos.x;
         state.getPlayer1().y = spawnPos.y;
 

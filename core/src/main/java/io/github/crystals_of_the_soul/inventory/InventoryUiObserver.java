@@ -1,31 +1,20 @@
 package io.github.crystals_of_the_soul.inventory;
 
-import io.github.crystals_of_the_soul.entity.Item;
-import io.github.crystals_of_the_soul.player.Player;
-import io.github.crystals_of_the_soul.ui.FloatingTextManager;
+import io.github.crystals_of_the_soul.model.entity.Item;
+import io.github.crystals_of_the_soul.view.GameHud;
 
 public class InventoryUiObserver implements InventoryObserver {
 
-    private final FloatingTextManager floatingTextManager;
-    private final Player player;
-    public InventoryUiObserver(FloatingTextManager floatingTextManager,Player player) {
+    private final GameHud hud;
 
-        System.out.println("InventoryUiObserver chiamato");
-        floatingTextManager.show(
-            "+20 HP",
-            400,
-            300
-        );
-        this.floatingTextManager = floatingTextManager;
-        this.player = player;
+    public InventoryUiObserver(GameHud hud) {
+
+        this.hud = hud;
     }
+
     @Override
     public void onItemUsed(Item item) {
 
-        floatingTextManager.show(
-            "+20 HP",
-            player.getX(),
-            player.getY() + 50
-        );
+        hud.showNotification("+20 HP");
     }
 }

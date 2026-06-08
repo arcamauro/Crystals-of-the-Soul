@@ -21,4 +21,8 @@ public class InputHandler {
 
         return dy;
     }
+    public boolean isUsePotionPressed() {
+
+        return Gdx.input.isKeyJustPressed(Input.Keys.H);
+    }
 }
