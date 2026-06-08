@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import io.github.crystals_of_the_soul.controller.interactions.ItemInteraction;
 import io.github.crystals_of_the_soul.model.Player;
 import io.github.crystals_of_the_soul.model.entity.Item;
 import io.github.crystals_of_the_soul.view.GameHud;
@@ -36,23 +37,21 @@ public class ItemManager {
 
         for (Item item : items) {
 
-            float distance = Vector2.dst(
-                player.getX(),
-                player.getY(),
-                item.getX(),
-                item.getY()
-            );
+            ItemInteraction interaction =
+                new ItemInteraction(
+                    player,
+                    item
+                );
 
-            if (distance < 50) {
+            if (interaction.canInteract()) {
 
                 nearItem = true;
 
                 if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
 
-                    player.getInventory().addItem(item);
+                    interaction.interact();
 
                     collectedItem = item;
-
                 }
             }
         }

@@ -24,7 +24,7 @@ import io.github.crystals_of_the_soul.model.SaveManager;
 import io.github.crystals_of_the_soul.model.boss.BossFactory;
 import io.github.crystals_of_the_soul.model.boss.MirrorBlueBoss;
 import io.github.crystals_of_the_soul.model.entity.Item;
-
+import io.github.crystals_of_the_soul.controller.interactions.EnemyInteraction;
 public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callbacks {
 
     private final Main game;
@@ -209,13 +209,29 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         hud.updatePlayerHp(player.getHp());
 
         boolean nearEnemy = false;
+
         for (Enemy enemy : enemies) {
-            if (Vector2.dst(player.getX(), player.getY(), enemy.getX(), enemy.getY()) < 60) {
+
+            EnemyInteraction interaction =
+                new EnemyInteraction(
+                    player,
+                    enemy,
+                    battleManager
+                );
+
+            if (interaction.canInteract()) {
+
                 nearEnemy = true;
+
                 if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-                    battleManager.startBattle(enemy);
-                    Gdx.input.setInputProcessor(hud.getStage());
+
+                    interaction.interact();
+
+                    Gdx.input.setInputProcessor(
+                        hud.getStage()
+                    );
                 }
+
                 break;
             }
         }
