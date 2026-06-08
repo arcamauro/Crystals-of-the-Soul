@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.crystals_of_the_soul.input.InputHandler;
+import io.github.crystals_of_the_soul.inventory.InventoryObserver;
 import io.github.crystals_of_the_soul.player.Player;
 import io.github.crystals_of_the_soul.entity.Enemy;
 import io.github.crystals_of_the_soul.entity.Item;
@@ -20,9 +21,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.graphics.Color;
 import io.github.crystals_of_the_soul.inventory.Inventory;
+import io.github.crystals_of_the_soul.ui.FloatingTextManager;
+import io.github.crystals_of_the_soul.inventory.InventoryUiObserver;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class Main extends ApplicationAdapter {
+public class Main extends ApplicationAdapter   {
     private SpriteBatch batch;
     private Texture image;
     /*
@@ -43,13 +46,22 @@ public class Main extends ApplicationAdapter {
     Rectangle talkButton;
     BitmapFont font;
 
+    private FloatingTextManager floatingTextManager;
+
     Array<Item> items;
    // SpriteBatch batch;
-
     //fine prova
     @Override
     public void create() {
         player = new Player(100, 100);
+        floatingTextManager = new FloatingTextManager();
+
+        player.getInventory().setObserver(
+            new InventoryUiObserver(
+                floatingTextManager,
+                player
+            )
+        );
         input = new InputHandler();
         shape = new ShapeRenderer();
         batch = new SpriteBatch();
@@ -86,9 +98,9 @@ public class Main extends ApplicationAdapter {
         font.dispose();
         image.dispose();
     }
-
     private void renderWorld()
     {
+        floatingTextManager.update();
         updatePlayer();
 
         handleInventoryInput();
@@ -112,6 +124,10 @@ public class Main extends ApplicationAdapter {
             items.removeValue(collectedItem, true);
         }
         shape.setColor(Color.WHITE);
+        batch.begin();
+
+        floatingTextManager.render(batch, font);
+        batch.end();
     }
     private void updatePlayer() {
 

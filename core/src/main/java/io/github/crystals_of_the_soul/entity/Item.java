@@ -2,6 +2,7 @@ package io.github.crystals_of_the_soul.entity;
 
 public class Item {
 
+
     private float x;
     private float y;
 

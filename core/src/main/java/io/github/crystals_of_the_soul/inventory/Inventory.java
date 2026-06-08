@@ -8,6 +8,11 @@ public class Inventory {
 
     private Array<Item> items;
 
+    private InventoryObserver observer;
+
+    public void setObserver(InventoryObserver observer) {
+        this.observer = observer;
+    }
     public Inventory() {
 
         items = new Array<>();
@@ -31,8 +36,12 @@ public class Inventory {
     }
     public boolean usePotion(Player player) {
 
+
         for (Item item : items) {
 
+            if(observer != null) {
+                observer.onItemUsed(item);
+            }
             if (item.getName().contains("Pozione")) {
 
                 player.heal(20);
