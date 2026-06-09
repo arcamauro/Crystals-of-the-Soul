@@ -8,7 +8,6 @@ buildscript {
   }
   dependencies {
 
-
   }
 }
 
@@ -67,3 +66,4 @@ subprojects {
 }
 
 eclipse.project.name = 'Crystals-of-the-Soul' + '-parent'
+
