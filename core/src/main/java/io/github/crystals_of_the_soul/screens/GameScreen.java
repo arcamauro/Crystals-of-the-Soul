@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+
 import io.github.crystals_of_the_soul.Main;
 import io.github.crystals_of_the_soul.battle.BattleManager;
 import io.github.crystals_of_the_soul.collision.CollisionManager;
@@ -21,6 +22,7 @@ import io.github.crystals_of_the_soul.entity.Enemy;
 import io.github.crystals_of_the_soul.entity.NormalEnemy;
 import io.github.crystals_of_the_soul.input.InputHandler;
 import io.github.crystals_of_the_soul.player.Player;
+import io.github.crystals_of_the_soul.player.Player2;
 import io.github.crystals_of_the_soul.save.SaveManager;
 import io.github.crystals_of_the_soul.states.CrystalType;
 import io.github.crystals_of_the_soul.states.GameState;
@@ -37,6 +39,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     private ShapeRenderer shapeRenderer;
 
     private Player player;
+    private Player2 player2;
     private InputHandler inputHandler;
     private Array<Enemy> enemies;
 
@@ -66,6 +69,9 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         inputHandler = new InputHandler();
 
         collisionManager = new CollisionManager();
+        // Ensure default collision mapping (no rotation/offset) to avoid breaking maps
+        collisionManager.setRotateTileObjects90(false);
+        collisionManager.setTileObjectYOffset(0);
         map = assets.get(state.getCurrentMapPath(), TiledMap.class);
         mapRenderer = new OrthogonalTiledMapRenderer(map);
         collisionManager.load(map);
@@ -75,6 +81,13 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             state.getPlayer1().x != 0 ? state.getPlayer1().x : spawn.x,
             state.getPlayer1().y != 0 ? state.getPlayer1().y : spawn.y
         );
+
+        // Istanzia Player2 se esiste (dal floor 2 in poi)
+        if (state.getPlayer2() != null) {
+            // Posiziona Player2 accanto a Player1
+            player2 = null; // ensure fresh
+            placePlayer2Adjacent();
+        }
 
         enemies = new Array<>();
         spawnEnemies();
@@ -146,13 +159,30 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         Vector2 dir = new Vector2(dx, dy);
         if (dir.len() > 0) dir.nor();
 
-        float newX = player.getX() + dir.x * 200 * delta;
-        float newY = player.getY() + dir.y * 200 * delta;
-        if (!collisionManager.wouldCollide(newX, player.getY(), 16, 16)) player.update(dir.x, 0, delta);
-        if (!collisionManager.wouldCollide(player.getX(), newY, 16, 16)) player.update(0, dir.y, delta);
+        // Calcola movimento proposto
+        float moveAmount = 200f * delta;
+        float newX = player.getX() + dir.x * moveAmount;
+        float newY = player.getY() + dir.y * moveAmount;
+
+        // Verifica X
+        if (!collisionManager.wouldCollide(newX + Player.HITBOX_OFFSET, player.getY() + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
+            player.update(dir.x, 0, delta);
+        }
+
+        // Verifica Y (usa la nuova posizione X se è stata accettata)
+        newY = player.getY() + dir.y * moveAmount;
+        if (!collisionManager.wouldCollide(player.getX() + Player.HITBOX_OFFSET, newY + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
+            player.update(0, dir.y, delta);
+        }
 
         state.getPlayer1().x = player.getX();
         state.getPlayer1().y = player.getY();
+
+        // Sincronizza Player2 con movimento caterpillar
+        if (player2 != null) {
+            player2.recordPosition(player.getX(), player.getY());
+            player2.followPath(delta, collisionManager);
+        }
 
         if (portalCooldown > 0) {
             portalCooldown = Math.max(0, portalCooldown - delta);
@@ -166,10 +196,26 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         mapRenderer.setView(camera);
         mapRenderer.render();
 
+        // DEBUG: disegna i rettangoli di collisione per verifica visiva
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(new Color(1f, 0f, 0f, 0.2f));
+        for (Rectangle r : collisionManager.getCollisionRects()) {
+            shapeRenderer.rect(r.x, r.y, r.width, r.height);
+        }
+        shapeRenderer.end();
+
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.WHITE);
         shapeRenderer.rect(player.getX(), player.getY(), 16, 16);
+        
+        // Renderizza Player2 se esiste
+        if (player2 != null) {
+            shapeRenderer.setColor(Color.CYAN);
+            shapeRenderer.rect(player2.getX(), player2.getY(), 16, 16);
+        }
+        
         shapeRenderer.setColor(Color.RED);
         for (Enemy enemy : enemies) {
             shapeRenderer.rect(enemy.getX(), enemy.getY(), 32, 32);
@@ -227,8 +273,12 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             return;
         }
 
-        if (state.currentFloor == 2) {
+        if (state.currentFloor == 3) {
             state.assignCrystal();
+            // Crea Player2 quando il cristallo è assegnato (floor 3)
+            if (state.getPlayer2() != null) {
+                player2 = new Player2(state.getPlayer2());
+            }
         }
 
         map = assets.get(state.getCurrentMapPath(), TiledMap.class);
@@ -240,6 +290,13 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         player = new Player(floorSpawn.x, floorSpawn.y);
         state.getPlayer1().x = floorSpawn.x;
         state.getPlayer1().y = floorSpawn.y;
+
+        // Ricrea Player2 se esiste
+        if (player2 != null && state.getPlayer2() != null) {
+            // Posiziona Player2 accanto a Player1 nel nuovo floor
+            player2 = null;
+            placePlayer2Adjacent();
+        }
 
         spawnEnemies();
 
@@ -426,6 +483,11 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         state.getPlayer1().x = spawnPos.x;
         state.getPlayer1().y = spawnPos.y;
 
+        // Posiziona Player2 accanto al player dopo il teletrasporto/entrata in stanza
+        if (state.getPlayer2() != null) {
+            player2 = null;
+            placePlayer2Adjacent();
+        }
         spawnEnemies();
         SaveManager.getInstance().autoSave(state);
         Gdx.app.log("Portal", "Crossed to " + mapPath + " (floor " + state.currentFloor + ")");
@@ -466,6 +528,37 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
                 enemies.add(new NormalEnemy(s.x, s.y));
             }
         }
+    }
+
+    /**
+     * Posiziona Player2 accanto a Player1 cercando la prima posizione libera.
+     */
+    private void placePlayer2Adjacent() {
+        if (state.getPlayer2() == null) return;
+
+        float px = player.getX();
+        float py = player.getY();
+        float tile = 16f;
+        float[][] offsets = new float[][]{
+            {tile, 0}, {-tile, 0}, {0, tile}, {0, -tile}, {tile, tile}, {-tile, tile}, {tile, -tile}, {-tile, -tile}
+        };
+
+        for (float[] off : offsets) {
+            float nx = px + off[0];
+            float ny = py + off[1];
+            // use same hitbox offset as collision checks
+            if (!collisionManager.wouldCollide(nx + Player.HITBOX_OFFSET, ny + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
+                state.getPlayer2().x = nx;
+                state.getPlayer2().y = ny;
+                player2 = new Player2(state.getPlayer2());
+                return;
+            }
+        }
+
+        // fallback: just place to the right
+        state.getPlayer2().x = px + tile;
+        state.getPlayer2().y = py;
+        player2 = new Player2(state.getPlayer2());
     }
 
     private void togglePause() {
