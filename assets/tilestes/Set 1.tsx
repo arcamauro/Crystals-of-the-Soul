@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.12.1" name="Set-Full" tilewidth="16" tileheight="16" tilecount="560" columns="28">
+<tileset version="1.10" tiledversion="1.12.2" name="Set-Full" tilewidth="16" tileheight="16" tilecount="560" columns="28">
  <transformations hflip="1" vflip="1" rotate="1" preferuntransformed="1"/>
  <image source="main/Set 1.png" trans="000000" width="448" height="320"/>
  <tile id="33">
@@ -300,19 +300,19 @@
  </tile>
  <tile id="197">
   <objectgroup draworder="index" id="2">
-   <object id="1" x="-0.181818" y="0.181818" width="3.18182" height="15.8182"/>
-   <object id="2" x="0.0909091" y="-0.272727" width="15.8182" height="3"/>
+   <object id="1" x="-0.181818" y="0.181818" width="3.18182" height="16.4269"/>
+   <object id="2" x="0.0909091" y="-0.272727" width="16.4269" height="3"/>
   </objectgroup>
  </tile>
  <tile id="198">
   <objectgroup draworder="index" id="2">
-   <object id="1" x="0.181818" y="0.181818" width="15.9091" height="2.72727"/>
+   <object id="3" x="-0.521739" y="-0.391304" width="16.8261" height="3.73913"/>
   </objectgroup>
  </tile>
  <tile id="199">
   <objectgroup draworder="index" id="2">
-   <object id="1" x="13.2727" y="0.272727" width="2.81818" height="15.7273"/>
-   <object id="2" x="0" y="0.272727" width="16.0909" height="3"/>
+   <object id="1" x="13.2727" y="0.272727" width="2.81818" height="16.423"/>
+   <object id="2" x="-0.652174" y="0.272727" width="16.7431" height="3"/>
   </objectgroup>
  </tile>
  <tile id="201">
@@ -332,7 +332,7 @@
  </tile>
  <tile id="225">
   <objectgroup draworder="index" id="2">
-   <object id="1" x="0.0909091" y="0.0909091" width="3" height="16.0909"/>
+   <object id="1" x="0.0909091" y="-0.996047" width="3" height="17.6126"/>
   </objectgroup>
  </tile>
  <tile id="227">
@@ -373,6 +373,18 @@
  <tile id="283">
   <objectgroup draworder="index" id="2">
    <object id="1" x="0.363636" y="0" width="2.72727" height="16.0909"/>
+  </objectgroup>
+ </tile>
+ <tile id="370">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-0.0869565" y="-0.173913" width="0.347826" height="16.3043"/>
+   <object id="2" x="15.7391" y="0.0434783" width="0.304348" height="16.087"/>
+  </objectgroup>
+ </tile>
+ <tile id="371">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0.125" y="0" width="16" height="0.25"/>
+   <object id="2" x="-0.0625" y="15.625" width="16.125" height="0.4375"/>
   </objectgroup>
  </tile>
  <tile id="455">

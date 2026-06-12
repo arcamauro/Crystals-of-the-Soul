@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.12.1" name="tileset_full" tilewidth="16" tileheight="16" tilecount="400" columns="16">
+<tileset version="1.10" tiledversion="1.12.2" name="tileset_full" tilewidth="16" tileheight="16" tilecount="400" columns="16">
  <transformations hflip="1" vflip="1" rotate="1" preferuntransformed="1"/>
  <image source="CUORE/Tilesets/tileset_full.png" trans="000000" width="256" height="400"/>
  <tile id="24">
@@ -514,9 +514,7 @@
  </tile>
  <tile id="346">
   <objectgroup draworder="index" id="2">
-   <object id="3" x="1.90909" y="-0.0909091">
-    <polygon points="0,0 -0.0909091,16.2727 -2.27273,15.8182 -2.18182,0.545455"/>
-   </object>
+   <object id="4" x="-0.304348" y="-0.434783" width="3.56522" height="17"/>
   </objectgroup>
  </tile>
  <tile id="348">

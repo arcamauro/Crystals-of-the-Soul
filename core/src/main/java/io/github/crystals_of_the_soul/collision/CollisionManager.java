@@ -30,6 +30,12 @@ public class CollisionManager {
 
     private final Array<Rectangle> rects = new Array<>();
     private final Array<Portal> portals = new Array<>();
+    // Optional Y offset (pixels) to apply to tile-object collision rectangles.
+    // Use this to compensate for tileset/object origin mismatches from Tiled.
+    private int tileObjectYOffset = 0;
+    // If true, swap width/height of tile object rectangles (rotate 90 degrees). Useful
+    // when tileset objects were authored rotated in the tileset to fake symmetry.
+    private boolean rotateTileObjects90 = false;
 
     public void load(TiledMap map) {
         rects.clear();
@@ -50,8 +56,33 @@ public class CollisionManager {
         Gdx.app.log("Collision", "Loaded " + rects.size + " collision rects");
     }
 
+    /**
+     * Imposta un offset verticale (in pixel) applicato ai rettangoli ricavati dagli oggetti dei tile.
+     * Valori positivi spostano i rettangoli verso l'alto, negativi verso il basso.
+     */
+    public void setTileObjectYOffset(int offset) {
+        this.tileObjectYOffset = offset;
+    }
+
+    public int getTileObjectYOffset() {
+        return tileObjectYOffset;
+    }
+
+    public boolean isRotateTileObjects90() {
+        return rotateTileObjects90;
+    }
+
+    public void setRotateTileObjects90(boolean rotate) {
+        this.rotateTileObjects90 = rotate;
+    }
+
     public Array<Portal> getPortals() {
         return portals;
+    }
+
+    // DEBUG: restituisce i rettangoli di collisione caricati (per visualizzazione)
+    public Array<Rectangle> getCollisionRects() {
+        return rects;
     }
 
     public boolean wouldCollide(float x, float y, float width, float height) {
@@ -143,12 +174,28 @@ public class CollisionManager {
                         for (MapObject obj : cell.getTile().getObjects()) {
                             if (obj instanceof RectangleMapObject) {
                                 Rectangle rect = ((RectangleMapObject) obj).getRectangle();
-                                rects.add(new Rectangle(
-                                    x * tw + rect.x,
-                                    y * th + (th - rect.y - rect.height),
-                                    rect.width,
-                                    rect.height
-                                ));
+                                // Use rect.y directly. Tiled stores object coordinates relative to tile;
+                                // previous inversion caused misalignment when tileset objects used top-left origin.
+                                // Debug log original tile-object values for first items
+                                Gdx.app.log("Collision", String.format("TileObj raw x=%.1f y=%.1f w=%.1f h=%.1f at tile(%d,%d)", rect.x, rect.y, rect.width, rect.height, x, y));
+
+                                if (rotateTileObjects90) {
+                                    // Swap width/height
+                                    rects.add(new Rectangle(
+                                        x * tw + rect.x,
+                                        y * th + rect.y + tileObjectYOffset,
+                                        rect.height,
+                                        rect.width
+                                    ));
+                                    Gdx.app.log("Collision", "TileObj rotated 90deg applied");
+                                } else {
+                                    rects.add(new Rectangle(
+                                        x * tw + rect.x,
+                                        y * th + rect.y + tileObjectYOffset,
+                                        rect.width,
+                                        rect.height
+                                    ));
+                                }
                             }
                         }
                     }

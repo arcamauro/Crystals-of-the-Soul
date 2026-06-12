@@ -30,19 +30,16 @@ public class Player2State extends PlayerState {
             case ASSASSIN:
                 p2.damage = 30;
                 p2.defense = 10;
-                p2.speedMultiplier = 1.5f;
                 p2.shieldCapacity = 0;
                 break;
             case ARCHER:
                 p2.damage = 25;
                 p2.defense = 5;
-                p2.speedMultiplier = 1.0f;
                 p2.shieldCapacity = 0;
                 break;
             case PROTECTOR:
                 p2.damage = 10;
                 p2.defense = 30;
-                p2.speedMultiplier = 1.0f;
                 p2.shieldCapacity = 50;
                 p2.currentShield = 50;
                 break;
