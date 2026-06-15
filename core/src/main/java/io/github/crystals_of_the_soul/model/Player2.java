@@ -1,22 +1,28 @@
-package io.github.crystals_of_the_soul.player;
+package io.github.crystals_of_the_soul.model;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.crystals_of_the_soul.collision.CollisionManager;
-import io.github.crystals_of_the_soul.states.Player2State;
+import io.github.crystals_of_the_soul.controller.CollisionManager;
 
 public class Player2 {
-    private Player2State state;
-    private Queue<Vector2> pathHistory;
-    private static final int PATH_DELAY = 20;  // Frame di ritardo per il caterpillar
-    private static final float SPEED = 180f;   // Velocità fissa
+    private final Player2State state;
+    private final Queue<Vector2> pathHistory;
+    public static final int PATH_DELAY = 20;  // Frame di ritardo per il caterpillar
+    public static final float DEFAULT_SPEED = 180f;   // Velocità fissa base
+
+    private Player2Behavior behavior;
 
     public Player2(Player2State state) {
+        this(state, Player2Factory.createBehavior(state.playerClass));
+    }
+
+    public Player2(Player2State state, Player2Behavior behavior) {
         this.state = state;
         this.pathHistory = new LinkedList<>();
+        this.behavior = behavior;
     }
 
     public void recordPosition(float x, float y) {
@@ -27,37 +33,39 @@ public class Player2 {
     }
 
     public void followPath(float delta, CollisionManager collisionManager) {
-        if (pathHistory.isEmpty()) return;
+        if (behavior != null) {
+            behavior.update(this, delta, collisionManager);
+        }
+    }
 
-        Vector2 targetPos = pathHistory.peek();
-        float dx = targetPos.x - state.x;
-        float dy = targetPos.y - state.y;
-        float distance = (float) Math.sqrt(dx * dx + dy * dy);
+    public void notifyBattleStarted() {
+        if (behavior != null) behavior.onBattleStarted(this);
+    }
 
-        if (distance > 25) {  // Si ferma quando è a ~25px di distanza
-            float moveX = (dx / distance) * SPEED;
-            float moveY = (dy / distance) * SPEED;
-            
-            float deltaMove = delta;
-            float newX = state.x + moveX * deltaMove;
-            float newY = state.y + moveY * deltaMove;
-            
-            // Controlla X prima di applicare
-            if (!collisionManager.wouldCollide(newX + Player.HITBOX_OFFSET, state.y + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
-                state.x = newX;
-            }
+    public void notifyBattleEnded() {
+        if (behavior != null) behavior.onBattleEnded(this);
+    }
 
-            // Controlla Y prima di applicare (usa la nuova X se è stata accettata)
-            newY = state.y + moveY * deltaMove;
-            if (!collisionManager.wouldCollide(state.x + Player.HITBOX_OFFSET, newY + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
-                state.y = newY;
-            }
+    // Helpers used by behaviors
+    public Vector2 peekTarget() {
+        return pathHistory.peek();
+    }
+
+    public void tryMove(float newX, float newY, CollisionManager collisionManager) {
+        // Controlla X prima di applicare
+        if (!collisionManager.wouldCollide(newX + Player.HITBOX_OFFSET, state.y + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
+            state.x = newX;
+        }
+
+        // Controlla Y prima di applicare (usa la nuova X se è stata accettata)
+        if (!collisionManager.wouldCollide(state.x + Player.HITBOX_OFFSET, newY + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
+            state.y = newY;
         }
     }
 
     public void update(float dx, float dy, float delta) {
-        state.x += dx * SPEED * delta;
-        state.y += dy * SPEED * delta;
+        state.x += dx * DEFAULT_SPEED * delta;
+        state.y += dy * DEFAULT_SPEED * delta;
     }
 
     public void takeDamage(int damage) {

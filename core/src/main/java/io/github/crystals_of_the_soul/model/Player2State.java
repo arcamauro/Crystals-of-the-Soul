@@ -22,6 +22,7 @@ public class Player2State extends PlayerState {
         p2.playerClass = playerClass;
         p2.health = 100;
         p2.maxHealth = 100;
+        p2.speedMultiplier = 1.5f;
         p2.canAttack = true;
         p2.canSpare = true;
         p2.currentShield = 0;

@@ -15,17 +15,22 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.github.crystals_of_the_soul.Main;
-import io.github.crystals_of_the_soul.controller.*;
+import io.github.crystals_of_the_soul.controller.BattleManager;
+import io.github.crystals_of_the_soul.controller.CollisionManager;
+import io.github.crystals_of_the_soul.controller.InputHandler;
+import io.github.crystals_of_the_soul.controller.InventoryManager;
+import io.github.crystals_of_the_soul.controller.ItemManager;
+import io.github.crystals_of_the_soul.controller.interactions.EnemyInteraction;
 import io.github.crystals_of_the_soul.model.Boss;
 import io.github.crystals_of_the_soul.model.Enemy;
 import io.github.crystals_of_the_soul.model.GameState;
 import io.github.crystals_of_the_soul.model.NormalEnemy;
 import io.github.crystals_of_the_soul.model.Player;
+import io.github.crystals_of_the_soul.model.Player2;
 import io.github.crystals_of_the_soul.model.SaveManager;
 import io.github.crystals_of_the_soul.model.boss.BossFactory;
 import io.github.crystals_of_the_soul.model.boss.MirrorBlueBoss;
 import io.github.crystals_of_the_soul.model.entity.Item;
-import io.github.crystals_of_the_soul.controller.interactions.EnemyInteraction;
 public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callbacks {
 
     private final Main game;
@@ -224,15 +229,6 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         mapRenderer.setView(camera);
         mapRenderer.render();
 
-        // DEBUG: disegna i rettangoli di collisione per verifica visiva
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(new Color(1f, 0f, 0f, 0.2f));
-        for (Rectangle r : collisionManager.getCollisionRects()) {
-            shapeRenderer.rect(r.x, r.y, r.width, r.height);
-        }
-        shapeRenderer.end();
-
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.WHITE);
@@ -240,7 +236,12 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         
         // Renderizza Player2 se esiste
         if (player2 != null) {
-            shapeRenderer.setColor(Color.CYAN);
+            switch (state.getPlayer2().playerClass) {
+                case ASSASSIN: shapeRenderer.setColor(Color.RED); break;
+                case PROTECTOR: shapeRenderer.setColor(Color.BLUE); break;
+                case ARCHER: shapeRenderer.setColor(Color.GREEN); break;
+                default: shapeRenderer.setColor(Color.CYAN); break;
+            }
             shapeRenderer.rect(player2.getX(), player2.getY(), 16, 16);
         }
         
@@ -323,7 +324,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             state.assignCrystal();
             // Crea Player2 quando il cristallo è assegnato (floor 3)
             if (state.getPlayer2() != null) {
-                player2 = new Player2(state.getPlayer2());
+                player2 = io.github.crystals_of_the_soul.model.Player2Factory.create(state.getPlayer2());
             }
         }
 
@@ -377,6 +378,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         hud.setAttackEnabled(canAttack);
         hud.setTalkEnabled(canTalk);
         hud.showBattle();
+        if (player2 != null) player2.notifyBattleStarted();
     }
 
     @Override
@@ -430,6 +432,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     @Override
     public void onPlayerDefeated() {
         Gdx.app.log("Battle", "Player defeated — returning to main menu");
+        if (player2 != null) player2.notifyBattleEnded();
         hud.hideBattle();
         Gdx.input.setInputProcessor(null);
         game.setScreen(new MainMenuScreen(game));
@@ -437,6 +440,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
     @Override
     public void onBattleExited() {
+        if (player2 != null) player2.notifyBattleEnded();
         hud.hideBattle();
         Gdx.input.setInputProcessor(null);
     }
@@ -602,7 +606,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             if (!collisionManager.wouldCollide(nx + Player.HITBOX_OFFSET, ny + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
                 state.getPlayer2().x = nx;
                 state.getPlayer2().y = ny;
-                player2 = new Player2(state.getPlayer2());
+                player2 = io.github.crystals_of_the_soul.model.Player2Factory.create(state.getPlayer2());
                 return;
             }
         }
@@ -610,7 +614,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         // fallback: just place to the right
         state.getPlayer2().x = px + tile;
         state.getPlayer2().y = py;
-        player2 = new Player2(state.getPlayer2());
+        player2 = io.github.crystals_of_the_soul.model.Player2Factory.create(state.getPlayer2());
     }
 
     private void togglePause() {
