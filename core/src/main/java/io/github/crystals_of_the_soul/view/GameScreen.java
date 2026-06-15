@@ -46,6 +46,11 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
     private com.badlogic.gdx.utils.Array<Texture> playerTextures;
+    private AnimatedSprite playerSprite;
+    private AnimatedSprite player2Sprite;
+    private String player2SpriteKey;
+    private float lastPlayer2X = 0f;
+    private float lastPlayer2Y = 0f;
 
     // Sprite / animation for player
     private Animation<TextureRegion> walkDownAnim, walkLeftAnim, walkRightAnim, walkUpAnim;
@@ -84,28 +89,35 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         shapeRenderer = new ShapeRenderer();
         inputHandler = new InputHandler();
         playerTextures = new com.badlogic.gdx.utils.Array<>();
-        // Carica i frame del player (path relativi alla cartella assets/)
-        try {
-            Texture down1 = new Texture(Gdx.files.internal("sprites/Player/sotto/frame_086-removebg-preview.png"));
-            Texture down2 = new Texture(Gdx.files.internal("sprites/Player/sotto/frame_091-removebg-preview.png"));
-            Texture left1 = new Texture(Gdx.files.internal("sprites/Player/sinistra/Sinistra90-removebg-preview.png"));
-            Texture left2 = new Texture(Gdx.files.internal("sprites/Player/sinistra/Sinistra98-removebg-preview.png"));
-            Texture right1 = new Texture(Gdx.files.internal("sprites/Player/destra/Destra37-removebg-preview.png"));
-            Texture right2 = new Texture(Gdx.files.internal("sprites/Player/destra/Destra43-removebg-preview.png"));
-            Texture up1 = new Texture(Gdx.files.internal("sprites/Player/sopra/Sopra64-removebg-preview.png"));
-            Texture up2 = new Texture(Gdx.files.internal("sprites/Player/sopra/Sopra82-removebg-preview.png"));
-            Texture still = new Texture(Gdx.files.internal("sprites/Player/STILL.png"));
 
-            playerTextures.addAll(down1, down2, left1, left2, right1, right2, up1, up2, still);
+        // Proviamo a caricare il player tramite il loader centralizzato
+        playerSprite = AnimationManager.load("Player");
 
-            float frameDuration = 0.14f;
-            walkDownAnim = new Animation<>(frameDuration, new TextureRegion(down1), new TextureRegion(down2));
-            walkLeftAnim = new Animation<>(frameDuration, new TextureRegion(left1), new TextureRegion(left2));
-            walkRightAnim = new Animation<>(frameDuration, new TextureRegion(right1), new TextureRegion(right2));
-            walkUpAnim = new Animation<>(frameDuration, new TextureRegion(up1), new TextureRegion(up2));
-            stillRegion = new TextureRegion(still);
-        } catch (Exception e) {
-            Gdx.app.log("Assets", "Errore caricamento sprite player: " + e.getMessage());
+        // Se il loader non trova nulla, manteniamo il caricamento manuale (fallback)
+        if (playerSprite == null) {
+            // Carica i frame del player (path relativi alla cartella assets/)
+            try {
+                Texture down1 = new Texture(Gdx.files.internal("sprites/Player/sotto/sotto1.png"));
+                Texture down2 = new Texture(Gdx.files.internal("sprites/Player/sotto/sotto.png"));
+                Texture left1 = new Texture(Gdx.files.internal("sprites/Player/sinistra/sinistra1.png"));
+                Texture left2 = new Texture(Gdx.files.internal("sprites/Player/sinistra/sinistra.png"));
+                Texture right1 = new Texture(Gdx.files.internal("sprites/Player/destra/destra1.png"));
+                Texture right2 = new Texture(Gdx.files.internal("sprites/Player/destra/destra.png"));
+                Texture up1 = new Texture(Gdx.files.internal("sprites/Player/sopra/sopra1.png"));
+                Texture up2 = new Texture(Gdx.files.internal("sprites/Player/sopra/sopra.png"));
+                Texture still = new Texture(Gdx.files.internal("sprites/Player/STILL.png"));
+
+                playerTextures.addAll(down1, down2, left1, left2, right1, right2, up1, up2, still);
+
+                float frameDuration = 0.14f;
+                walkDownAnim = new Animation<>(frameDuration, new TextureRegion(down1), new TextureRegion(down2));
+                walkLeftAnim = new Animation<>(frameDuration, new TextureRegion(left1), new TextureRegion(left2));
+                walkRightAnim = new Animation<>(frameDuration, new TextureRegion(right1), new TextureRegion(right2));
+                walkUpAnim = new Animation<>(frameDuration, new TextureRegion(up1), new TextureRegion(up2));
+                stillRegion = new TextureRegion(still);
+            } catch (Exception e) {
+                Gdx.app.log("Assets", "Errore caricamento sprite player: " + e.getMessage());
+            }
         }
         collisionManager = new CollisionManager();
         // Ensure default collision mapping (no rotation/offset) to avoid breaking maps
@@ -194,6 +206,9 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
                 if (t != null) t.dispose();
             }
         }
+        // Dispose del player caricato tramite AnimationManager (se presente)
+        AnimationManager.dispose("Player");
+        if (player2SpriteKey != null) AnimationManager.dispose(player2SpriteKey);
     }
 
     // -------------------------------------------------------------------------
@@ -229,6 +244,9 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         float dy = inputHandler.getDy();
         Vector2 dir = new Vector2(dx, dy);
         if (dir.len() > 0) dir.nor();
+
+        // Aggiorna lo sprite animato se presente
+        if (playerSprite != null) playerSprite.update(delta, dx, dy);
 
         // Calcola movimento proposto
         float moveAmount = 200f * delta;
@@ -279,14 +297,22 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             animStateTime = 0f;
         }
 
-        // Scegli frame corrente
+        // Scegli frame corrente (solo se non stiamo usando AnimatedSprite centralizzato)
         TextureRegion currentFrame = stillRegion;
-        if (dir.len() > 0) {
+        if (playerSprite == null && dir.len() > 0) {
             switch (lastDirection) {
-                case 1: currentFrame = walkLeftAnim.getKeyFrame(animStateTime, true); break;
-                case 2: currentFrame = walkRightAnim.getKeyFrame(animStateTime, true); break;
-                case 3: currentFrame = walkUpAnim.getKeyFrame(animStateTime, true); break;
-                default: currentFrame = walkDownAnim.getKeyFrame(animStateTime, true); break;
+                case 1:
+                    if (walkLeftAnim != null) currentFrame = walkLeftAnim.getKeyFrame(animStateTime, true);
+                    break;
+                case 2:
+                    if (walkRightAnim != null) currentFrame = walkRightAnim.getKeyFrame(animStateTime, true);
+                    break;
+                case 3:
+                    if (walkUpAnim != null) currentFrame = walkUpAnim.getKeyFrame(animStateTime, true);
+                    break;
+                default:
+                    if (walkDownAnim != null) currentFrame = walkDownAnim.getKeyFrame(animStateTime, true);
+                    break;
             }
         }
 
@@ -294,9 +320,22 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         SpriteBatch batch = game.batch;
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        if (currentFrame != null) {
-            // Disegna il personaggio alto 2 tile (16x32)
-            batch.draw(currentFrame, player.getX(), player.getY(), 16f, 32f);
+        if (playerSprite != null) {
+            playerSprite.draw(batch, player.getX(), player.getY(), 16f, 32f);
+        } else {
+            if (currentFrame != null) {
+                // Disegna il personaggio alto 2 tile (16x32)
+                batch.draw(currentFrame, player.getX(), player.getY(), 16f, 32f);
+            }
+        }
+        // Disegna Player2 con AnimatedSprite se disponibile
+        if (player2 != null && player2Sprite != null) {
+            float p2dx = player2.getX() - lastPlayer2X;
+            float p2dy = player2.getY() - lastPlayer2Y;
+            player2Sprite.update(delta, p2dx, p2dy);
+            player2Sprite.draw(batch, player2.getX(), player2.getY(), 16f, 32f);
+            lastPlayer2X = player2.getX();
+            lastPlayer2Y = player2.getY();
         }
         batch.end();
 
@@ -305,7 +344,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         // Renderizza Player2 se esiste
-        if (player2 != null) {
+        if (player2 != null && player2Sprite == null) {
             switch (state.getPlayer2().playerClass) {
                 case ASSASSIN: shapeRenderer.setColor(Color.RED); break;
                 case PROTECTOR: shapeRenderer.setColor(Color.BLUE); break;
@@ -677,6 +716,10 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
                 state.getPlayer2().x = nx;
                 state.getPlayer2().y = ny;
                 player2 = io.github.crystals_of_the_soul.model.Player2Factory.create(state.getPlayer2());
+                // Carica la sprite per Player2
+                loadPlayer2Sprite();
+                lastPlayer2X = player2.getX();
+                lastPlayer2Y = player2.getY();
                 return;
             }
         }
@@ -685,6 +728,30 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         state.getPlayer2().x = px + tile;
         state.getPlayer2().y = py;
         player2 = io.github.crystals_of_the_soul.model.Player2Factory.create(state.getPlayer2());
+        loadPlayer2Sprite();
+        lastPlayer2X = player2.getX();
+        lastPlayer2Y = player2.getY();
+    }
+
+    private void loadPlayer2Sprite() {
+        // dispose precedente
+        if (player2SpriteKey != null) AnimationManager.dispose(player2SpriteKey);
+        if (state.getPlayer2() == null) {
+            player2Sprite = null;
+            player2SpriteKey = null;
+            return;
+        }
+        // mappatura semplice dalle classi a cartelle assets
+        switch (state.getPlayer2().playerClass) {
+            case ARCHER: player2SpriteKey = "Archer"; break;
+            case PROTECTOR: player2SpriteKey = "Tank"; break;
+            case ASSASSIN: player2SpriteKey = "Player"; break;
+            default: player2SpriteKey = "Player"; break;
+        }
+        player2Sprite = AnimationManager.load(player2SpriteKey);
+        if (player2Sprite == null) {
+            Gdx.app.log("AnimationManager", "Player2 sprite not found for key: " + player2SpriteKey);
+        }
     }
 
     private void togglePause() {
