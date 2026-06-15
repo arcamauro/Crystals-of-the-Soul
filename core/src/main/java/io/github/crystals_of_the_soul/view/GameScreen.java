@@ -6,6 +6,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -41,7 +45,13 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     private OrthogonalTiledMapRenderer mapRenderer;
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
+    private com.badlogic.gdx.utils.Array<Texture> playerTextures;
 
+    // Sprite / animation for player
+    private Animation<TextureRegion> walkDownAnim, walkLeftAnim, walkRightAnim, walkUpAnim;
+    private TextureRegion stillRegion;
+    private float animStateTime = 0f;
+    private int lastDirection = 0; // 0 = down, 1 = left, 2 = right, 3 = up
     private Player player;
     private Player2 player2;
     private InputHandler inputHandler;
@@ -73,7 +83,30 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         shapeRenderer = new ShapeRenderer();
         inputHandler = new InputHandler();
+        playerTextures = new com.badlogic.gdx.utils.Array<>();
+        // Carica i frame del player (path relativi alla cartella assets/)
+        try {
+            Texture down1 = new Texture(Gdx.files.internal("sprites/Player/sotto/frame_086-removebg-preview.png"));
+            Texture down2 = new Texture(Gdx.files.internal("sprites/Player/sotto/frame_091-removebg-preview.png"));
+            Texture left1 = new Texture(Gdx.files.internal("sprites/Player/sinistra/Sinistra90-removebg-preview.png"));
+            Texture left2 = new Texture(Gdx.files.internal("sprites/Player/sinistra/Sinistra98-removebg-preview.png"));
+            Texture right1 = new Texture(Gdx.files.internal("sprites/Player/destra/Destra37-removebg-preview.png"));
+            Texture right2 = new Texture(Gdx.files.internal("sprites/Player/destra/Destra43-removebg-preview.png"));
+            Texture up1 = new Texture(Gdx.files.internal("sprites/Player/sopra/Sopra64-removebg-preview.png"));
+            Texture up2 = new Texture(Gdx.files.internal("sprites/Player/sopra/Sopra82-removebg-preview.png"));
+            Texture still = new Texture(Gdx.files.internal("sprites/Player/STILL.png"));
 
+            playerTextures.addAll(down1, down2, left1, left2, right1, right2, up1, up2, still);
+
+            float frameDuration = 0.14f;
+            walkDownAnim = new Animation<>(frameDuration, new TextureRegion(down1), new TextureRegion(down2));
+            walkLeftAnim = new Animation<>(frameDuration, new TextureRegion(left1), new TextureRegion(left2));
+            walkRightAnim = new Animation<>(frameDuration, new TextureRegion(right1), new TextureRegion(right2));
+            walkUpAnim = new Animation<>(frameDuration, new TextureRegion(up1), new TextureRegion(up2));
+            stillRegion = new TextureRegion(still);
+        } catch (Exception e) {
+            Gdx.app.log("Assets", "Errore caricamento sprite player: " + e.getMessage());
+        }
         collisionManager = new CollisionManager();
         // Ensure default collision mapping (no rotation/offset) to avoid breaking maps
         collisionManager.setRotateTileObjects90(false);
@@ -156,6 +189,11 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         mapRenderer.dispose();
         shapeRenderer.dispose();
         hud.dispose();
+        if (playerTextures != null) {
+            for (Texture t : playerTextures) {
+                if (t != null) t.dispose();
+            }
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -229,11 +267,43 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         mapRenderer.setView(camera);
         mapRenderer.render();
 
+        // Aggiorna stato animazione in base al movimento d'ingresso
+        if (dir.len() > 0) {
+            animStateTime += delta;
+            if (Math.abs(dx) > Math.abs(dy)) {
+                lastDirection = dx > 0 ? 2 : 1;
+            } else {
+                lastDirection = dy > 0 ? 3 : 0;
+            }
+        } else {
+            animStateTime = 0f;
+        }
+
+        // Scegli frame corrente
+        TextureRegion currentFrame = stillRegion;
+        if (dir.len() > 0) {
+            switch (lastDirection) {
+                case 1: currentFrame = walkLeftAnim.getKeyFrame(animStateTime, true); break;
+                case 2: currentFrame = walkRightAnim.getKeyFrame(animStateTime, true); break;
+                case 3: currentFrame = walkUpAnim.getKeyFrame(animStateTime, true); break;
+                default: currentFrame = walkDownAnim.getKeyFrame(animStateTime, true); break;
+            }
+        }
+
+        // Disegna il player con SpriteBatch condiviso
+        SpriteBatch batch = game.batch;
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        if (currentFrame != null) {
+            // Disegna il personaggio alto 2 tile (16x32)
+            batch.draw(currentFrame, player.getX(), player.getY(), 16f, 32f);
+        }
+        batch.end();
+
+        // Usa ShapeRenderer per gli altri oggetti debug (Player2, nemici, items)
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.rect(player.getX(), player.getY(), 16, 16);
-        
+
         // Renderizza Player2 se esiste
         if (player2 != null) {
             switch (state.getPlayer2().playerClass) {
@@ -244,7 +314,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             }
             shapeRenderer.rect(player2.getX(), player2.getY(), 16, 16);
         }
-        
+
         shapeRenderer.setColor(Color.RED);
         for (Enemy enemy : enemies) {
             shapeRenderer.rect(enemy.getX(), enemy.getY(), 32, 32);
