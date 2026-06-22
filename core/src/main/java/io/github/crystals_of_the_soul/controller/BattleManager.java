@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import io.github.crystals_of_the_soul.model.Boss;
 import io.github.crystals_of_the_soul.model.Enemy;
 import io.github.crystals_of_the_soul.model.Player;
+import io.github.crystals_of_the_soul.model.Player2;
 
 public class BattleManager {
 
@@ -39,8 +40,18 @@ public class BattleManager {
     }
 
     public void onAttack() {
+        onAttack(null);
+    }
+
+    public void onAttack(Player2 player2) {
         if (!playerTurn || !inBattle) return;
         currentEnemy.onAttack();
+
+        StringBuilder logMsg = new StringBuilder("* Attacchi il nemico!");
+        if (player2 != null && player2.getBehavior() != null) {
+            player2.getBehavior().onAttack(player2, currentEnemy, logMsg);
+        }
+
         listener.onEnemyHpChanged(currentEnemy.getName() + " HP: " + currentEnemy.getHp());
         Gdx.app.log("Battle", currentEnemy.getName() + " HP: " + currentEnemy.getHp());
 
@@ -55,15 +66,25 @@ public class BattleManager {
                 listener.onEnemyKilled(killed);
             }
         } else {
-            listener.onDialogueChanged(currentEnemy.getDialogue());
+            logMsg.append("\n").append(currentEnemy.getDialogue());
+            listener.onDialogueChanged(logMsg.toString());
             endPlayerTurn();
         }
     }
 
     public void onTalk() {
+        onTalk(null);
+    }
+
+    public void onTalk(Player2 player2) {
         if (!playerTurn || !inBattle) return;
         currentEnemy.onTalk();
         Gdx.app.log("Battle", "Talk count for " + currentEnemy.getName());
+
+        StringBuilder logMsg = new StringBuilder("* Parli al nemico.");
+        if (player2 != null && player2.getBehavior() != null) {
+            player2.getBehavior().onTalk(player2, currentEnemy, logMsg);
+        }
 
         if (currentEnemy.isDefeated()) {
             if (currentEnemy instanceof Boss) {
@@ -76,19 +97,40 @@ public class BattleManager {
                 listener.onEnemySpared(spared);
             }
         } else {
-            listener.onDialogueChanged(currentEnemy.getDialogue());
+            logMsg.append("\n").append(currentEnemy.getDialogue());
+            listener.onDialogueChanged(logMsg.toString());
             endPlayerTurn();
         }
     }
 
     public void tickEnemyTurn(Player player) {
+        tickEnemyTurn(player, null);
+    }
+
+    public void tickEnemyTurn(Player player, Player2 player2) {
         if (playerTurn || enemyHasAttacked) return;
-        player.takeDamage(currentEnemy.getDamage());
+
+        int initialDamage = currentEnemy.getDamage();
+        StringBuilder logMsg = new StringBuilder("* " + currentEnemy.getName() + " attacca!");
+
+        int remainingDamage = initialDamage;
+        if (player2 != null && player2.getBehavior() != null) {
+            remainingDamage = player2.getBehavior().onShieldDamage(player2, initialDamage, logMsg);
+        }
+
+        if (remainingDamage > 0) {
+            player.takeDamage(remainingDamage);
+            logMsg.append("\n* Subisci ").append(remainingDamage).append(" danni!");
+        }
+
         int hp = player.getHp();
         listener.onPlayerHpChanged(hp);
         Gdx.app.log("Battle", "Player HP: " + hp);
         enemyHasAttacked = true;
         playerTurn = true;
+
+        logMsg.append("\n").append(currentEnemy.getDialogue());
+        listener.onDialogueChanged(logMsg.toString());
 
         if (hp <= 0) {
             Gdx.app.log("Battle", "Player defeated");

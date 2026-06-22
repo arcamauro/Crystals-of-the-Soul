@@ -1,9 +1,9 @@
 {
     "activeFile": "maps/lvl5_v.tmx",
     "expandedProjectPaths": [
-        "maps",
         ".",
-        "tilestes"
+        "tilestes",
+        "maps"
     ],
     "fileStates": {
         "maps/lvl0.tmx": {
@@ -63,8 +63,8 @@
             "scale": 5.5,
             "selectedLayer": 12,
             "viewCenter": {
-                "x": 80,
-                "y": 96.09090909090908
+                "x": 99.63636363636364,
+                "y": 191
             }
         },
         "maps/lvl3_b.tmx": {
@@ -75,32 +75,32 @@
             "scale": 3,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 503.99999999999994,
-                "y": 192.49999999999997
+                "x": 320.66666666666663,
+                "y": 241.83333333333331
             }
         },
         "maps/lvl3_r.tmx": {
             "expandedObjectLayers": [
-                4,
-                2
+                2,
+                4
             ],
             "scale": 3,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 439.99999999999994,
-                "y": 46.833333333333314
+                "x": 320,
+                "y": 240.16666666666663
             }
         },
         "maps/lvl3_v.tmx": {
             "expandedObjectLayers": [
-                6,
-                2
+                2,
+                6
             ],
             "scale": 1,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 410,
-                "y": 158.5
+                "x": 320,
+                "y": 239.5
             }
         },
         "maps/lvl4_b.tmx": {
@@ -111,8 +111,8 @@
             "scale": 5.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 272,
-                "y": 160.09090909090907
+                "x": 240,
+                "y": 320.0909090909091
             }
         },
         "maps/lvl4_r.tmx": {
@@ -122,8 +122,8 @@
             "scale": 8,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 250.125,
-                "y": 165.5625
+                "x": 240,
+                "y": 320.0625
             }
         },
         "maps/lvl4_v.tmx": {
@@ -133,8 +133,8 @@
             "scale": 2,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 230,
-                "y": 278.25
+                "x": 240,
+                "y": 320.25
             }
         },
         "maps/lvl5_b.tmx": {
@@ -145,8 +145,8 @@
             "scale": 4,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 85,
-                "y": 106.375
+                "x": 80,
+                "y": 112.125
             }
         },
         "maps/lvl5_r.tmx": {
@@ -158,7 +158,7 @@
             "selectedLayer": 4,
             "viewCenter": {
                 "x": 79.98023227081791,
-                "y": 95.89325426241663
+                "y": 111.9446503582901
             }
         },
         "maps/lvl5_v.tmx": {

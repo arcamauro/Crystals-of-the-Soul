@@ -19,6 +19,21 @@ public class ArcherBehavior implements Player2Behavior {
     }
 
     @Override
+    public void onAttack(Player2 p2, Enemy enemy, StringBuilder logMessage) {
+        if (p2.getHp() <= 0) return;
+        int companionDamage = p2.getState().damage;
+        enemy.takeDamage(companionDamage);
+        logMessage.append("\n* L'Arciere scaglia una freccia precisa infliggendo ").append(companionDamage).append(" danni!");
+    }
+
+    @Override
+    public void onTalk(Player2 p2, Enemy enemy, StringBuilder logMessage) {
+        if (p2.getHp() <= 0) return;
+        enemy.onTalk();
+        logMessage.append("\n* L'Arciere ti supporta nel dialogo pacifico! (Progresso raddoppiato)");
+    }
+
+    @Override
     public void update(Player2 p2, float delta, CollisionManager collisionManager) {
         Vector2 target = p2.peekTarget();
         if (target == null) return;

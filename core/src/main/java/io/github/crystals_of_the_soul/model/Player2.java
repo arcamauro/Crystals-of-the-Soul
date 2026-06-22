@@ -25,6 +25,10 @@ public class Player2 {
         this.behavior = behavior;
     }
 
+    public Player2Behavior getBehavior() {
+        return behavior;
+    }
+
     public void recordPosition(float x, float y) {
         pathHistory.add(new Vector2(x, y));
         if (pathHistory.size() > PATH_DELAY) {

@@ -362,6 +362,15 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         shapeRenderer.end();
 
         hud.updatePlayerHp(player.getHp());
+        if (player2 != null) {
+            String p2Text = player2.getState().playerClass.name() + " HP: " + player2.getHp();
+            if (player2.getState().playerClass == io.github.crystals_of_the_soul.model.Player2Class.PROTECTOR) {
+                p2Text += " (Scudo: " + player2.getState().currentShield + ")";
+            }
+            hud.updatePlayer2Hp(p2Text);
+        } else {
+            hud.updatePlayer2Hp("");
+        }
 
         boolean nearEnemy = false;
 
@@ -399,7 +408,19 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     }
 
     private void renderBattle() {
-        battleManager.tickEnemyTurn(player);
+        battleManager.tickEnemyTurn(player, player2);
+
+        // Aggiorna HUD in tempo reale per la battaglia
+        hud.updatePlayerHp(player.getHp());
+        if (player2 != null) {
+            String p2Text = player2.getState().playerClass.name() + " HP: " + player2.getHp();
+            if (player2.getState().playerClass == io.github.crystals_of_the_soul.model.Player2Class.PROTECTOR) {
+                p2Text += " (Scudo: " + player2.getState().currentShield + ")";
+            }
+            hud.updatePlayer2Hp(p2Text);
+        } else {
+            hud.updatePlayer2Hp("");
+        }
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -412,6 +433,29 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         shapeRenderer.setColor(Color.WHITE);
         shapeRenderer.rect(w * 0.1f, h * 0.38f, 96, 96);
+
+        // Disegna Player 2 (colore di classe o grigio se KO)
+        if (player2 != null) {
+            if (player2.getHp() <= 0) {
+                shapeRenderer.setColor(Color.GRAY);
+            } else {
+                switch (player2.getState().playerClass) {
+                    case ASSASSIN:
+                        shapeRenderer.setColor(Color.ORANGE);
+                        break;
+                    case ARCHER:
+                        shapeRenderer.setColor(Color.GREEN);
+                        break;
+                    case PROTECTOR:
+                        shapeRenderer.setColor(Color.BLUE);
+                        break;
+                    default:
+                        shapeRenderer.setColor(Color.CYAN);
+                        break;
+                }
+            }
+            shapeRenderer.rect(w * 0.22f, h * 0.38f, 80, 80);
+        }
 
         shapeRenderer.end();
     }
@@ -560,12 +604,12 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
     @Override
     public void onAttack() {
-        battleManager.onAttack();
+        battleManager.onAttack(player2);
     }
 
     @Override
     public void onTalk() {
-        battleManager.onTalk();
+        battleManager.onTalk(player2);
     }
 
     @Override
@@ -745,7 +789,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         switch (state.getPlayer2().playerClass) {
             case ARCHER: player2SpriteKey = "Archer"; break;
             case PROTECTOR: player2SpriteKey = "Tank"; break;
-            case ASSASSIN: player2SpriteKey = "Player"; break;
+            case ASSASSIN: player2SpriteKey = "Assassin"; break;
             default: player2SpriteKey = "Player"; break;
         }
         player2Sprite = AnimationManager.load(player2SpriteKey);

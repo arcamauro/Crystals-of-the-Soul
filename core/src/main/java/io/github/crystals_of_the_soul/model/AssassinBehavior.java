@@ -19,6 +19,14 @@ public class AssassinBehavior implements Player2Behavior {
     }
 
     @Override
+    public void onAttack(Player2 p2, Enemy enemy, StringBuilder logMessage) {
+        if (p2.getHp() <= 0) return;
+        int companionDamage = p2.getState().damage;
+        enemy.takeDamage(companionDamage);
+        logMessage.append("\n* L'Assassino colpisce alle spalle infliggendo ").append(companionDamage).append(" danni!");
+    }
+
+    @Override
     public void update(Player2 p2, float delta, CollisionManager collisionManager) {
         Vector2 target = p2.peekTarget();
         if (target == null) return;

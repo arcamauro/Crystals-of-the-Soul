@@ -29,6 +29,7 @@ public class GameHud {
     private Table hudTable;
 
     private Label playerHpLabel;
+    private Label player2HpLabel;
     private Label interactLabel;
     private Label saveConfirmLabel;
     private Label enemyHpLabel;
@@ -65,9 +66,11 @@ public class GameHud {
         hudTable.top().left().pad(10);
 
         playerHpLabel = new Label("HP: " + initialHp, skin);
+        player2HpLabel = new Label("", skin);
         interactLabel = new Label("Premi E per interagire", skin);
 
         hudTable.add(playerHpLabel).row();
+        hudTable.add(player2HpLabel).row();
         hudTable.add(interactLabel);
 
         notificationLabel = new Label("", skin);
@@ -182,6 +185,10 @@ public class GameHud {
 
     public void updatePlayerHp(int hp) {
         playerHpLabel.setText("HP: " + hp);
+    }
+
+    public void updatePlayer2Hp(String text) {
+        player2HpLabel.setText(text);
     }
 
     public void updateEnemyHp(String text) {
