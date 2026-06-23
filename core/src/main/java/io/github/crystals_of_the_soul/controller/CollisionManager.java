@@ -110,8 +110,32 @@ public class CollisionManager {
         MapLayer layer = map.getLayers().get("NPC");
         if (layer != null) {
             for (MapObject obj : layer.getObjects()) {
+                String aspetto = getStringProperty(obj, "aspetto");
+                String type = getStringProperty(obj, "type");
+                String typeTutorial = getStringProperty(obj, "type_tutorial");
+                boolean isShop = "shop".equals(aspetto) || "shop".equals(type) || "shop".equals(typeTutorial);
+                if (isShop) continue;
+
                 Vector2 pos = getObjectPosition(obj);
                 if (pos != null) spawns.add(pos);
+            }
+        }
+        return spawns;
+    }
+
+    public Array<Vector2> getShopSpawns(TiledMap map) {
+        Array<Vector2> spawns = new Array<>();
+        MapLayer layer = map.getLayers().get("NPC");
+        if (layer != null) {
+            for (MapObject obj : layer.getObjects()) {
+                String aspetto = getStringProperty(obj, "aspetto");
+                String type = getStringProperty(obj, "type");
+                String typeTutorial = getStringProperty(obj, "type_tutorial");
+                boolean isShop = "shop".equals(aspetto) || "shop".equals(type) || "shop".equals(typeTutorial);
+                if (isShop) {
+                    Vector2 pos = getObjectPosition(obj);
+                    if (pos != null) spawns.add(pos);
+                }
             }
         }
         return spawns;
@@ -140,6 +164,11 @@ public class CollisionManager {
         return null;
     }
 
+    private String getStringProperty(MapObject obj, String key) {
+        Object value = obj.getProperties().get(key);
+        return value instanceof String ? (String) value : null;
+    }
+
     private void loadPortalsFromLayers(Iterable<MapLayer> layers) {
         for (MapLayer layer : layers) {
             if (layer instanceof MapGroupLayer) {
@@ -148,12 +177,12 @@ public class CollisionManager {
             }
             for (MapObject obj : layer.getObjects()) {
                 if (!(obj instanceof RectangleMapObject)) continue;
-                String pType = obj.getProperties().get("type", String.class);
+                String pType = getStringProperty(obj, "type");
                 if (!"porta".equals(pType) && !"ponte".equals(pType) && !"portaF".equals(pType)) continue;
                 Rectangle r = ((RectangleMapObject) obj).getRectangle();
-                String dest = obj.getProperties().get("dest", String.class);
-                if (dest == null) dest = obj.getProperties().get("destinazione", String.class);
-                String condition = obj.getProperties().get("condition", String.class);
+                String dest = getStringProperty(obj, "dest");
+                if (dest == null) dest = getStringProperty(obj, "destinazione");
+                String condition = getStringProperty(obj, "condition");
                 portals.add(new Portal(new Rectangle(r.x, r.y, r.width, r.height), dest, condition, pType));
                 Gdx.app.log("Portal", "Loaded portal type=" + pType + " dest=" + dest + " condition=" + condition);
             }

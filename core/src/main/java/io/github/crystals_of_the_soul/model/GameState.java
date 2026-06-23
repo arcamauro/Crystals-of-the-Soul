@@ -8,6 +8,7 @@ public class GameState {
     // --- Moral counter ---
     public int killCount;
     public int spareCount;
+    public int gold;
 
     // --- Crystal ---
     private CrystalType crystal;
@@ -39,6 +40,7 @@ public class GameState {
         state.currentFloor = 0;
         state.killCount = 0;
         state.spareCount = 0;
+        state.gold = 20;
         state.crystal = null;
         state.player1 = new PlayerState();
         state.player2 = null;

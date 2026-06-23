@@ -19,6 +19,8 @@ public class GameHud {
         void onSave();
         void onMainMenu();
         void onExit();
+        void onBuyPotion(int price);
+        void onCloseShop();
     }
 
     private final Stage stage;
@@ -27,9 +29,11 @@ public class GameHud {
     private Table pauseTable;
     private Table battleTable;
     private Table hudTable;
+    private Table shopTable;
 
     private Label playerHpLabel;
     private Label player2HpLabel;
+    private Label goldLabel;
     private Label interactLabel;
     private Label saveConfirmLabel;
     private Label enemyHpLabel;
@@ -37,6 +41,8 @@ public class GameHud {
 
     private TextButton attackBtn;
     private TextButton talkBtn;
+    private TextButton buyPotionBtn;
+    private TextButton exitShopBtn;
 
     private Label notificationLabel;
     private float notificationTimer;
@@ -50,13 +56,16 @@ public class GameHud {
         buildHud(initialHp);
         buildBattleUI(callbacks);
         buildPauseMenu(callbacks);
+        buildShopUI(callbacks);
 
         stage.addActor(hudTable);
         stage.addActor(battleTable);
         stage.addActor(pauseTable);
+        stage.addActor(shopTable);
 
         pauseTable.setVisible(false);
         battleTable.setVisible(false);
+        shopTable.setVisible(false);
         interactLabel.setVisible(false);
     }
 
@@ -67,10 +76,12 @@ public class GameHud {
 
         playerHpLabel = new Label("HP: " + initialHp, skin);
         player2HpLabel = new Label("", skin);
+        goldLabel = new Label("Oro: 20", skin);
         interactLabel = new Label("Premi E per interagire", skin);
 
         hudTable.add(playerHpLabel).row();
         hudTable.add(player2HpLabel).row();
+        hudTable.add(goldLabel).row();
         hudTable.add(interactLabel);
 
         notificationLabel = new Label("", skin);
@@ -197,6 +208,50 @@ public class GameHud {
 
     public void updateDialogue(String text) {
         dialogueLabel.setText(text);
+    }
+
+    private void buildShopUI(final Callbacks callbacks) {
+        shopTable = new Table();
+        shopTable.setFillParent(true);
+        shopTable.center();
+
+        Label shopTitle = new Label("Mercante", skin);
+        shopTitle.setFontScale(1.5f);
+        Label shopWelcome = new Label("Benvenuto! Vuoi comprare una Pozione per 15 Oro?", skin);
+        shopWelcome.setWrap(true);
+
+        buyPotionBtn = new TextButton("Compra Pozione (15 Oro)", skin);
+        buyPotionBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                callbacks.onBuyPotion(15);
+            }
+        });
+
+        exitShopBtn = new TextButton("Esci", skin);
+        exitShopBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                callbacks.onCloseShop();
+            }
+        });
+
+        shopTable.add(shopTitle).padBottom(10).row();
+        shopTable.add(shopWelcome).width(400).padBottom(20).row();
+        shopTable.add(buyPotionBtn).width(250).height(45).padBottom(10).row();
+        shopTable.add(exitShopBtn).width(150).height(40);
+    }
+
+    public void showShop() {
+        shopTable.setVisible(true);
+    }
+
+    public void hideShop() {
+        shopTable.setVisible(false);
+    }
+
+    public void updateGold(int gold) {
+        goldLabel.setText("Oro: " + gold);
     }
 
     public void setInteractVisible(boolean visible) {

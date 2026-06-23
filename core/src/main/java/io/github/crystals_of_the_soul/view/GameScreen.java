@@ -25,6 +25,8 @@ import io.github.crystals_of_the_soul.controller.InputHandler;
 import io.github.crystals_of_the_soul.controller.InventoryManager;
 import io.github.crystals_of_the_soul.controller.ItemManager;
 import io.github.crystals_of_the_soul.controller.interactions.EnemyInteraction;
+import io.github.crystals_of_the_soul.controller.interactions.ShopInteraction;
+import io.github.crystals_of_the_soul.model.ShopNPC;
 import io.github.crystals_of_the_soul.model.Boss;
 import io.github.crystals_of_the_soul.model.Enemy;
 import io.github.crystals_of_the_soul.model.GameState;
@@ -61,6 +63,9 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     private Player2 player2;
     private InputHandler inputHandler;
     private Array<Enemy> enemies;
+    private Array<ShopNPC> shops;
+    private Texture[] shopTextures;
+    private boolean inShop = false;
 
     private CollisionManager collisionManager;
     private BattleManager battleManager;
@@ -86,6 +91,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     public void show() {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.zoom = 0.3f; // Zoom in (0.5f makes elements 2x larger, adjust as desired)
         shapeRenderer = new ShapeRenderer();
         inputHandler = new InputHandler();
         playerTextures = new com.badlogic.gdx.utils.Array<>();
@@ -141,10 +147,20 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         }
 
         enemies = new Array<>();
+        shops = new Array<>();
+        shopTextures = new Texture[3];
+        try {
+            shopTextures[0] = new Texture(Gdx.files.internal("sprites/Shop/shop.png"));
+            shopTextures[1] = new Texture(Gdx.files.internal("sprites/Shop/shop1.png"));
+            shopTextures[2] = new Texture(Gdx.files.internal("sprites/Shop/shop2.png"));
+        } catch (Exception e) {
+            Gdx.app.log("GameScreen", "Failed to load shop textures: " + e.getMessage());
+        }
         spawnEnemies();
 
         battleManager = new BattleManager(this);
         hud = new GameHud(player.getHp(), this);
+        hud.updateGold(state.gold);
         initializeInventoryManager();
         itemManager = new ItemManager(
             player,
@@ -179,6 +195,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false, width, height);
+        camera.zoom = 0.3f; // Maintain the zoom level when window is resized
         hud.resize(width, height);
     }
 
@@ -203,6 +220,11 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         hud.dispose();
         if (playerTextures != null) {
             for (Texture t : playerTextures) {
+                if (t != null) t.dispose();
+            }
+        }
+        if (shopTextures != null) {
+            for (Texture t : shopTextures) {
                 if (t != null) t.dispose();
             }
         }
@@ -240,8 +262,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         state.playTime += delta;
 
-        float dx = inputHandler.getDx();
-        float dy = inputHandler.getDy();
+        float dx = inShop ? 0f : inputHandler.getDx();
+        float dy = inShop ? 0f : inputHandler.getDy();
         Vector2 dir = new Vector2(dx, dy);
         if (dir.len() > 0) dir.nor();
 
@@ -254,13 +276,13 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         float newY = player.getY() + dir.y * moveAmount;
 
         // Verifica X
-        if (!collisionManager.wouldCollide(newX + Player.HITBOX_OFFSET, player.getY() + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
+        if (!inShop && !collisionManager.wouldCollide(newX + Player.HITBOX_OFFSET, player.getY() + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
             player.update(dir.x, 0, delta);
         }
 
         // Verifica Y (usa la nuova posizione X se è stata accettata)
         newY = player.getY() + dir.y * moveAmount;
-        if (!collisionManager.wouldCollide(player.getX() + Player.HITBOX_OFFSET, newY + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
+        if (!inShop && !collisionManager.wouldCollide(player.getX() + Player.HITBOX_OFFSET, newY + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
             player.update(0, dir.y, delta);
         }
 
@@ -268,15 +290,17 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         state.getPlayer1().y = player.getY();
 
         // Sincronizza Player2 con movimento caterpillar
-        if (player2 != null) {
+        if (player2 != null && !inShop) {
             player2.recordPosition(player.getX(), player.getY());
             player2.followPath(delta, collisionManager);
         }
 
-        if (portalCooldown > 0) {
-            portalCooldown = Math.max(0, portalCooldown - delta);
-        } else {
-            checkPortals();
+        if (!inShop) {
+            if (portalCooldown > 0) {
+                portalCooldown = Math.max(0, portalCooldown - delta);
+            } else {
+                checkPortals();
+            }
         }
 
         camera.position.set(player.getX(), player.getY(), 0);
@@ -337,6 +361,17 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             lastPlayer2X = player2.getX();
             lastPlayer2Y = player2.getY();
         }
+        
+        // Disegna i ShopNPC se la texture è disponibile
+        for (ShopNPC shop : shops) {
+            Texture tex = null;
+            if (shopTextures != null && shop.getImageIndex() >= 0 && shop.getImageIndex() < shopTextures.length) {
+                tex = shopTextures[shop.getImageIndex()];
+            }
+            if (tex != null) {
+                batch.draw(tex, shop.getX(), shop.getY(), 32f, 32f);
+            }
+        }
         batch.end();
 
         // Usa ShapeRenderer per gli altri oggetti debug (Player2, nemici, items)
@@ -352,6 +387,20 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
                 default: shapeRenderer.setColor(Color.CYAN); break;
             }
             shapeRenderer.rect(player2.getX(), player2.getY(), 16, 16);
+        }
+
+        // Se la texture dello shop non è stata caricata, usa ShapeRenderer verde
+        boolean hasShopTexture = false;
+        if (shopTextures != null) {
+            for (Texture t : shopTextures) {
+                if (t != null) hasShopTexture = true;
+            }
+        }
+        if (!hasShopTexture) {
+            shapeRenderer.setColor(Color.GREEN);
+            for (ShopNPC shop : shops) {
+                shapeRenderer.rect(shop.getX(), shop.getY(), 32, 32);
+            }
         }
 
         shapeRenderer.setColor(Color.RED);
@@ -373,37 +422,47 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         }
 
         boolean nearEnemy = false;
+        boolean nearShop = false;
 
+        // Verifica prossimità nemici
         for (Enemy enemy : enemies) {
-
-            EnemyInteraction interaction =
-                new EnemyInteraction(
-                    player,
-                    enemy,
-                    battleManager
-                );
-
+            EnemyInteraction interaction = new EnemyInteraction(player, enemy, battleManager);
             if (interaction.canInteract()) {
-
                 nearEnemy = true;
-
                 if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-
                     interaction.interact();
-
-                    Gdx.input.setInputProcessor(
-                        hud.getStage()
-                    );
+                    Gdx.input.setInputProcessor(hud.getStage());
                 }
-
                 break;
             }
         }
-        hud.setInteractVisible(nearEnemy);
-        itemManager.update();
-        inventoryManager.update();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            advanceFloor();
+
+        // Verifica prossimità shop (solo se non siamo già vicini a un nemico)
+        if (!nearEnemy) {
+            for (final ShopNPC shop : shops) {
+                ShopInteraction interaction = new ShopInteraction(player, shop, new ShopInteraction.Listener() {
+                    @Override
+                    public void onShopOpened(ShopNPC s) {
+                        openShop(s);
+                    }
+                });
+                if (interaction.canInteract()) {
+                    nearShop = true;
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                        interaction.interact();
+                    }
+                    break;
+                }
+            }
+        }
+
+        hud.setInteractVisible(nearEnemy || nearShop);
+        if (!inShop) {
+            itemManager.update();
+            inventoryManager.update();
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                advanceFloor();
+            }
         }
     }
 
@@ -564,6 +623,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             state.killCount++;
             Gdx.app.log("Battle", "Enemy killed. Total kills: " + state.killCount);
         }
+        state.gold += 10;
+        hud.updateGold(state.gold);
         enemies.removeValue(enemy, true);
     }
 
@@ -573,6 +634,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             state.spareCount++;
             Gdx.app.log("Battle", "Enemy spared. Total spares: " + state.spareCount);
         }
+        state.gold += 10;
+        hud.updateGold(state.gold);
         enemies.removeValue(enemy, true);
     }
 
@@ -631,6 +694,32 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     @Override
     public void onExit() {
         Gdx.app.exit();
+    }
+
+    @Override
+    public void onBuyPotion(int price) {
+        if (state.gold >= price) {
+            state.gold -= price;
+            hud.updateGold(state.gold);
+            player.getInventory().addItem(new io.github.crystals_of_the_soul.model.entity.Item(0, 0, "Pozione"));
+            hud.showNotification("Hai comprato una Pozione!");
+        } else {
+            hud.showNotification("Oro insufficiente!");
+        }
+    }
+
+    @Override
+    public void onCloseShop() {
+        inShop = false;
+        hud.hideShop();
+        Gdx.input.setInputProcessor(null);
+    }
+
+    private void openShop(ShopNPC shop) {
+        inShop = true;
+        hud.updateGold(state.gold);
+        hud.showShop();
+        Gdx.input.setInputProcessor(hud.getStage());
     }
 
     // -------------------------------------------------------------------------
@@ -723,6 +812,21 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
     private void spawnEnemies() {
         enemies.clear();
+        shops.clear();
+
+        String mapPath = state.getCurrentMapPath();
+        int shopImgIndex = 0;
+        if (mapPath != null) {
+            if (mapPath.contains("lvl1")) {
+                shopImgIndex = 1;
+            } else if (mapPath.contains("lvl3")) {
+                shopImgIndex = 2;
+            }
+        }
+        for (Vector2 s : collisionManager.getShopSpawns(map)) {
+            shops.add(new ShopNPC(s.x, s.y, shopImgIndex));
+        }
+
         boolean isBossFloor = (state.currentFloor == 4 || state.currentFloor == 5) && state.hasCrystal();
         boolean isMiniBossFloor = state.currentFloor == 2 || state.currentFloor == 3;
 
