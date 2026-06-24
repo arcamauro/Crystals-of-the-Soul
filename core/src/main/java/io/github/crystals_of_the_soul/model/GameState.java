@@ -86,21 +86,8 @@ public class GameState {
     /**
      * Determina il finale del gioco in base al cristallo assegnato e ai contatori morali.
      */
-    public EndingType determineEnding() {
-        if (!hasCrystal()) return null;
-
-        switch (crystal) {
-            case RED:
-                return EndingType.GUARDIAN;
-            case BLUE:
-                return EndingType.HERO;
-            case GREEN:
-                if(killCount > spareCount) return EndingType.WANDERER;
-                if(spareCount > killCount) return EndingType.CITIZEN;
-                return EndingType.CHOICE; // killCount == spareCount
-            default:
-                return null;
-        }
+    public io.github.crystals_of_the_soul.model.ending.EndingStrategy determineEnding() {
+        return io.github.crystals_of_the_soul.model.ending.EndingResolver.resolve(this);
     }
 
     /**

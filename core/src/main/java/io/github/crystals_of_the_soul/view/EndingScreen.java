@@ -13,14 +13,16 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.crystals_of_the_soul.Main;
-import io.github.crystals_of_the_soul.model.EndingType;
 import io.github.crystals_of_the_soul.model.GameState;
+import io.github.crystals_of_the_soul.model.ending.CitizenEndingStrategy;
+import io.github.crystals_of_the_soul.model.ending.EndingStrategy;
+import io.github.crystals_of_the_soul.model.ending.GuardianEndingStrategy;
 
 public class EndingScreen implements Screen {
 
     private final Main game;
     private final GameState state;
-    private final EndingType ending;
+    private final EndingStrategy ending;
 
     private Stage stage;
     private Skin skin;
@@ -39,7 +41,7 @@ public class EndingScreen implements Screen {
      * Costruttore usato per il finale CHOICE — il giocatore ha scelto
      * esplicitamente il proprio destino tra CITIZEN e GUARDIAN.
      */
-    public EndingScreen(Main game, GameState state, EndingType ending) {
+    public EndingScreen(Main game, GameState state, EndingStrategy ending) {
         this.game = game;
         this.state = state;
         this.ending = ending;
@@ -64,12 +66,12 @@ public class EndingScreen implements Screen {
         table.add(titleLabel).padBottom(40).row();
         table.add(narrativeLabel).width(600).padBottom(40).row();
 
-        if (ending == EndingType.CHOICE) {
+        if (ending.isInteractive()) {
             TextButton exitBtn = new TextButton("Lascia il dungeon", skin);
             exitBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    game.setScreen(new EndingScreen(game, state, EndingType.CITIZEN));
+                    game.setScreen(new EndingScreen(game, state, new CitizenEndingStrategy()));
                 }
             });
 
@@ -77,7 +79,7 @@ public class EndingScreen implements Screen {
             stayBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    game.setScreen(new EndingScreen(game, state, EndingType.GUARDIAN));
+                    game.setScreen(new EndingScreen(game, state, new GuardianEndingStrategy()));
                 }
             });
 
