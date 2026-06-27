@@ -26,7 +26,6 @@ import io.github.crystals_of_the_soul.controller.InventoryManager;
 import io.github.crystals_of_the_soul.controller.ItemManager;
 import io.github.crystals_of_the_soul.controller.interactions.EnemyInteraction;
 import io.github.crystals_of_the_soul.controller.interactions.ShopInteraction;
-import io.github.crystals_of_the_soul.model.ShopNPC;
 import io.github.crystals_of_the_soul.model.Boss;
 import io.github.crystals_of_the_soul.model.Enemy;
 import io.github.crystals_of_the_soul.model.GameState;
@@ -34,6 +33,8 @@ import io.github.crystals_of_the_soul.model.NormalEnemy;
 import io.github.crystals_of_the_soul.model.Player;
 import io.github.crystals_of_the_soul.model.Player2;
 import io.github.crystals_of_the_soul.model.SaveManager;
+import io.github.crystals_of_the_soul.model.ShopNPC;
+import io.github.crystals_of_the_soul.model.ShopNPCFactory;
 import io.github.crystals_of_the_soul.model.boss.BossFactory;
 import io.github.crystals_of_the_soul.model.boss.MirrorBlueBoss;
 import io.github.crystals_of_the_soul.model.entity.Item;
@@ -66,6 +67,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     private Array<ShopNPC> shops;
     private Texture[] shopTextures;
     private boolean inShop = false;
+    private ShopNPC activeShop;
 
     private CollisionManager collisionManager;
     private BattleManager battleManager;
@@ -75,6 +77,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
     private InventoryManager inventoryManager;
     private ItemManager itemManager;
+    private final Vector2 tempDir = new Vector2();
+
     public GameScreen(Main game, AssetManager assets) {
         this.game = game;
         this.assets = assets;
@@ -264,26 +268,26 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         float dx = inShop ? 0f : inputHandler.getDx();
         float dy = inShop ? 0f : inputHandler.getDy();
-        Vector2 dir = new Vector2(dx, dy);
-        if (dir.len() > 0) dir.nor();
+        tempDir.set(dx, dy);
+        if (tempDir.len() > 0) tempDir.nor();
 
         // Aggiorna lo sprite animato se presente
         if (playerSprite != null) playerSprite.update(delta, dx, dy);
 
         // Calcola movimento proposto
         float moveAmount = 200f * delta;
-        float newX = player.getX() + dir.x * moveAmount;
-        float newY = player.getY() + dir.y * moveAmount;
+        float newX = player.getX() + tempDir.x * moveAmount;
+        float newY = player.getY() + tempDir.y * moveAmount;
 
         // Verifica X
         if (!inShop && !collisionManager.wouldCollide(newX + Player.HITBOX_OFFSET, player.getY() + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
-            player.update(dir.x, 0, delta);
+            player.update(tempDir.x, 0, delta);
         }
 
         // Verifica Y (usa la nuova posizione X se è stata accettata)
-        newY = player.getY() + dir.y * moveAmount;
+        newY = player.getY() + tempDir.y * moveAmount;
         if (!inShop && !collisionManager.wouldCollide(player.getX() + Player.HITBOX_OFFSET, newY + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
-            player.update(0, dir.y, delta);
+            player.update(0, tempDir.y, delta);
         }
 
         state.getPlayer1().x = player.getX();
@@ -310,7 +314,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         mapRenderer.render();
 
         // Aggiorna stato animazione in base al movimento d'ingresso
-        if (dir.len() > 0) {
+        if (tempDir.len() > 0) {
             animStateTime += delta;
             if (Math.abs(dx) > Math.abs(dy)) {
                 lastDirection = dx > 0 ? 2 : 1;
@@ -323,7 +327,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         // Scegli frame corrente (solo se non stiamo usando AnimatedSprite centralizzato)
         TextureRegion currentFrame = stillRegion;
-        if (playerSprite == null && dir.len() > 0) {
+        if (playerSprite == null && tempDir.len() > 0) {
             switch (lastDirection) {
                 case 1:
                     if (walkLeftAnim != null) currentFrame = walkLeftAnim.getKeyFrame(animStateTime, true);
@@ -426,10 +430,10 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         // Verifica prossimità nemici
         for (Enemy enemy : enemies) {
-            EnemyInteraction interaction = new EnemyInteraction(player, enemy, battleManager);
-            if (interaction.canInteract()) {
+            if (Vector2.dst2(player.getX(), player.getY(), enemy.getX(), enemy.getY()) < 3600f) {
                 nearEnemy = true;
                 if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                    EnemyInteraction interaction = new EnemyInteraction(player, enemy, battleManager);
                     interaction.interact();
                     Gdx.input.setInputProcessor(hud.getStage());
                 }
@@ -440,15 +444,15 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         // Verifica prossimità shop (solo se non siamo già vicini a un nemico)
         if (!nearEnemy) {
             for (final ShopNPC shop : shops) {
-                ShopInteraction interaction = new ShopInteraction(player, shop, new ShopInteraction.Listener() {
-                    @Override
-                    public void onShopOpened(ShopNPC s) {
-                        openShop(s);
-                    }
-                });
-                if (interaction.canInteract()) {
+                if (Vector2.dst2(player.getX(), player.getY(), shop.getX(), shop.getY()) < 3600f) {
                     nearShop = true;
                     if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                        ShopInteraction interaction = new ShopInteraction(player, shop, new ShopInteraction.Listener() {
+                            @Override
+                            public void onShopOpened(ShopNPC s) {
+                                openShop(s);
+                            }
+                        });
                         interaction.interact();
                     }
                     break;
@@ -697,12 +701,12 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     }
 
     @Override
-    public void onBuyPotion(int price) {
+    public void onBuyItem(String itemName, int price) {
         if (state.gold >= price) {
             state.gold -= price;
             hud.updateGold(state.gold);
-            player.getInventory().addItem(new io.github.crystals_of_the_soul.model.entity.Item(0, 0, "Pozione"));
-            hud.showNotification("Hai comprato una Pozione!");
+            player.getInventory().addItem(new io.github.crystals_of_the_soul.model.entity.Item(0, 0, itemName));
+            hud.showNotification("Hai comprato: " + itemName + "!");
         } else {
             hud.showNotification("Oro insufficiente!");
         }
@@ -711,14 +715,16 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     @Override
     public void onCloseShop() {
         inShop = false;
+        activeShop = null;
         hud.hideShop();
         Gdx.input.setInputProcessor(null);
     }
 
     private void openShop(ShopNPC shop) {
+        activeShop = shop;
         inShop = true;
         hud.updateGold(state.gold);
-        hud.showShop();
+        hud.showShop(shop.getName(), shop.getDialogue(), shop.getItemName(), shop.getPotionPrice());
         Gdx.input.setInputProcessor(hud.getStage());
     }
 
@@ -814,17 +820,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         enemies.clear();
         shops.clear();
 
-        String mapPath = state.getCurrentMapPath();
-        int shopImgIndex = 0;
-        if (mapPath != null) {
-            if (mapPath.contains("lvl1")) {
-                shopImgIndex = 1;
-            } else if (mapPath.contains("lvl3")) {
-                shopImgIndex = 2;
-            }
-        }
-        for (Vector2 s : collisionManager.getShopSpawns(map)) {
-            shops.add(new ShopNPC(s.x, s.y, shopImgIndex));
+        for (CollisionManager.ShopSpawnData s : collisionManager.getShopSpawns(map, state.getCurrentMapPath())) {
+            shops.add(ShopNPCFactory.create(s.position.x, s.position.y, s.shopType));
         }
 
         boolean isBossFloor = (state.currentFloor == 4 || state.currentFloor == 5) && state.hasCrystal();

@@ -1,15 +1,14 @@
 package io.github.crystals_of_the_soul.model;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.crystals_of_the_soul.controller.CollisionManager;
 
 public class Player2 {
     private final Player2State state;
-    private final Queue<Vector2> pathHistory;
+    private final Vector2[] pathHistory;
+    private int pathHistorySize = 0;
+    private int pathHistoryIndex = 0; // Circular write index
     public static final int PATH_DELAY = 20;  // Frame di ritardo per il caterpillar
     public static final float DEFAULT_SPEED = 180f;   // Velocità fissa base
 
@@ -21,7 +20,10 @@ public class Player2 {
 
     public Player2(Player2State state, Player2Behavior behavior) {
         this.state = state;
-        this.pathHistory = new LinkedList<>();
+        this.pathHistory = new Vector2[PATH_DELAY];
+        for (int i = 0; i < PATH_DELAY; i++) {
+            pathHistory[i] = new Vector2();
+        }
         this.behavior = behavior;
     }
 
@@ -30,9 +32,12 @@ public class Player2 {
     }
 
     public void recordPosition(float x, float y) {
-        pathHistory.add(new Vector2(x, y));
-        if (pathHistory.size() > PATH_DELAY) {
-            pathHistory.poll();
+        if (pathHistorySize < PATH_DELAY) {
+            pathHistory[pathHistorySize].set(x, y);
+            pathHistorySize++;
+        } else {
+            pathHistory[pathHistoryIndex].set(x, y);
+            pathHistoryIndex = (pathHistoryIndex + 1) % PATH_DELAY;
         }
     }
 
@@ -52,7 +57,12 @@ public class Player2 {
 
     // Helpers used by behaviors
     public Vector2 peekTarget() {
-        return pathHistory.peek();
+        if (pathHistorySize == 0) return null;
+        if (pathHistorySize < PATH_DELAY) {
+            return pathHistory[0];
+        } else {
+            return pathHistory[pathHistoryIndex];
+        }
     }
 
     public void tryMove(float newX, float newY, CollisionManager collisionManager) {

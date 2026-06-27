@@ -19,7 +19,7 @@ public class GameHud {
         void onSave();
         void onMainMenu();
         void onExit();
-        void onBuyPotion(int price);
+        void onBuyItem(String itemName, int price);
         void onCloseShop();
     }
 
@@ -43,6 +43,11 @@ public class GameHud {
     private TextButton talkBtn;
     private TextButton buyPotionBtn;
     private TextButton exitShopBtn;
+
+    private Label shopTitleLabel;
+    private Label shopWelcomeLabel;
+    private String activeItemName;
+    private int activeItemPrice;
 
     private Label notificationLabel;
     private float notificationTimer;
@@ -215,16 +220,16 @@ public class GameHud {
         shopTable.setFillParent(true);
         shopTable.center();
 
-        Label shopTitle = new Label("Mercante", skin);
-        shopTitle.setFontScale(1.5f);
-        Label shopWelcome = new Label("Benvenuto! Vuoi comprare una Pozione per 15 Oro?", skin);
-        shopWelcome.setWrap(true);
+        shopTitleLabel = new Label("Mercante", skin);
+        shopTitleLabel.setFontScale(1.5f);
+        shopWelcomeLabel = new Label("Benvenuto!", skin);
+        shopWelcomeLabel.setWrap(true);
 
-        buyPotionBtn = new TextButton("Compra Pozione (15 Oro)", skin);
+        buyPotionBtn = new TextButton("Compra", skin);
         buyPotionBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                callbacks.onBuyPotion(15);
+                callbacks.onBuyItem(activeItemName, activeItemPrice);
             }
         });
 
@@ -236,13 +241,18 @@ public class GameHud {
             }
         });
 
-        shopTable.add(shopTitle).padBottom(10).row();
-        shopTable.add(shopWelcome).width(400).padBottom(20).row();
+        shopTable.add(shopTitleLabel).padBottom(10).row();
+        shopTable.add(shopWelcomeLabel).width(400).padBottom(20).row();
         shopTable.add(buyPotionBtn).width(250).height(45).padBottom(10).row();
         shopTable.add(exitShopBtn).width(150).height(40);
     }
 
-    public void showShop() {
+    public void showShop(String title, String welcomeText, String itemName, int price) {
+        shopTitleLabel.setText(title);
+        shopWelcomeLabel.setText(welcomeText);
+        buyPotionBtn.setText("Compra " + itemName + " (" + price + " Oro)");
+        this.activeItemName = itemName;
+        this.activeItemPrice = price;
         shopTable.setVisible(true);
     }
 

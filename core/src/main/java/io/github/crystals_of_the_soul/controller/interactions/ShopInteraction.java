@@ -22,12 +22,12 @@ public class ShopInteraction implements InteractionStrategy {
 
     @Override
     public boolean canInteract() {
-        return Vector2.dst(
+        return Vector2.dst2(
             player.getX(),
             player.getY(),
             shop.getX(),
             shop.getY()
-        ) < 60;
+        ) < 3600f;
     }
 
     @Override

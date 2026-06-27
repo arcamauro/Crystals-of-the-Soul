@@ -28,6 +28,16 @@ public class CollisionManager {
         }
     }
 
+    public static class ShopSpawnData {
+        public final Vector2 position;
+        public final String shopType;
+
+        public ShopSpawnData(Vector2 position, String shopType) {
+            this.position = position;
+            this.shopType = shopType;
+        }
+    }
+
     private final Array<Rectangle> rects = new Array<>();
     private final Array<Portal> portals = new Array<>();
     // Optional Y offset (pixels) to apply to tile-object collision rectangles.
@@ -110,11 +120,7 @@ public class CollisionManager {
         MapLayer layer = map.getLayers().get("NPC");
         if (layer != null) {
             for (MapObject obj : layer.getObjects()) {
-                String aspetto = getStringProperty(obj, "aspetto");
-                String type = getStringProperty(obj, "type");
-                String typeTutorial = getStringProperty(obj, "type_tutorial");
-                boolean isShop = "shop".equals(aspetto) || "shop".equals(type) || "shop".equals(typeTutorial);
-                if (isShop) continue;
+                if (isShopNPC(obj)) continue;
 
                 Vector2 pos = getObjectPosition(obj);
                 if (pos != null) spawns.add(pos);
@@ -123,18 +129,30 @@ public class CollisionManager {
         return spawns;
     }
 
-    public Array<Vector2> getShopSpawns(TiledMap map) {
-        Array<Vector2> spawns = new Array<>();
+    public Array<ShopSpawnData> getShopSpawns(TiledMap map, String mapPath) {
+        Array<ShopSpawnData> spawns = new Array<>();
         MapLayer layer = map.getLayers().get("NPC");
         if (layer != null) {
             for (MapObject obj : layer.getObjects()) {
-                String aspetto = getStringProperty(obj, "aspetto");
-                String type = getStringProperty(obj, "type");
-                String typeTutorial = getStringProperty(obj, "type_tutorial");
-                boolean isShop = "shop".equals(aspetto) || "shop".equals(type) || "shop".equals(typeTutorial);
-                if (isShop) {
+                if (isShopNPC(obj)) {
                     Vector2 pos = getObjectPosition(obj);
-                    if (pos != null) spawns.add(pos);
+                    if (pos != null) {
+                        String aspetto = getStringProperty(obj, "aspetto");
+                        String type = getStringProperty(obj, "type");
+                        String typeTutorial = getStringProperty(obj, "type_tutorial");
+                        String shopType = aspetto != null ? aspetto : (type != null ? type : typeTutorial);
+                        
+                        // Default to map-specific shop keepers if generic "shop" is found
+                        if ("shop".equals(shopType) && mapPath != null) {
+                            if (mapPath.contains("lvl1")) {
+                                shopType = "shop1";
+                            } else if (mapPath.contains("lvl3")) {
+                                shopType = "shop2";
+                            }
+                        }
+                        
+                        spawns.add(new ShopSpawnData(pos, shopType));
+                    }
                 }
             }
         }
@@ -167,6 +185,15 @@ public class CollisionManager {
     private String getStringProperty(MapObject obj, String key) {
         Object value = obj.getProperties().get(key);
         return value instanceof String ? (String) value : null;
+    }
+
+    private boolean isShopNPC(MapObject obj) {
+        String aspetto = getStringProperty(obj, "aspetto");
+        String type = getStringProperty(obj, "type");
+        String typeTutorial = getStringProperty(obj, "type_tutorial");
+        return "shop".equals(aspetto) || "shop".equals(type) || "shop".equals(typeTutorial)
+            || "shop1".equals(aspetto) || "shop1".equals(type)
+            || "shop2".equals(aspetto) || "shop2".equals(type);
     }
 
     private void loadPortalsFromLayers(Iterable<MapLayer> layers) {

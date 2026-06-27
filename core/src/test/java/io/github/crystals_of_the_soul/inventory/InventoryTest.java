@@ -64,4 +64,29 @@ class InventoryTest {
         );
     }
 
+    @Test
+    void useSuperPotionHealsPlayer50HP() {
+        Player player = new Player(0, 0);
+        player.takeDamage(80); // HP is 20
+        Inventory inventory = player.getInventory();
+        inventory.addItem(new Item(0, 0, "Super Pozione"));
+
+        boolean used = inventory.usePotion(player);
+
+        assertTrue(used);
+        assertEquals(70, player.getHp()); // 20 + 50 = 70 HP
+    }
+
+    @Test
+    void useElixirOfStrengthHealsPlayer100HP() {
+        Player player = new Player(0, 0);
+        player.takeDamage(90); // HP is 10
+        Inventory inventory = player.getInventory();
+        inventory.addItem(new Item(0, 0, "Elisir di Forza"));
+
+        boolean used = inventory.usePotion(player);
+
+        assertTrue(used);
+        assertEquals(100, player.getHp()); // 10 + 100 capped at 100 HP
+    }
 }

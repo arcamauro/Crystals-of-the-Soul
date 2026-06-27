@@ -32,17 +32,25 @@ public class Inventory {
 
     public boolean usePotion(Player player) {
         for (Item item : items) {
-            if (item.getName().contains("Pozione")) {
+            String name = item.getName();
+            if (name.contains("Pozione") || name.contains("Elisir") || name.contains("Super")) {
+                int healAmount = 20;
+                if (name.contains("Super")) {
+                    healAmount = 50;
+                } else if (name.contains("Elisir")) {
+                    healAmount = 100;
+                }
+
                 if (observer != null) {
                     observer.onItemUsed(item);
                 }
-                player.heal(20);
+                player.heal(healAmount);
                 items.removeValue(item, true);
-                System.out.println("Pozione usata!");
+                System.out.println(name + " usata! Curato di " + healAmount + " HP.");
                 return true;
             }
         }
-        System.out.println("Nessuna pozione!");
+        System.out.println("Nessun oggetto curativo!");
         return false;
     }
 }
