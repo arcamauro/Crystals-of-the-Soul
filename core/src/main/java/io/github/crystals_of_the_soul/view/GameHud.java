@@ -32,6 +32,7 @@ public class GameHud {
     private Table shopTable;
 
     private Label playerHpLabel;
+    private Label playerStatsLabel;
     private Label player2HpLabel;
     private Label goldLabel;
     private Label interactLabel;
@@ -42,12 +43,16 @@ public class GameHud {
     private TextButton attackBtn;
     private TextButton talkBtn;
     private TextButton buyPotionBtn;
+    private TextButton buySwordBtn;
+    private TextButton buyArmorBtn;
     private TextButton exitShopBtn;
 
     private Label shopTitleLabel;
     private Label shopWelcomeLabel;
     private String activeItemName;
-    private int activeItemPrice;
+    private int activePotionPrice;
+    private int activeSwordPrice;
+    private int activeArmorPrice;
 
     private Label notificationLabel;
     private float notificationTimer;
@@ -80,11 +85,13 @@ public class GameHud {
         hudTable.top().left().pad(10);
 
         playerHpLabel = new Label("HP: " + initialHp, skin);
+        playerStatsLabel = new Label("ATK: 10 | DEF: 0", skin);
         player2HpLabel = new Label("", skin);
         goldLabel = new Label("Oro: 20", skin);
         interactLabel = new Label("Premi E per interagire", skin);
 
         hudTable.add(playerHpLabel).row();
+        hudTable.add(playerStatsLabel).row();
         hudTable.add(player2HpLabel).row();
         hudTable.add(goldLabel).row();
         hudTable.add(interactLabel);
@@ -203,6 +210,10 @@ public class GameHud {
         playerHpLabel.setText("HP: " + hp);
     }
 
+    public void updatePlayerStats(int attack, int defense) {
+        playerStatsLabel.setText("ATK: " + attack + " | DEF: " + defense);
+    }
+
     public void updatePlayer2Hp(String text) {
         player2HpLabel.setText(text);
     }
@@ -229,7 +240,23 @@ public class GameHud {
         buyPotionBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                callbacks.onBuyItem(activeItemName, activeItemPrice);
+                callbacks.onBuyItem(activeItemName, activePotionPrice);
+            }
+        });
+
+        buySwordBtn = new TextButton("Compra Spada", skin);
+        buySwordBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                callbacks.onBuyItem("Spada", activeSwordPrice);
+            }
+        });
+
+        buyArmorBtn = new TextButton("Compra Armatura", skin);
+        buyArmorBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                callbacks.onBuyItem("Armatura", activeArmorPrice);
             }
         });
 
@@ -243,16 +270,22 @@ public class GameHud {
 
         shopTable.add(shopTitleLabel).padBottom(10).row();
         shopTable.add(shopWelcomeLabel).width(400).padBottom(20).row();
-        shopTable.add(buyPotionBtn).width(250).height(45).padBottom(10).row();
+        shopTable.add(buyPotionBtn).width(300).height(45).padBottom(10).row();
+        shopTable.add(buySwordBtn).width(300).height(45).padBottom(10).row();
+        shopTable.add(buyArmorBtn).width(300).height(45).padBottom(10).row();
         shopTable.add(exitShopBtn).width(150).height(40);
     }
 
-    public void showShop(String title, String welcomeText, String itemName, int price) {
+    public void showShop(String title, String welcomeText, String itemName, int potionPrice, int swordPrice, int armorPrice) {
         shopTitleLabel.setText(title);
         shopWelcomeLabel.setText(welcomeText);
-        buyPotionBtn.setText("Compra " + itemName + " (" + price + " Oro)");
+        buyPotionBtn.setText("Compra " + itemName + " (" + potionPrice + " Oro)");
+        buySwordBtn.setText("Compra Spada (+5 ATK) (" + swordPrice + " Oro)");
+        buyArmorBtn.setText("Compra Armatura (+5 DEF) (" + armorPrice + " Oro)");
         this.activeItemName = itemName;
-        this.activeItemPrice = price;
+        this.activePotionPrice = potionPrice;
+        this.activeSwordPrice = swordPrice;
+        this.activeArmorPrice = armorPrice;
         shopTable.setVisible(true);
     }
 

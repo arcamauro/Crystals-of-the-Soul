@@ -139,6 +139,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         Vector2 spawn = collisionManager.getPlayerSpawn(map);
         player = new Player(
+            state.getPlayer1(),
             state.getPlayer1().x != 0 ? state.getPlayer1().x : spawn.x,
             state.getPlayer1().y != 0 ? state.getPlayer1().y : spawn.y
         );
@@ -415,6 +416,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         shapeRenderer.end();
 
         hud.updatePlayerHp(player.getHp());
+        hud.updatePlayerStats(player.getAttack(), player.getDefense());
         if (player2 != null) {
             String p2Text = player2.getState().playerClass.name() + " HP: " + player2.getHp();
             if (player2.getState().playerClass == io.github.crystals_of_the_soul.model.Player2Class.PROTECTOR) {
@@ -430,7 +432,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         // Verifica prossimità nemici
         for (Enemy enemy : enemies) {
-            if (Vector2.dst2(player.getX(), player.getY(), enemy.getX(), enemy.getY()) < 3600f) {
+            if (Vector2.dst2(player.getX(), player.getY(), enemy.getX(), enemy.getY()) < 900f) {
                 nearEnemy = true;
                 if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                     EnemyInteraction interaction = new EnemyInteraction(player, enemy, battleManager);
@@ -444,7 +446,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         // Verifica prossimità shop (solo se non siamo già vicini a un nemico)
         if (!nearEnemy) {
             for (final ShopNPC shop : shops) {
-                if (Vector2.dst2(player.getX(), player.getY(), shop.getX(), shop.getY()) < 3600f) {
+                if (Vector2.dst2(player.getX(), player.getY(), shop.getX(), shop.getY()) < 900f) {
                     nearShop = true;
                     if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                         ShopInteraction interaction = new ShopInteraction(player, shop, new ShopInteraction.Listener() {
@@ -475,6 +477,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         // Aggiorna HUD in tempo reale per la battaglia
         hud.updatePlayerHp(player.getHp());
+        hud.updatePlayerStats(player.getAttack(), player.getDefense());
         if (player2 != null) {
             String p2Text = player2.getState().playerClass.name() + " HP: " + player2.getHp();
             if (player2.getState().playerClass == io.github.crystals_of_the_soul.model.Player2Class.PROTECTOR) {
@@ -671,7 +674,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
     @Override
     public void onAttack() {
-        battleManager.onAttack(player2);
+        battleManager.onAttack(player.getAttack(), player2);
     }
 
     @Override
@@ -702,11 +705,23 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
     @Override
     public void onBuyItem(String itemName, int price) {
+        System.out.println("onBuyItem called: " + itemName + ", price: " + price + ", current gold: " + state.gold);
         if (state.gold >= price) {
             state.gold -= price;
             hud.updateGold(state.gold);
-            player.getInventory().addItem(new io.github.crystals_of_the_soul.model.entity.Item(0, 0, itemName));
-            hud.showNotification("Hai comprato: " + itemName + "!");
+            io.github.crystals_of_the_soul.model.entity.Item item = new io.github.crystals_of_the_soul.model.entity.Item(0, 0, itemName);
+            player.getInventory().addItem(item);
+            System.out.println("Item added. Inventory size: " + player.getInventory().getItems().size);
+            
+            // Execute the UseItemInteraction strategy to apply the item effect
+            io.github.crystals_of_the_soul.controller.interactions.UseItemInteraction interaction =
+                new io.github.crystals_of_the_soul.controller.interactions.UseItemInteraction(player, item);
+            boolean canUse = interaction.canInteract();
+            System.out.println("canInteract: " + canUse);
+            if (canUse) {
+                interaction.interact();
+                System.out.println("Applied! Player Attack: " + player.getAttack() + ", Defense: " + player.getDefense());
+            }
         } else {
             hud.showNotification("Oro insufficiente!");
         }
@@ -720,11 +735,27 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         Gdx.input.setInputProcessor(null);
     }
 
+    private int getAdjustedPrice(int basePrice) {
+        if (!state.hasCrystal()) return basePrice;
+        switch (state.getCrystal()) {
+            case BLUE:
+                return (int) Math.round(basePrice * 0.8);
+            case RED:
+                return (int) Math.round(basePrice * 1.2);
+            case GREEN:
+            default:
+                return basePrice;
+        }
+    }
+
     private void openShop(ShopNPC shop) {
         activeShop = shop;
         inShop = true;
         hud.updateGold(state.gold);
-        hud.showShop(shop.getName(), shop.getDialogue(), shop.getItemName(), shop.getPotionPrice());
+        int potionPrice = getAdjustedPrice(shop.getPotionPrice());
+        int swordPrice = getAdjustedPrice(40);
+        int armorPrice = getAdjustedPrice(40);
+        hud.showShop(shop.getName(), shop.getDialogue(), shop.getItemName(), potionPrice, swordPrice, armorPrice);
         Gdx.input.setInputProcessor(hud.getStage());
     }
 

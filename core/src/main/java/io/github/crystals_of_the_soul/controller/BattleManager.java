@@ -40,12 +40,16 @@ public class BattleManager {
     }
 
     public void onAttack() {
-        onAttack(null);
+        onAttack(10, null);
     }
 
     public void onAttack(Player2 player2) {
+        onAttack(10, player2);
+    }
+
+    public void onAttack(int playerDamage, Player2 player2) {
         if (!playerTurn || !inBattle) return;
-        currentEnemy.onAttack();
+        currentEnemy.onAttack(playerDamage);
 
         StringBuilder logMsg = new StringBuilder("* Attacchi il nemico!");
         if (player2 != null && player2.getBehavior() != null) {
@@ -119,8 +123,8 @@ public class BattleManager {
         }
 
         if (remainingDamage > 0) {
-            player.takeDamage(remainingDamage);
-            logMsg.append("\n* Subisci ").append(remainingDamage).append(" danni!");
+            int actualDamage = player.takeDamage(remainingDamage);
+            logMsg.append("\n* Subisci ").append(actualDamage).append(" danni!");
         }
 
         int hp = player.getHp();

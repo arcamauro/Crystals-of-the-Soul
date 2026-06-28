@@ -27,7 +27,7 @@ public class ShopInteraction implements InteractionStrategy {
             player.getY(),
             shop.getX(),
             shop.getY()
-        ) < 3600f;
+        ) < 900f;
     }
 
     @Override

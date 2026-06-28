@@ -26,7 +26,11 @@ public abstract class Enemy {
      * Chiamato quando il giocatore attacca.
      * Le sottoclassi possono sovrascrivere per comportamenti speciali.
      */
-    public abstract void onAttack();
+    public void onAttack() {
+        onAttack(10);
+    }
+
+    public abstract void onAttack(int playerDamage);
 
     /**
      * Chiamato quando il giocatore parla.

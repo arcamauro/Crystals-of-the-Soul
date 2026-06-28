@@ -22,9 +22,9 @@ public class GuardianBoss extends Boss {
     }
 
     @Override
-    public void onAttack() {
+    public void onAttack(int playerDamage) {
         attackCount++;
-        takeDamage(8);
+        takeDamage(playerDamage);
         dialogueIndex++;
     }
 

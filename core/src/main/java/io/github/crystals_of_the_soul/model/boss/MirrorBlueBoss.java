@@ -19,7 +19,7 @@ public class MirrorBlueBoss extends Boss {
     }
 
     @Override
-    public void onAttack() {
+    public void onAttack(int playerDamage) {
         takeDamage(hp);
         dialogueIndex++;
     }

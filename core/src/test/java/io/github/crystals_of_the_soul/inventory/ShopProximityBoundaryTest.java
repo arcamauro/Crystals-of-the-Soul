@@ -12,27 +12,27 @@ public class ShopProximityBoundaryTest {
     @Test
     void testProximityBoundaryInside() {
         Player player = new Player(100f, 100f);
-        // Distance 59f (59^2 = 3481 < 3600) -> should be inside
-        ShopNPC shop = new PotionMerchant(159f, 100f);
+        // Distance 29f (29^2 = 841 < 900) -> should be inside
+        ShopNPC shop = new PotionMerchant(129f, 100f);
         ShopInteraction interaction = new ShopInteraction(player, shop, s -> {});
-        assertTrue(interaction.canInteract(), "Distance 59 should be within interaction range");
+        assertTrue(interaction.canInteract(), "Distance 29 should be within interaction range");
     }
 
     @Test
     void testProximityBoundaryExactly60() {
         Player player = new Player(100f, 100f);
-        // Distance 60f (60^2 = 3600) -> should not be strictly less than 3600
-        ShopNPC shop = new PotionMerchant(160f, 100f);
+        // Distance 30f (30^2 = 900) -> should not be strictly less than 900
+        ShopNPC shop = new PotionMerchant(130f, 100f);
         ShopInteraction interaction = new ShopInteraction(player, shop, s -> {});
-        assertFalse(interaction.canInteract(), "Distance 60 should not be within interaction range (strict less-than)");
+        assertFalse(interaction.canInteract(), "Distance 30 should not be within interaction range (strict less-than)");
     }
 
     @Test
     void testProximityBoundaryOutside() {
         Player player = new Player(100f, 100f);
-        // Distance 61f (61^2 = 3721 > 3600) -> should be outside
-        ShopNPC shop = new PotionMerchant(161f, 100f);
+        // Distance 31f (31^2 = 961 > 900) -> should be outside
+        ShopNPC shop = new PotionMerchant(131f, 100f);
         ShopInteraction interaction = new ShopInteraction(player, shop, s -> {});
-        assertFalse(interaction.canInteract(), "Distance 61 should be outside interaction range");
+        assertFalse(interaction.canInteract(), "Distance 31 should be outside interaction range");
     }
 }

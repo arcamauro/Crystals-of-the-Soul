@@ -30,24 +30,28 @@ public class Inventory {
         }
     }
 
+    public Array<Item> getItems() {
+        return items;
+    }
+
+    public void removeItem(Item item) {
+        items.removeValue(item, true);
+        if (observer != null) {
+            observer.onItemUsed(item);
+        }
+    }
+
     public boolean usePotion(Player player) {
         for (Item item : items) {
             String name = item.getName();
             if (name.contains("Pozione") || name.contains("Elisir") || name.contains("Super")) {
-                int healAmount = 20;
-                if (name.contains("Super")) {
-                    healAmount = 50;
-                } else if (name.contains("Elisir")) {
-                    healAmount = 100;
+                io.github.crystals_of_the_soul.controller.interactions.UseItemInteraction interaction =
+                    new io.github.crystals_of_the_soul.controller.interactions.UseItemInteraction(player, item);
+                if (interaction.canInteract()) {
+                    interaction.interact();
+                    System.out.println(name + " usata!");
+                    return true;
                 }
-
-                if (observer != null) {
-                    observer.onItemUsed(item);
-                }
-                player.heal(healAmount);
-                items.removeValue(item, true);
-                System.out.println(name + " usata! Curato di " + healAmount + " HP.");
-                return true;
             }
         }
         System.out.println("Nessun oggetto curativo!");

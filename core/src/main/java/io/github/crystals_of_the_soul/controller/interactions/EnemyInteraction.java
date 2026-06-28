@@ -28,7 +28,7 @@ public class EnemyInteraction implements InteractionStrategy {
             player.getY(),
             enemy.getX(),
             enemy.getY()
-        ) < 3600f;
+        ) < 900f;
     }
 
     @Override
