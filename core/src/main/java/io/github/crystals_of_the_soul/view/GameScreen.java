@@ -66,6 +66,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     private Array<Enemy> enemies;
     private Array<ShopNPC> shops;
     private Texture[] shopTextures;
+    private java.util.Map<String, Texture> enemyTextures;
     private boolean inShop = false;
     private ShopNPC activeShop;
 
@@ -74,6 +75,9 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     private GameHud hud;
 
     private float portalCooldown = 0f;
+
+    private float accumulator = 0f;
+    private static final float TIME_STEP = 1f / 60f;
 
     private InventoryManager inventoryManager;
     private ItemManager itemManager;
@@ -161,6 +165,17 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         } catch (Exception e) {
             Gdx.app.log("GameScreen", "Failed to load shop textures: " + e.getMessage());
         }
+
+        enemyTextures = new java.util.HashMap<>();
+        String[] enemySpriteNames = {"Orco", "Skeleton", "MiniBoss", "BossB", "BossG", "BossR"};
+        for (String name : enemySpriteNames) {
+            try {
+                enemyTextures.put(name, new Texture(Gdx.files.internal("sprites/Enemy/" + name + ".png")));
+            } catch (Exception e) {
+                Gdx.app.log("GameScreen", "Failed to load enemy texture " + name + ": " + e.getMessage());
+            }
+        }
+
         spawnEnemies();
 
         battleManager = new BattleManager(this);
@@ -233,6 +248,12 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
                 if (t != null) t.dispose();
             }
         }
+        if (enemyTextures != null) {
+            for (Texture t : enemyTextures.values()) {
+                if (t != null) t.dispose();
+            }
+            enemyTextures.clear();
+        }
         // Dispose del player caricato tramite AnimationManager (se presente)
         AnimationManager.dispose("Player");
         if (player2SpriteKey != null) AnimationManager.dispose(player2SpriteKey);
@@ -264,57 +285,66 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     }
 
     private void renderWorld(float delta) {
+        // Accumulate elapsed frame time
+        float frameTime = Math.min(delta, 0.25f); // Prevent spiral of death
+        accumulator += frameTime;
 
-        state.playTime += delta;
+        while (accumulator >= TIME_STEP) {
+            state.playTime += TIME_STEP;
 
-        float dx = inShop ? 0f : inputHandler.getDx();
-        float dy = inShop ? 0f : inputHandler.getDy();
-        tempDir.set(dx, dy);
-        if (tempDir.len() > 0) tempDir.nor();
+            float currentDx = inShop ? 0f : inputHandler.getDx();
+            float currentDy = inShop ? 0f : inputHandler.getDy();
+            tempDir.set(currentDx, currentDy);
+            if (tempDir.len() > 0) tempDir.nor();
 
-        // Aggiorna lo sprite animato se presente
-        if (playerSprite != null) playerSprite.update(delta, dx, dy);
+            // Calcola movimento proposto con TIME_STEP fisso
+            float moveAmount = 200f * TIME_STEP;
+            float newX = player.getX() + tempDir.x * moveAmount;
 
-        // Calcola movimento proposto
-        float moveAmount = 200f * delta;
-        float newX = player.getX() + tempDir.x * moveAmount;
-        float newY = player.getY() + tempDir.y * moveAmount;
-
-        // Verifica X
-        if (!inShop && !collisionManager.wouldCollide(newX + Player.HITBOX_OFFSET, player.getY() + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
-            player.update(tempDir.x, 0, delta);
-        }
-
-        // Verifica Y (usa la nuova posizione X se è stata accettata)
-        newY = player.getY() + tempDir.y * moveAmount;
-        if (!inShop && !collisionManager.wouldCollide(player.getX() + Player.HITBOX_OFFSET, newY + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
-            player.update(0, tempDir.y, delta);
-        }
-
-        state.getPlayer1().x = player.getX();
-        state.getPlayer1().y = player.getY();
-
-        // Sincronizza Player2 con movimento caterpillar
-        if (player2 != null && !inShop) {
-            player2.recordPosition(player.getX(), player.getY());
-            player2.followPath(delta, collisionManager);
-        }
-
-        if (!inShop) {
-            if (portalCooldown > 0) {
-                portalCooldown = Math.max(0, portalCooldown - delta);
-            } else {
-                checkPortals();
+            // Verifica X
+            if (!inShop && !collisionManager.wouldCollide(newX + Player.HITBOX_OFFSET, player.getY() + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
+                player.update(tempDir.x, 0, TIME_STEP);
             }
+
+            // Verifica Y (usa la nuova posizione X se è stata accettata)
+            float newY = player.getY() + tempDir.y * moveAmount;
+            if (!inShop && !collisionManager.wouldCollide(player.getX() + Player.HITBOX_OFFSET, newY + Player.HITBOX_OFFSET, Player.HITBOX_SIZE, Player.HITBOX_SIZE)) {
+                player.update(0, tempDir.y, TIME_STEP);
+            }
+
+            state.getPlayer1().x = player.getX();
+            state.getPlayer1().y = player.getY();
+
+            // Sincronizza Player2 con movimento caterpillar
+            if (player2 != null && !inShop) {
+                player2.recordPosition(player.getX(), player.getY());
+                player2.followPath(TIME_STEP, collisionManager);
+            }
+
+            if (!inShop) {
+                if (portalCooldown > 0) {
+                    portalCooldown = Math.max(0, portalCooldown - TIME_STEP);
+                } else {
+                    checkPortals();
+                }
+            }
+
+            accumulator -= TIME_STEP;
         }
 
+        // Camera updates and map rendering (per frame)
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
 
         mapRenderer.setView(camera);
         mapRenderer.render();
 
-        // Aggiorna stato animazione in base al movimento d'ingresso
+        // Aggiorna lo sprite animato e lo stato animazione (a frame rate nativo per massima fluidità)
+        float dx = inShop ? 0f : inputHandler.getDx();
+        float dy = inShop ? 0f : inputHandler.getDy();
+        if (playerSprite != null) playerSprite.update(delta, dx, dy);
+
+        tempDir.set(dx, dy);
         if (tempDir.len() > 0) {
             animStateTime += delta;
             if (Math.abs(dx) > Math.abs(dy)) {
@@ -377,6 +407,17 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
                 batch.draw(tex, shop.getX(), shop.getY(), 32f, 32f);
             }
         }
+
+        // Disegna gli Enemy se la texture è disponibile
+        for (Enemy enemy : enemies) {
+            Texture tex = null;
+            if (enemyTextures != null && enemy.getSpriteName() != null) {
+                tex = enemyTextures.get(enemy.getSpriteName());
+            }
+            if (tex != null) {
+                batch.draw(tex, enemy.getX(), enemy.getY(), 32f, 32f);
+            }
+        }
         batch.end();
 
         // Usa ShapeRenderer per gli altri oggetti debug (Player2, nemici, items)
@@ -410,7 +451,10 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         shapeRenderer.setColor(Color.RED);
         for (Enemy enemy : enemies) {
-            shapeRenderer.rect(enemy.getX(), enemy.getY(), 32, 32);
+            boolean hasTexture = enemyTextures != null && enemy.getSpriteName() != null && enemyTextures.containsKey(enemy.getSpriteName());
+            if (!hasTexture) {
+                shapeRenderer.rect(enemy.getX(), enemy.getY(), 32, 32);
+            }
         }
         renderItems();
         shapeRenderer.end();
@@ -491,11 +535,23 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
+        Enemy currentEnemy = battleManager.getCurrentEnemy();
+        boolean hasEnemyTexture = false;
+        Texture enemyTex = null;
+        if (currentEnemy != null && enemyTextures != null && currentEnemy.getSpriteName() != null) {
+            enemyTex = enemyTextures.get(currentEnemy.getSpriteName());
+            if (enemyTex != null) {
+                hasEnemyTexture = true;
+            }
+        }
+
         shapeRenderer.setProjectionMatrix(hud.getStage().getCamera().combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(w * 0.6f, h * 0.45f, 120, 120);
+        if (!hasEnemyTexture) {
+            shapeRenderer.setColor(Color.RED);
+            shapeRenderer.rect(w * 0.6f, h * 0.45f, 120, 120);
+        }
 
         shapeRenderer.setColor(Color.WHITE);
         shapeRenderer.rect(w * 0.1f, h * 0.38f, 96, 96);
@@ -524,6 +580,14 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         }
 
         shapeRenderer.end();
+
+        if (hasEnemyTexture) {
+            SpriteBatch batch = game.batch;
+            batch.setProjectionMatrix(hud.getStage().getCamera().combined);
+            batch.begin();
+            batch.draw(enemyTex, w * 0.6f, h * 0.45f, 120f, 120f);
+            batch.end();
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -855,19 +919,36 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             shops.add(ShopNPCFactory.create(s.position.x, s.position.y, s.shopType));
         }
 
-        boolean isBossFloor = (state.currentFloor == 4 || state.currentFloor == 5) && state.hasCrystal();
-        boolean isMiniBossFloor = state.currentFloor == 2 || state.currentFloor == 3;
-
-        if (isBossFloor) {
-            Vector2 bossSpawn = collisionManager.getBossSpawn(map);
-            enemies.add(BossFactory.forFloor(state.getCrystal(), state.currentFloor).createBoss(bossSpawn.x, bossSpawn.y));
-        } else if (isMiniBossFloor) {
-            Vector2 bossSpawn = collisionManager.getBossSpawn(map);
-            enemies.add(new NormalEnemy(bossSpawn.x, bossSpawn.y, 150));
-        } else {
-            for (Vector2 s : collisionManager.getEnemySpawns(map)) {
-                enemies.add(new NormalEnemy(s.x, s.y));
+        // Carichiamo i boss/mini-boss dal layer Boss/boss
+        for (CollisionManager.BossSpawnData b : collisionManager.getBossSpawns(map)) {
+            if (b.isBoss) {
+                if (state.hasCrystal()) {
+                    enemies.add(BossFactory.forFloor(state.getCrystal(), state.currentFloor).createBoss(b.position.x, b.position.y));
+                }
+            } else if (b.isMiniBoss) {
+                if (state.currentFloor == 4) {
+                    if (state.hasCrystal()) {
+                        Enemy boss = BossFactory.forFloor(state.getCrystal(), state.currentFloor).createBoss(b.position.x, b.position.y);
+                        boss.setSpriteName("MiniBoss");
+                        enemies.add(boss);
+                    }
+                } else {
+                    NormalEnemy miniBoss = new NormalEnemy(b.position.x, b.position.y, 150);
+                    miniBoss.setSpriteName("MiniBoss");
+                    enemies.add(miniBoss);
+                }
             }
+        }
+
+        // Carichiamo i nemici normali dal layer NPC
+        for (CollisionManager.EnemySpawnData s : collisionManager.getEnemySpawnsWithData(map)) {
+            NormalEnemy e = new NormalEnemy(s.position.x, s.position.y);
+            String sprite = "Skeleton"; // default
+            if ("orco".equalsIgnoreCase(s.aspetto) || "orco".equalsIgnoreCase(s.type)) {
+                sprite = "Orco";
+            }
+            e.setSpriteName(sprite);
+            enemies.add(e);
         }
     }
 

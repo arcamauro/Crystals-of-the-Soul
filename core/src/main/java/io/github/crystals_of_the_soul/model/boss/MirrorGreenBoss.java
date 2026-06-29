@@ -13,6 +13,7 @@ public class MirrorGreenBoss extends Boss {
 
     public MirrorGreenBoss(float x, float y) {
         super(x, y, 180);
+        this.spriteName = "BossG";
     }
 
     @Override

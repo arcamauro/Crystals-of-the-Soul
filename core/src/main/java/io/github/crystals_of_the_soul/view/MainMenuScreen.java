@@ -66,6 +66,14 @@ public class MainMenuScreen implements Screen {
             }
         });
 
+        TextButton settingsBtn = new TextButton("Settings", skin);
+        settingsBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new SettingsScreen(game));
+            }
+        });
+
         TextButton exitBtn = new TextButton("Exit", skin);
         exitBtn.addListener(new ClickListener() {
             @Override
@@ -77,6 +85,7 @@ public class MainMenuScreen implements Screen {
         table.add(title).padBottom(60).row();
         table.add(newGameBtn).width(200).height(50).padBottom(20).row();
         table.add(continueBtn).width(200).height(50).padBottom(20).row();
+        table.add(settingsBtn).width(200).height(50).padBottom(20).row();
         table.add(exitBtn).width(200).height(50);
 
         stage.addActor(table);

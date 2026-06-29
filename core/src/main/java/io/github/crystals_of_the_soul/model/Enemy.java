@@ -9,12 +9,21 @@ public abstract class Enemy {
     protected float x, y;
     protected int hp;
     protected int maxHp;
+    protected String spriteName;
 
     public Enemy(float x, float y, int maxHp) {
         this.x = x;
         this.y = y;
         this.hp = maxHp;
         this.maxHp = maxHp;
+    }
+
+    public String getSpriteName() {
+        return spriteName;
+    }
+
+    public void setSpriteName(String spriteName) {
+        this.spriteName = spriteName;
     }
 
     public void takeDamage(int damage) {

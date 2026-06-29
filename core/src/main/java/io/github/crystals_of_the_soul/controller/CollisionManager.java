@@ -38,6 +38,30 @@ public class CollisionManager {
         }
     }
 
+    public static class EnemySpawnData {
+        public final Vector2 position;
+        public final String aspetto;
+        public final String type;
+
+        public EnemySpawnData(Vector2 position, String aspetto, String type) {
+            this.position = position;
+            this.aspetto = aspetto;
+            this.type = type;
+        }
+    }
+
+    public static class BossSpawnData {
+        public final Vector2 position;
+        public final boolean isBoss;
+        public final boolean isMiniBoss;
+
+        public BossSpawnData(Vector2 position, boolean isBoss, boolean isMiniBoss) {
+            this.position = position;
+            this.isBoss = isBoss;
+            this.isMiniBoss = isMiniBoss;
+        }
+    }
+
     private final Array<Rectangle> rects = new Array<>();
     private final Array<Portal> portals = new Array<>();
     // Optional Y offset (pixels) to apply to tile-object collision rectangles.
@@ -129,6 +153,24 @@ public class CollisionManager {
         return spawns;
     }
 
+    public Array<EnemySpawnData> getEnemySpawnsWithData(TiledMap map) {
+        Array<EnemySpawnData> spawns = new Array<>();
+        MapLayer layer = map.getLayers().get("NPC");
+        if (layer != null) {
+            for (MapObject obj : layer.getObjects()) {
+                if (isShopNPC(obj)) continue;
+
+                Vector2 pos = getObjectPosition(obj);
+                if (pos != null) {
+                    String aspetto = getStringProperty(obj, "aspetto");
+                    String type = getStringProperty(obj, "type");
+                    spawns.add(new EnemySpawnData(pos, aspetto, type));
+                }
+            }
+        }
+        return spawns;
+    }
+
     public Array<ShopSpawnData> getShopSpawns(TiledMap map, String mapPath) {
         Array<ShopSpawnData> spawns = new Array<>();
         MapLayer layer = map.getLayers().get("NPC");
@@ -170,6 +212,24 @@ public class CollisionManager {
         return new Vector2(300, 300);
     }
 
+    public Array<BossSpawnData> getBossSpawns(TiledMap map) {
+        Array<BossSpawnData> spawns = new Array<>();
+        for (String layerName : new String[]{"Boss", "boss"}) {
+            MapLayer layer = map.getLayers().get(layerName);
+            if (layer != null) {
+                for (MapObject obj : layer.getObjects()) {
+                    Vector2 pos = getObjectPosition(obj);
+                    if (pos != null) {
+                        boolean isBoss = getBooleanProperty(obj, "isBoss");
+                        boolean isMiniBoss = getBooleanProperty(obj, "isMiniBoss");
+                        spawns.add(new BossSpawnData(pos, isBoss, isMiniBoss));
+                    }
+                }
+            }
+        }
+        return spawns;
+    }
+
     private Vector2 getObjectPosition(MapObject obj) {
         if (obj instanceof PointMapObject) {
             Vector2 p = ((PointMapObject) obj).getPoint();
@@ -185,6 +245,17 @@ public class CollisionManager {
     private String getStringProperty(MapObject obj, String key) {
         Object value = obj.getProperties().get(key);
         return value instanceof String ? (String) value : null;
+    }
+
+    private boolean getBooleanProperty(MapObject obj, String key) {
+        Object value = obj.getProperties().get(key);
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        if (value instanceof String) {
+            return Boolean.parseBoolean((String) value);
+        }
+        return false;
     }
 
     private boolean isShopNPC(MapObject obj) {

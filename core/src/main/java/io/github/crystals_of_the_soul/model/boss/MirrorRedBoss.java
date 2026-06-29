@@ -14,6 +14,7 @@ public class MirrorRedBoss extends Boss {
 
     public MirrorRedBoss(float x, float y) {
         super(x, y, 999);
+        this.spriteName = "BossR";
     }
 
     @Override
