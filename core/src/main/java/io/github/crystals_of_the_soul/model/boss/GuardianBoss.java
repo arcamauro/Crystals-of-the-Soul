@@ -19,12 +19,19 @@ public class GuardianBoss extends Boss {
     public GuardianBoss(float x, float y, CrystalType crystal) {
         super(x, y, 250);
         this.crystal = crystal;
+        if (crystal == CrystalType.RED) {
+            this.spriteName = "BossB"; // RED crystal -> Blue boss
+        } else if (crystal == CrystalType.GREEN) {
+            this.spriteName = "BossG"; // GREEN crystal -> Green boss
+        } else if (crystal == CrystalType.BLUE) {
+            this.spriteName = "BossR"; // BLUE crystal -> Red boss
+        }
     }
 
     @Override
-    public void onAttack() {
+    public void onAttack(int playerDamage) {
         attackCount++;
-        takeDamage(8);
+        takeDamage(playerDamage);
         dialogueIndex++;
     }
 

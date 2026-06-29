@@ -8,7 +8,6 @@ import com.badlogic.gdx.maps.objects.PointMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -26,6 +25,40 @@ public class CollisionManager {
             this.destination = destination;
             this.condition = condition;
             this.portalType = portalType;
+        }
+    }
+
+    public static class ShopSpawnData {
+        public final Vector2 position;
+        public final String shopType;
+
+        public ShopSpawnData(Vector2 position, String shopType) {
+            this.position = position;
+            this.shopType = shopType;
+        }
+    }
+
+    public static class EnemySpawnData {
+        public final Vector2 position;
+        public final String aspetto;
+        public final String type;
+
+        public EnemySpawnData(Vector2 position, String aspetto, String type) {
+            this.position = position;
+            this.aspetto = aspetto;
+            this.type = type;
+        }
+    }
+
+    public static class BossSpawnData {
+        public final Vector2 position;
+        public final boolean isBoss;
+        public final boolean isMiniBoss;
+
+        public BossSpawnData(Vector2 position, boolean isBoss, boolean isMiniBoss) {
+            this.position = position;
+            this.isBoss = isBoss;
+            this.isMiniBoss = isMiniBoss;
         }
     }
 
@@ -111,8 +144,58 @@ public class CollisionManager {
         MapLayer layer = map.getLayers().get("NPC");
         if (layer != null) {
             for (MapObject obj : layer.getObjects()) {
+                if (isShopNPC(obj)) continue;
+
                 Vector2 pos = getObjectPosition(obj);
                 if (pos != null) spawns.add(pos);
+            }
+        }
+        return spawns;
+    }
+
+    public Array<EnemySpawnData> getEnemySpawnsWithData(TiledMap map) {
+        Array<EnemySpawnData> spawns = new Array<>();
+        MapLayer layer = map.getLayers().get("NPC");
+        if (layer != null) {
+            for (MapObject obj : layer.getObjects()) {
+                if (isShopNPC(obj)) continue;
+
+                Vector2 pos = getObjectPosition(obj);
+                if (pos != null) {
+                    String aspetto = getStringProperty(obj, "aspetto");
+                    String type = getStringProperty(obj, "type");
+                    spawns.add(new EnemySpawnData(pos, aspetto, type));
+                }
+            }
+        }
+        return spawns;
+    }
+
+    public Array<ShopSpawnData> getShopSpawns(TiledMap map, String mapPath) {
+        Array<ShopSpawnData> spawns = new Array<>();
+        MapLayer layer = map.getLayers().get("NPC");
+        if (layer != null) {
+            for (MapObject obj : layer.getObjects()) {
+                if (isShopNPC(obj)) {
+                    Vector2 pos = getObjectPosition(obj);
+                    if (pos != null) {
+                        String aspetto = getStringProperty(obj, "aspetto");
+                        String type = getStringProperty(obj, "type");
+                        String typeTutorial = getStringProperty(obj, "type_tutorial");
+                        String shopType = aspetto != null ? aspetto : (type != null ? type : typeTutorial);
+                        
+                        // Default to map-specific shop keepers if generic "shop" is found
+                        if ("shop".equals(shopType) && mapPath != null) {
+                            if (mapPath.contains("lvl1")) {
+                                shopType = "shop1";
+                            } else if (mapPath.contains("lvl3")) {
+                                shopType = "shop2";
+                            }
+                        }
+                        
+                        spawns.add(new ShopSpawnData(pos, shopType));
+                    }
+                }
             }
         }
         return spawns;
@@ -151,6 +234,24 @@ public class CollisionManager {
         return new Vector2(300, 300);
     }
 
+    public Array<BossSpawnData> getBossSpawns(TiledMap map) {
+        Array<BossSpawnData> spawns = new Array<>();
+        for (String layerName : new String[]{"Boss", "boss"}) {
+            MapLayer layer = map.getLayers().get(layerName);
+            if (layer != null) {
+                for (MapObject obj : layer.getObjects()) {
+                    Vector2 pos = getObjectPosition(obj);
+                    if (pos != null) {
+                        boolean isBoss = getBooleanProperty(obj, "isBoss");
+                        boolean isMiniBoss = getBooleanProperty(obj, "isMiniBoss");
+                        spawns.add(new BossSpawnData(pos, isBoss, isMiniBoss));
+                    }
+                }
+            }
+        }
+        return spawns;
+    }
+
     private Vector2 getObjectPosition(MapObject obj) {
         if (obj instanceof PointMapObject) {
             Vector2 p = ((PointMapObject) obj).getPoint();
@@ -163,6 +264,31 @@ public class CollisionManager {
         return null;
     }
 
+    private String getStringProperty(MapObject obj, String key) {
+        Object value = obj.getProperties().get(key);
+        return value instanceof String ? (String) value : null;
+    }
+
+    private boolean getBooleanProperty(MapObject obj, String key) {
+        Object value = obj.getProperties().get(key);
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        if (value instanceof String) {
+            return Boolean.parseBoolean((String) value);
+        }
+        return false;
+    }
+
+    private boolean isShopNPC(MapObject obj) {
+        String aspetto = getStringProperty(obj, "aspetto");
+        String type = getStringProperty(obj, "type");
+        String typeTutorial = getStringProperty(obj, "type_tutorial");
+        return "shop".equals(aspetto) || "shop".equals(type) || "shop".equals(typeTutorial)
+            || "shop1".equals(aspetto) || "shop1".equals(type)
+            || "shop2".equals(aspetto) || "shop2".equals(type);
+    }
+
     private void loadPortalsFromLayers(Iterable<MapLayer> layers) {
         for (MapLayer layer : layers) {
             if (layer instanceof MapGroupLayer) {
@@ -171,12 +297,12 @@ public class CollisionManager {
             }
             for (MapObject obj : layer.getObjects()) {
                 if (!(obj instanceof RectangleMapObject)) continue;
-                String pType = obj.getProperties().get("type", String.class);
+                String pType = getStringProperty(obj, "type");
                 if (!"porta".equals(pType) && !"ponte".equals(pType) && !"portaF".equals(pType)) continue;
                 Rectangle r = ((RectangleMapObject) obj).getRectangle();
-                String dest = obj.getProperties().get("dest", String.class);
-                if (dest == null) dest = obj.getProperties().get("destinazione", String.class);
-                String condition = obj.getProperties().get("condition", String.class);
+                String dest = getStringProperty(obj, "dest");
+                if (dest == null) dest = getStringProperty(obj, "destinazione");
+                String condition = getStringProperty(obj, "condition");
                 portals.add(new Portal(new Rectangle(r.x, r.y, r.width, r.height), dest, condition, pType));
                 Gdx.app.log("Portal", "Loaded portal type=" + pType + " dest=" + dest + " condition=" + condition);
             }

@@ -16,10 +16,11 @@ public class MirrorBlueBoss extends Boss {
 
     public MirrorBlueBoss(float x, float y) {
         super(x, y, 150);
+        this.spriteName = "BossB";
     }
 
     @Override
-    public void onAttack() {
+    public void onAttack(int playerDamage) {
         takeDamage(hp);
         dialogueIndex++;
     }

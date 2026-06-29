@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="22">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="23">
  <tileset firstgid="1" source="../tilestes/tileset_full.tsx"/>
  <tileset firstgid="401" source="../tilestes/cristalli.tsx"/>
  <tileset firstgid="1169" source="../tilestes/Set 1.tsx"/>
@@ -169,6 +169,13 @@
    <point/>
   </object>
   <object id="21" type="NPC" x="439.333" y="112">
+   <point/>
+  </object>
+  <object id="22" name="shop" type="NPC" x="539.667" y="434.667">
+   <properties>
+    <property name="aspetto" value="shop"/>
+    <property name="type" value="shop"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="20" height="11" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="14">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="20" height="11" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="15">
  <tileset firstgid="1" source="../tilestes/tileset_full.tsx"/>
  <tileset firstgid="401" source="../tilestes/Set 1.tsx"/>
  <tileset firstgid="961" source="../tilestes/Torch Yellow L.tsx"/>
@@ -65,13 +65,17 @@
 </data>
  </layer>
  <objectgroup id="3" name="start">
-  <object id="5" name="Start" type="Start" x="48" y="118.5">
+  <object id="5" name="Start0" type="Start" x="48" y="118.5">
+   <point/>
+  </object>
+  <object id="14" name="Start2" type="Start" x="266.5" y="107.25">
    <point/>
   </object>
  </objectgroup>
  <objectgroup id="5" name="Ponte">
   <object id="2" name="ponte1_0" type="Portale" x="277" y="96" width="28" height="16">
    <properties>
+    <property name="condition" value="guardia2_Sconfitta"/>
     <property name="destinazione" value="lvl1_1"/>
     <property name="type" value="ponte"/>
    </properties>
@@ -106,7 +110,7 @@
    </properties>
    <point/>
   </object>
-  <object id="13" name="guardia2" type="NPC" x="269.75" y="107.5">
+  <object id="13" name="guardia2" type="NPC" x="268" y="107.5">
    <properties>
     <property name="aspetto" value="orco"/>
     <property name="type" value="orco"/>

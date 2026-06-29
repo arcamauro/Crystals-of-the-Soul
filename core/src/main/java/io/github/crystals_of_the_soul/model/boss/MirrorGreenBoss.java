@@ -13,11 +13,12 @@ public class MirrorGreenBoss extends Boss {
 
     public MirrorGreenBoss(float x, float y) {
         super(x, y, 180);
+        this.spriteName = "BossG";
     }
 
     @Override
-    public void onAttack() {
-        takeDamage(10);
+    public void onAttack(int playerDamage) {
+        takeDamage(playerDamage);
         dialogueIndex++;
     }
 

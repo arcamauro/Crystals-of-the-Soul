@@ -11,15 +11,17 @@ public class NormalEnemy extends Enemy {
 
     public NormalEnemy(float x, float y) {
         super(x, y, 50);
+        this.spriteName = "Skeleton";
     }
 
     public NormalEnemy(float x, float y, int maxHp) {
         super(x, y, maxHp);
+        this.spriteName = "Skeleton";
     }
 
     @Override
-    public void onAttack() {
-        takeDamage(10);
+    public void onAttack(int playerDamage) {
+        takeDamage(playerDamage);
     }
 
     @Override

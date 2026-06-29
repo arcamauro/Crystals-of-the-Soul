@@ -23,13 +23,12 @@ public class EnemyInteraction implements InteractionStrategy {
 
     @Override
     public boolean canInteract() {
-
-        return Vector2.dst(
+        return Vector2.dst2(
             player.getX(),
             player.getY(),
             enemy.getX(),
             enemy.getY()
-        ) < 60;
+        ) < 900f;
     }
 
     @Override

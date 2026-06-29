@@ -2,6 +2,7 @@ package io.github.crystals_of_the_soul;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import io.github.crystals_of_the_soul.model.SettingsManager;
 import io.github.crystals_of_the_soul.view.MainMenuScreen;
 
 public class Main extends Game {
@@ -11,6 +12,7 @@ public class Main extends Game {
     @Override
     public void create() {
         batch = new SpriteBatch();
+        SettingsManager.getInstance().applySettings();
         setScreen(new MainMenuScreen(this));
     }
 
