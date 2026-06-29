@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.objects.PointMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -115,6 +116,28 @@ public class CollisionManager {
             }
         }
         return spawns;
+    }
+
+    public Vector2 getCrystalAltarPosition(TiledMap map) {
+        MapLayer layer = map.getLayers().get("altareEmpty");
+        if (layer == null) return null;
+        Vector2 lowest = null;
+        for (MapObject obj : layer.getObjects()) {
+            float x, y;
+            if (obj instanceof TiledMapTileMapObject) {
+                TiledMapTileMapObject t = (TiledMapTileMapObject) obj;
+                x = t.getX();
+                y = t.getY();
+            } else if (obj instanceof RectangleMapObject) {
+                Rectangle r = ((RectangleMapObject) obj).getRectangle();
+                x = r.x;
+                y = r.y;
+            } else {
+                continue;
+            }
+            if (lowest == null || y < lowest.y) lowest = new Vector2(x, y);
+        }
+        return lowest;
     }
 
     public Vector2 getBossSpawn(TiledMap map) {

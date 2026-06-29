@@ -6,8 +6,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -16,6 +18,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import io.github.crystals_of_the_soul.Main;
 import io.github.crystals_of_the_soul.controller.*;
 import io.github.crystals_of_the_soul.model.Boss;
+import io.github.crystals_of_the_soul.model.CrystalDialogue;
+import io.github.crystals_of_the_soul.model.CrystalType;
 import io.github.crystals_of_the_soul.model.Enemy;
 import io.github.crystals_of_the_soul.model.GameState;
 import io.github.crystals_of_the_soul.model.NormalEnemy;
@@ -45,6 +49,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     private GameHud hud;
 
     private float portalCooldown = 0f;
+    private Runnable pendingAfterCrystal;
 
     private InventoryManager inventoryManager;
     private ItemManager itemManager;
@@ -101,7 +106,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         if (!hud.isPaused()) {
             if (battleManager.isInBattle()) {
                 renderBattle();
-            } else {
+            } else if (!hud.isCrystalDialogueShowing()) {
                 renderWorld(delta);
             }
         }
@@ -206,6 +211,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         renderItems();
         shapeRenderer.end();
 
+        renderCrystalOnAltar();
+
         hud.updatePlayerHp(player.getHp());
 
         boolean nearEnemy = false;
@@ -269,28 +276,32 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         state.currentFloor++;
 
         if (state.currentFloor > 5) {
-            state.assignCrystal();
+            if (!state.hasCrystal()) state.assignCrystal();
             game.setScreen(new EndingScreen(game, state));
             return;
         }
 
-        if (state.currentFloor == 2) {
-            state.assignCrystal();
+        if (state.currentFloor == 2 && !state.hasCrystal()) {
+            pendingAfterCrystal = this::doAdvanceFloorLoad;
+            hud.showCrystalDialogue(CrystalDialogue.getPreMessage(state));
+            return;
         }
 
+        doAdvanceFloorLoad();
+    }
+
+    private void doAdvanceFloorLoad() {
         map = assets.get(state.getCurrentMapPath(), TiledMap.class);
         mapRenderer.getMap().dispose();
         mapRenderer = new OrthogonalTiledMapRenderer(map);
         collisionManager.load(map);
 
         Vector2 floorSpawn = collisionManager.getPlayerSpawn(map);
-        //player = new Player(floorSpawn.x, floorSpawn.y);
         player.setPosition(floorSpawn.x, floorSpawn.y);
         state.getPlayer1().x = floorSpawn.x;
         state.getPlayer1().y = floorSpawn.y;
 
         spawnEnemies();
-
         SaveManager.getInstance().autoSave(state);
         Gdx.app.log("DEBUG", "Floor: " + state.currentFloor);
     }
@@ -420,6 +431,20 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         Gdx.app.exit();
     }
 
+    @Override
+    public void onCrystalContinue() {
+        if (!state.hasCrystal()) {
+            state.assignCrystal();
+            hud.showCrystalDialogue(CrystalDialogue.getPostMessage(state));
+        } else {
+            hud.hideCrystalDialogue();
+            if (pendingAfterCrystal != null) {
+                pendingAfterCrystal.run();
+                pendingAfterCrystal = null;
+            }
+        }
+    }
+
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
@@ -462,14 +487,22 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         if ("lvl3".equals(destKey) || "lvl4".equals(destKey) || "lvl5".equals(destKey)) {
             destKey = destKey + "_" + crystalSuffix();
         }
-        String mapPath = "maps/" + destKey + ".tmx";
-        int newFloor = floorFromMapKey(destKey);
+        final String mapPath = "maps/" + destKey + ".tmx";
+        final int newFloor = floorFromMapKey(destKey);
 
         if (newFloor > state.currentFloor) {
             state.currentFloor = newFloor;
-            if (newFloor == 2 && !state.hasCrystal()) state.assignCrystal();
+            if (newFloor == 2 && !state.hasCrystal()) {
+                pendingAfterCrystal = () -> doPortalLoad(mapPath);
+                hud.showCrystalDialogue(CrystalDialogue.getPreMessage(state));
+                return;
+            }
         }
 
+        doPortalLoad(mapPath);
+    }
+
+    private void doPortalLoad(String mapPath) {
         map = assets.get(mapPath, TiledMap.class);
         mapRenderer.dispose();
         mapRenderer = new OrthogonalTiledMapRenderer(map);
@@ -519,6 +552,29 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
                 enemies.add(new NormalEnemy(s.x, s.y));
             }
         }
+    }
+
+    private void renderCrystalOnAltar() {
+        if (state.currentFloor != 2) return;
+        Vector2 altarPos = collisionManager.getCrystalAltarPosition(map);
+        if (altarPos == null) return;
+
+        CrystalType type = state.hasCrystal() ? state.getCrystal() : state.predictCrystal();
+        int botGid, topGid;
+        switch (type) {
+            case RED:   botGid = 1379; topGid = 1347; break;
+            case BLUE:  botGid = 1378; topGid = 1346; break;
+            default:    botGid = 1443; topGid = 1411; break; // GREEN
+        }
+
+        Batch batch = mapRenderer.getBatch();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        TiledMapTile botTile = map.getTileSets().getTile(botGid);
+        if (botTile != null) batch.draw(botTile.getTextureRegion(), altarPos.x, altarPos.y, 16, 16);
+        TiledMapTile topTile = map.getTileSets().getTile(topGid);
+        if (topTile != null) batch.draw(topTile.getTextureRegion(), altarPos.x, altarPos.y + 16, 16, 16);
+        batch.end();
     }
 
     private void togglePause() {

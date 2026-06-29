@@ -91,6 +91,16 @@ public class GameState {
     }
 
     /**
+     * Restituisce il tipo di cristallo che verrebbe assegnato dati i contatori correnti,
+     * senza alcun effetto collaterale (player2 e abilità player1 restano invariati).
+     */
+    public CrystalType predictCrystal() {
+        if (killCount > 0 && spareCount == 0) return CrystalType.RED;
+        if (killCount == 0 && spareCount > 0) return CrystalType.BLUE;
+        return CrystalType.GREEN;
+    }
+
+    /**
      * Metodo di supporto che verifica se il cristallo è stato assegnato
      */
     public boolean hasCrystal() {

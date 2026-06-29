@@ -39,7 +39,7 @@ public class SaveManager {
     }
 
     /**
-     * Salvataggio automatico — chiamato ad ogni cambio di piano.
+     * Salvataggio automatico - chiamato ad ogni cambio di piano.
      */
     public void autoSave(GameState state) {
         state.savedAt = System.currentTimeMillis();
@@ -48,7 +48,7 @@ public class SaveManager {
     }
 
     /**
-     * Salvataggio manuale — chiamato dal giocatore tramite il menu di pausa.
+     * Salvataggio manuale - chiamato dal giocatore tramite il menu di pausa.
      */
     public void manualSave(GameState state) {
         state.savedAt = System.currentTimeMillis();

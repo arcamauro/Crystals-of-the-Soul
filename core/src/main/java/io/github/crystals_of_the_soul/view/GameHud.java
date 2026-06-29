@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class GameHud {
@@ -19,6 +20,7 @@ public class GameHud {
         void onSave();
         void onMainMenu();
         void onExit();
+        void onCrystalContinue();
     }
 
     private final Stage stage;
@@ -27,6 +29,8 @@ public class GameHud {
     private Table pauseTable;
     private Table battleTable;
     private Table hudTable;
+    private Table crystalDialogueTable;
+    private Label crystalDialogueLabel;
 
     private Label playerHpLabel;
     private Label interactLabel;
@@ -49,14 +53,17 @@ public class GameHud {
         buildHud(initialHp);
         buildBattleUI(callbacks);
         buildPauseMenu(callbacks);
+        buildCrystalDialogue(callbacks);
 
         stage.addActor(hudTable);
         stage.addActor(battleTable);
         stage.addActor(pauseTable);
+        stage.addActor(crystalDialogueTable);
 
         pauseTable.setVisible(false);
         battleTable.setVisible(false);
         interactLabel.setVisible(false);
+        crystalDialogueTable.setVisible(false);
     }
 
     private void buildHud(int initialHp) {
@@ -111,6 +118,42 @@ public class GameHud {
         battleTable.add(enemyHpLabel).padBottom(15).colspan(2).row();
         battleTable.add(attackBtn).width(200).height(50).padRight(20).padBottom(20);
         battleTable.add(talkBtn).width(200).height(50).padBottom(20);
+    }
+
+    private void buildCrystalDialogue(final Callbacks callbacks) {
+        crystalDialogueTable = new Table();
+        crystalDialogueTable.setFillParent(true);
+        crystalDialogueTable.center();
+
+        crystalDialogueLabel = new Label("", skin);
+        crystalDialogueLabel.setWrap(true);
+        crystalDialogueLabel.setAlignment(Align.center);
+
+        TextButton continueBtn = new TextButton("Continue", skin);
+        continueBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                callbacks.onCrystalContinue();
+            }
+        });
+
+        crystalDialogueTable.add(crystalDialogueLabel).width(520).padBottom(24).row();
+        crystalDialogueTable.add(continueBtn).width(200).height(50);
+    }
+
+    public void showCrystalDialogue(String message) {
+        crystalDialogueLabel.setText(message);
+        crystalDialogueTable.setVisible(true);
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    public void hideCrystalDialogue() {
+        crystalDialogueTable.setVisible(false);
+        Gdx.input.setInputProcessor(null);
+    }
+
+    public boolean isCrystalDialogueShowing() {
+        return crystalDialogueTable.isVisible();
     }
 
     private void buildPauseMenu(final Callbacks callbacks) {
