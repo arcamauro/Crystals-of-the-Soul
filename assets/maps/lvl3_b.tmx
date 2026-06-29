@@ -80,32 +80,65 @@
  <objectgroup id="7" name="NPC">
   <object id="5" type="NPC" x="440" y="106">
    <properties>
-    <property name="type" value=""/>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
    </properties>
    <point/>
   </object>
   <object id="6" type="NPC" x="480" y="189">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="7" type="NPC" x="592" y="176">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="8" type="NPC" x="576" y="384">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="9" type="NPC" x="448" y="400">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="10" type="NPC" x="512" y="288">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="12" type="NPC" x="304" y="256">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="13" type="NPC" x="224" y="112">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="14" type="NPC" x="80" y="112">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="15" name="shop" type="NPC" x="543" y="440.333">

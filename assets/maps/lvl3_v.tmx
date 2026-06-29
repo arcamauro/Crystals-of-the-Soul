@@ -79,33 +79,73 @@
  </objectgroup>
  <objectgroup id="6" name="NPC">
   <object id="5" type="NPC" x="439.818" y="103.455">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="6" type="NPC" x="449.091" y="176.182">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="8" type="NPC" x="587.273" y="185.818">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="9" type="NPC" x="578.909" y="411.091">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="10" type="NPC" x="448.364" y="413.455">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="11" type="NPC" x="524" y="297.273">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="12" type="NPC" x="324.182" y="273.636">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="13" type="NPC" x="217.273" y="105.818">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="14" type="NPC" x="133.636" y="76.7273">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="15" type="NPC" x="75.8182" y="116.909">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
    <point/>
   </object>
   <object id="16" name="shop" type="NPC" x="512.25" y="431.5">

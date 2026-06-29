@@ -617,10 +617,6 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         }
         if (state.currentFloor == 2) {
             state.assignCrystal();
-            // Crea Player2 quando il cristallo è assegnato (floor 2)
-            if (state.getPlayer2() != null) {
-                player2 = io.github.crystals_of_the_soul.model.Player2Factory.create(state.getPlayer2());
-            }
         }
 
         doAdvanceFloorLoad();
@@ -637,8 +633,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         state.getPlayer1().x = floorSpawn.x;
         state.getPlayer1().y = floorSpawn.y;
 
-        // Ricrea Player2 se esiste
-        if (player2 != null && state.getPlayer2() != null) {
+        // Ricrea o crea Player2 se esiste nello stato
+        if (state.getPlayer2() != null) {
             // Posiziona Player2 accanto a Player1 nel nuovo floor
             player2 = null;
             placePlayer2Adjacent();
