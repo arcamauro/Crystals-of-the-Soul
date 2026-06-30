@@ -1,5 +1,7 @@
 package io.github.crystals_of_the_soul.controller;
 
+import io.github.crystals_of_the_soul.controller.interactions.UseItemInteraction;
+import io.github.crystals_of_the_soul.model.entity.Item;
 import io.github.crystals_of_the_soul.view.InventoryUiObserver;
 import io.github.crystals_of_the_soul.model.Player;
 import io.github.crystals_of_the_soul.view.GameHud;
@@ -32,7 +34,15 @@ public class InventoryManager {
     }
 
     public void usePotion() {
-
-        player.getInventory().usePotion(player);
+        Item item = player.getInventory().findFirstPotion();
+        if (item == null) {
+            System.out.println("Nessun oggetto curativo!");
+            return;
+        }
+        UseItemInteraction interaction = new UseItemInteraction(player, item);
+        if (interaction.canInteract()) {
+            interaction.interact();
+            System.out.println(item.getName() + " usata!");
+        }
     }
 }
