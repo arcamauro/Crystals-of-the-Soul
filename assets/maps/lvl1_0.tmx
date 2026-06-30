@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="20" height="11" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="15">
+ <tileset firstgid="1" source="../tilestes/tileset_full.tsx"/>
+ <tileset firstgid="401" source="../tilestes/Set 1.tsx"/>
+ <tileset firstgid="961" source="../tilestes/Torch Yellow L.tsx"/>
+ <tileset firstgid="969" source="../tilestes/Torch Yellow R.tsx"/>
+ <layer id="1" name="base" width="20" height="11">
+  <data encoding="csv">
+0,598,599,599,599,599,599,599,599,599,599,599,599,599,599,599,599,600,0,0,
+0,626,627,627,627,627,627,627,627,627,627,627,627,627,627,627,627,628,0,0,
+0,626,627,627,3221226128,526,526,526,526,526,526,526,498,627,627,627,627,628,0,0,
+0,626,627,627,628,0,0,0,0,0,0,0,626,627,627,627,627,628,0,0,
+0,626,35,627,628,0,0,0,0,0,0,0,626,627,627,627,627,628,0,0,
+0,626,627,627,628,0,0,0,598,599,600,0,626,627,627,627,627,628,0,0,
+0,626,627,627,628,0,0,0,626,627,627,772,627,627,627,627,627,627,18,0,
+0,626,627,627,628,0,0,0,525,526,528,0,626,627,627,627,627,628,0,0,
+0,525,1610613373,1610613373,528,0,0,0,0,0,0,0,525,526,526,526,526,528,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="4" name="dec" width="20" height="11">
+  <data encoding="csv">
+0,0,0,0,39,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,774,0,0,0,0,0,0,0,19,0,0,0,0,0,39,0,0,0,
+0,0,0,0,0,0,0,55,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,38,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,35,0,0,0,0,
+0,0,0,775,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,55,0,0,37,0,0,0,
+0,0,3221226329,3221226329,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="6" name="Tl" width="20" height="11" locked="1" offsetx="3" offsety="-4.33333">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,961,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,961,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,961,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="7" name="Tr" width="20" height="11" locked="1" offsetx="-2.33333" offsety="-3">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,969,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,969,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,969,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="start">
+  <object id="5" name="Start0" type="Start" x="48" y="118.5">
+   <point/>
+  </object>
+  <object id="14" name="Start2" type="Start" x="266.5" y="107.25">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="5" name="Ponte">
+  <object id="2" name="ponte1_0" type="Portale" x="277" y="96" width="28" height="16">
+   <properties>
+    <property name="condition" value="guardia2_Sconfitta"/>
+    <property name="destinazione" value="lvl1_1"/>
+    <property name="type" value="ponte"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="8" name="NPC">
+  <object id="6" name="primo" type="NPC" x="39" y="55.5">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="10" name="secondo" type="NPC" x="154" y="27.5">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="11" name="terzo" type="NPC" x="267.25" y="62.75">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="12" name="guardia1" type="NPC" x="206.5" y="107.5">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="13" name="guardia2" type="NPC" x="268" y="107.5">
+   <properties>
+    <property name="aspetto" value="orco"/>
+    <property name="type" value="orco"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <layer id="2" name="ponte" width="20" height="11">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,152,153,154,0,0,0,0,312,313,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+</map>
