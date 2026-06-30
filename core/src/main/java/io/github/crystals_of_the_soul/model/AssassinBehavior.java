@@ -23,7 +23,7 @@ public class AssassinBehavior implements Player2Behavior {
         if (p2.getHp() <= 0) return;
         int companionDamage = p2.getState().damage;
         enemy.takeDamage(companionDamage);
-        logMessage.append("\n* L'Assassino colpisce alle spalle infliggendo ").append(companionDamage).append(" danni!");
+        logMessage.append("\n* The Assassin strikes from behind for ").append(companionDamage).append(" damage!");
     }
 
     @Override

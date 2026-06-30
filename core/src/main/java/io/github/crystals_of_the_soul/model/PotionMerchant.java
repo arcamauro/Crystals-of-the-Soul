@@ -5,10 +5,10 @@ public class PotionMerchant extends ShopNPC {
         super(
             x,
             y,
-            "Mercante di Pozioni",
+            "Potion Merchant",
             15,
-            "Pozione",
-            "Benvenuto! Vuoi comprare una Pozione per 15 Oro?",
+            "Potion",
+            "Welcome! Would you like to buy a Potion for 15 Gold?",
             0
         );
     }

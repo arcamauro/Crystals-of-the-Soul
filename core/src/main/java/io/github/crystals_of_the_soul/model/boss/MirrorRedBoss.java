@@ -5,11 +5,11 @@ import io.github.crystals_of_the_soul.model.Boss;
 public class MirrorRedBoss extends Boss {
 
     private static final String[] DIALOGUE = {
-        "* Guardami. Sono quello che sei diventato.",
-        "* Così tanta violenza... ti ha cambiato.",
-        "* Forse potresti... risparmiare qualcuno.",
-        "* Abbassa la guardia. Parliamo.",
-        "* Ecco la tua fine."
+        "* Look at me. I am what you have become.",
+        "* So much violence... it has changed you.",
+        "* Perhaps you could... spare someone.",
+        "* Lower your guard. Let us talk.",
+        "* This is your end."
     };
 
     public MirrorRedBoss(float x, float y) {
@@ -35,7 +35,7 @@ public class MirrorRedBoss extends Boss {
 
     @Override
     public String getName() {
-        return "Il Tuo Riflesso";
+        return "Your Reflection";
     }
 
     @Override

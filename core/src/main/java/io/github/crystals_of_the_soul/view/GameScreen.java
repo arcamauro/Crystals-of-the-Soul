@@ -475,7 +475,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         if (player2 != null) {
             String p2Text = player2.getState().playerClass.name() + " HP: " + player2.getHp();
             if (player2.getState().playerClass == io.github.crystals_of_the_soul.model.Player2Class.PROTECTOR) {
-                p2Text += " (Scudo: " + player2.getState().currentShield + ")";
+                p2Text += " (Shield: " + player2.getState().currentShield + ")";
             }
             hud.updatePlayer2Hp(p2Text);
         } else {
@@ -562,7 +562,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         if (player2 != null) {
             String p2Text = player2.getState().playerClass.name() + " HP: " + player2.getHp();
             if (player2.getState().playerClass == io.github.crystals_of_the_soul.model.Player2Class.PROTECTOR) {
-                p2Text += " (Scudo: " + player2.getState().currentShield + ")";
+                p2Text += " (Shield: " + player2.getState().currentShield + ")";
             }
             hud.updatePlayer2Hp(p2Text);
         } else {
@@ -861,7 +861,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
                 }
             }
         } else {
-            hud.showNotification("Oro insufficiente!");
+            hud.showNotification("Not enough gold!");
         }
     }
 
@@ -944,7 +944,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         if (newFloor > state.currentFloor) {
             if (!FloorTransitionService.canAdvance(enemies)) {
-                hud.showNotification("Sconfiggi tutti i nemici prima di procedere!");
+                hud.showNotification("Defeat all enemies before proceeding!");
                 return;
             }
             state.currentFloor = newFloor;

@@ -24,13 +24,13 @@ public class ProtectorBehavior implements Player2Behavior {
         if (p2.getHp() <= 0) return;
         int companionDamage = p2.getState().damage;
         enemy.takeDamage(companionDamage);
-        logMessage.append("\n* Il Protettore attacca infliggendo ").append(companionDamage).append(" danni!");
+        logMessage.append("\n* The Protector attacks for ").append(companionDamage).append(" damage!");
     }
 
     @Override
     public void onTalk(Player2 p2, Enemy enemy, StringBuilder logMessage) {
         if (p2.getHp() <= 0) return;
-        logMessage.append("\n* Il Protettore alza lo scudo per proteggerti mentre parli.");
+        logMessage.append("\n* The Protector raises their shield to protect you while you talk.");
     }
 
     @Override
@@ -41,17 +41,17 @@ public class ProtectorBehavior implements Player2Behavior {
         if (shield > 0) {
             if (shield >= damage) {
                 p2.getState().currentShield -= damage;
-                logMessage.append("\n* Lo scudo del Protettore assorbe completamente il colpo! (Scudo: ").append(p2.getState().currentShield).append(")");
+                logMessage.append("\n* The Protector's shield absorbs the hit completely! (Shield: ").append(p2.getState().currentShield).append(")");
                 return 0;
             } else {
                 p2.getState().currentShield = 0;
-                logMessage.append("\n* Lo scudo del Protettore assorbe ").append(shield).append(" danni e si rompe!");
+                logMessage.append("\n* The Protector's shield absorbs ").append(shield).append(" damage and shatters!");
                 damage -= shield;
             }
         }
 
         p2.takeDamage(damage);
-        logMessage.append("\n* Il Protettore fa scudo con il suo corpo e subisce danni! (HP compagno: ").append(p2.getHp()).append(")");
+        logMessage.append("\n* The Protector shields you with their body and takes damage! (Companion HP: ").append(p2.getHp()).append(")");
         return 0;
     }
 

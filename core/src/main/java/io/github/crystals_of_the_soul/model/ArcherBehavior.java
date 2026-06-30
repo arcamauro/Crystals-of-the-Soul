@@ -23,14 +23,14 @@ public class ArcherBehavior implements Player2Behavior {
         if (p2.getHp() <= 0) return;
         int companionDamage = p2.getState().damage;
         enemy.takeDamage(companionDamage);
-        logMessage.append("\n* L'Arciere scaglia una freccia precisa infliggendo ").append(companionDamage).append(" danni!");
+        logMessage.append("\n* The Archer fires a precise arrow for ").append(companionDamage).append(" damage!");
     }
 
     @Override
     public void onTalk(Player2 p2, Enemy enemy, StringBuilder logMessage) {
         if (p2.getHp() <= 0) return;
         enemy.onTalk();
-        logMessage.append("\n* L'Arciere ti supporta nel dialogo pacifico! (Progresso raddoppiato)");
+        logMessage.append("\n* The Archer supports your peaceful dialogue! (Progress doubled)");
     }
 
     @Override

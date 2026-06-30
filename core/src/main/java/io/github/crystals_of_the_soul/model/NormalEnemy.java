@@ -31,10 +31,10 @@ public class NormalEnemy extends Enemy {
 
     @Override
     public String getDialogue() {
-        if (talkCount == 0) return "* Il nemico ti fissa minaccioso.";
-        if (talkCount == 1) return "* Il nemico sembra esitante.";
-        if (talkCount == 2) return "* Il nemico abbassa la guardia...";
-        return "* Il nemico smette di combattere.";
+        if (talkCount == 0) return "* The enemy glares at you menacingly.";
+        if (talkCount == 1) return "* The enemy seems hesitant.";
+        if (talkCount == 2) return "* The enemy lowers their guard...";
+        return "* The enemy stops fighting.";
     }
 
     @Override
@@ -49,6 +49,6 @@ public class NormalEnemy extends Enemy {
 
     @Override
     public String getName() {
-        return "Nemico";
+        return "Enemy";
     }
 }

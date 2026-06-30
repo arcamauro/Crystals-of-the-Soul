@@ -5,10 +5,10 @@ public class SpecialMerchant extends ShopNPC {
         super(
             x,
             y,
-            "Mercante Oscuro",
+            "Dark Merchant",
             50,
-            "Elisir di Forza",
-            "Chi va là... Vuoi scambiare 50 Oro per un Elisir di Forza?",
+            "Strength Elixir",
+            "Who goes there... Would you like to trade 50 Gold for a Strength Elixir?",
             2
         );
     }

@@ -5,10 +5,10 @@ public class ElixirMerchant extends ShopNPC {
         super(
             x,
             y,
-            "Saggio degli Elisir",
+            "Elixir Sage",
             30,
-            "Super Pozione",
-            "Salute, viaggiatore. Desideri una Super Pozione per 30 Oro?",
+            "Super Potion",
+            "Greetings, traveler. Would you like a Super Potion for 30 Gold?",
             1
         );
     }

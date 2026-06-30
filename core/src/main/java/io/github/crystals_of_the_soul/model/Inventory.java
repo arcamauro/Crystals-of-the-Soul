@@ -44,7 +44,7 @@ public class Inventory {
     public Item findFirstPotion() {
         for (Item item : items) {
             String name = item.getName();
-            if (name.contains("Pozione") || name.contains("Elisir") || name.contains("Super")) {
+            if (name.contains("Potion") || name.contains("Elixir") || name.contains("Super")) {
                 return item;
             }
         }

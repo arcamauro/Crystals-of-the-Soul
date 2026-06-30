@@ -96,7 +96,7 @@ public class GameHud {
         playerHpLabel = new Label("HP: " + initialHp, skin);
         playerStatsLabel = new Label("ATK: 10 | DEF: 0", skin);
         player2HpLabel = new Label("", skin);
-        goldLabel = new Label("Oro: 20", skin);
+        goldLabel = new Label("Gold: 20", skin);
         interactLabel = new Label("Press E to interact", skin);
 
         potionHintLabel = new Label("", skin);
@@ -131,7 +131,7 @@ public class GameHud {
         dialogueLabel.setWrap(true);
         enemyHpLabel = new Label("", skin);
 
-        attackBtn = new TextButton("Attacca", skin);
+        attackBtn = new TextButton("Attack", skin);
         attackBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -139,7 +139,7 @@ public class GameHud {
             }
         });
 
-        talkBtn = new TextButton("Parla", skin);
+        talkBtn = new TextButton("Talk", skin);
         talkBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -281,12 +281,12 @@ public class GameHud {
         shopTable.setFillParent(true);
         shopTable.center();
 
-        shopTitleLabel = new Label("Mercante", skin);
+        shopTitleLabel = new Label("Merchant", skin);
         shopTitleLabel.setFontScale(1.5f);
-        shopWelcomeLabel = new Label("Benvenuto!", skin);
+        shopWelcomeLabel = new Label("Welcome!", skin);
         shopWelcomeLabel.setWrap(true);
 
-        buyPotionBtn = new TextButton("Compra", skin);
+        buyPotionBtn = new TextButton("Buy", skin);
         buyPotionBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -294,23 +294,23 @@ public class GameHud {
             }
         });
 
-        buySwordBtn = new TextButton("Compra Spada", skin);
+        buySwordBtn = new TextButton("Buy Sword", skin);
         buySwordBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                callbacks.onBuyItem("Spada", activeSwordPrice);
+                callbacks.onBuyItem("Sword", activeSwordPrice);
             }
         });
 
-        buyArmorBtn = new TextButton("Compra Armatura", skin);
+        buyArmorBtn = new TextButton("Buy Armor", skin);
         buyArmorBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                callbacks.onBuyItem("Armatura", activeArmorPrice);
+                callbacks.onBuyItem("Armor", activeArmorPrice);
             }
         });
 
-        exitShopBtn = new TextButton("Esci", skin);
+        exitShopBtn = new TextButton("Leave", skin);
         exitShopBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -329,9 +329,9 @@ public class GameHud {
     public void showShop(String title, String welcomeText, String itemName, int potionPrice, int swordPrice, int armorPrice) {
         shopTitleLabel.setText(title);
         shopWelcomeLabel.setText(welcomeText);
-        buyPotionBtn.setText("Compra " + itemName + " (" + potionPrice + " Oro)");
-        buySwordBtn.setText("Compra Spada (+5 ATK) (" + swordPrice + " Oro)");
-        buyArmorBtn.setText("Compra Armatura (+5 DEF) (" + armorPrice + " Oro)");
+        buyPotionBtn.setText("Buy " + itemName + " (" + potionPrice + " Gold)");
+        buySwordBtn.setText("Buy Sword (+5 ATK) (" + swordPrice + " Gold)");
+        buyArmorBtn.setText("Buy Armor (+5 DEF) (" + armorPrice + " Gold)");
         this.activeItemName = itemName;
         this.activePotionPrice = potionPrice;
         this.activeSwordPrice = swordPrice;
@@ -344,7 +344,7 @@ public class GameHud {
     }
 
     public void updateGold(int gold) {
-        goldLabel.setText("Oro: " + gold);
+        goldLabel.setText("Gold: " + gold);
     }
 
     public void updatePotionHint(String hintText) {

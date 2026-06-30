@@ -25,7 +25,7 @@ public class ItemManager {
         items = new Array<>();
         spawnDebugPotion(spawnX, spawnY);
     }
-    private void spawnDebugPotion(float x, float y) { items.add(new Item(x, y, "Pozione")); }
+    private void spawnDebugPotion(float x, float y) { items.add(new Item(x, y, "Potion")); }
 
     public void clearFloorItems() {
         items.clear();

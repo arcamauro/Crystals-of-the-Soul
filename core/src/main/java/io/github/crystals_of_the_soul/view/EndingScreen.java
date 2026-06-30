@@ -67,7 +67,7 @@ public class EndingScreen implements Screen {
         table.add(narrativeLabel).width(600).padBottom(40).row();
 
         if (ending.isInteractive()) {
-            TextButton exitBtn = new TextButton("Lascia il dungeon", skin);
+            TextButton exitBtn = new TextButton("Leave the dungeon", skin);
             exitBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -75,7 +75,7 @@ public class EndingScreen implements Screen {
                 }
             });
 
-            TextButton stayBtn = new TextButton("Resta come guardiano", skin);
+            TextButton stayBtn = new TextButton("Stay as guardian", skin);
             stayBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -86,7 +86,7 @@ public class EndingScreen implements Screen {
             table.add(exitBtn).width(250).height(50).padBottom(15).row();
             table.add(stayBtn).width(250).height(50).row();
         } else {
-            TextButton menuBtn = new TextButton("Torna al Menu", skin);
+            TextButton menuBtn = new TextButton("Back to Menu", skin);
             menuBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {

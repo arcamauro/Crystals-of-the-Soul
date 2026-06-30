@@ -51,7 +51,7 @@ public class BattleManager {
         if (!playerTurn || !inBattle) return;
         currentEnemy.onAttack(playerDamage);
 
-        StringBuilder logMsg = new StringBuilder("* Attacchi il nemico!");
+        StringBuilder logMsg = new StringBuilder("* You attack the enemy!");
         if (player2 != null && player2.getBehavior() != null) {
             player2.getBehavior().onAttack(player2, currentEnemy, logMsg);
         }
@@ -85,7 +85,7 @@ public class BattleManager {
         currentEnemy.onTalk();
         Gdx.app.log("Battle", "Talk count for " + currentEnemy.getName());
 
-        StringBuilder logMsg = new StringBuilder("* Parli al nemico.");
+        StringBuilder logMsg = new StringBuilder("* You talk to the enemy.");
         if (player2 != null && player2.getBehavior() != null) {
             player2.getBehavior().onTalk(player2, currentEnemy, logMsg);
         }
@@ -115,7 +115,7 @@ public class BattleManager {
         if (playerTurn || enemyHasAttacked) return;
 
         int initialDamage = currentEnemy.getDamage();
-        StringBuilder logMsg = new StringBuilder("* " + currentEnemy.getName() + " attacca!");
+        StringBuilder logMsg = new StringBuilder("* " + currentEnemy.getName() + " attacks!");
 
         int remainingDamage = initialDamage;
         if (player2 != null && player2.getBehavior() != null) {
@@ -124,7 +124,7 @@ public class BattleManager {
 
         if (remainingDamage > 0) {
             int actualDamage = player.takeDamage(remainingDamage);
-            logMsg.append("\n* Subisci ").append(actualDamage).append(" danni!");
+            logMsg.append("\n* You take ").append(actualDamage).append(" damage!");
         }
 
         int hp = player.getHp();

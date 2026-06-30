@@ -5,10 +5,10 @@ import io.github.crystals_of_the_soul.model.Boss;
 public class MirrorGreenBoss extends Boss {
 
     private static final String[] DIALOGUE = {
-        "* Mi conosci. Sono te.",
-        "* Le tue scelte ti hanno portato qui.",
-        "* Non c'è niente da dire. Solo da fare.",
-        "* Combatti come sai fare."
+        "* You know me. I am you.",
+        "* Your choices have brought you here.",
+        "* There is nothing to say. Only to act.",
+        "* Fight as you know how."
     };
 
     public MirrorGreenBoss(float x, float y) {
@@ -34,7 +34,7 @@ public class MirrorGreenBoss extends Boss {
 
     @Override
     public String getName() {
-        return "La Tua Ombra";
+        return "Your Shadow";
     }
 
     @Override

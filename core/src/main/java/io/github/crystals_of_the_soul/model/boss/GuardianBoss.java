@@ -6,11 +6,11 @@ import io.github.crystals_of_the_soul.model.CrystalType;
 public class GuardianBoss extends Boss {
 
     private static final String[] DIALOGUE = {
-        "* Nessuno passa senza dimostrare il proprio valore.",
-        "* Mostrami che sai sia combattere che parlare.",
-        "* Il vero guerriero sa quando fermarsi.",
-        "* Stai imparando... continua.",
-        "* Siete pronti. Passate."
+        "* No one passes without proving their worth.",
+        "* Show me you can both fight and speak.",
+        "* A true warrior knows when to stop.",
+        "* You are learning... keep going.",
+        "* You are ready. Pass."
     };
 
     private final CrystalType crystal;
@@ -53,7 +53,7 @@ public class GuardianBoss extends Boss {
 
     @Override
     public String getName() {
-        return "Il Guardiano";
+        return "The Guardian";
     }
 
     @Override

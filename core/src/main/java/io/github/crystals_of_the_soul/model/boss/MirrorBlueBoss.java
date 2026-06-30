@@ -5,13 +5,13 @@ import io.github.crystals_of_the_soul.model.Boss;
 public class MirrorBlueBoss extends Boss {
 
     private static final String[] DIALOGUE = {
-        "* Fermati. Ascoltami.",
-        "* Tutta questa rabbia... da dove viene?",
-        "* Non puoi combattermi. Non funzionerà.",
-        "* Ricordi chi eri prima del dungeon?",
-        "* Le tue parole mi raggiungono...",
-        "* Continua a parlare. Sento la tua voce.",
-        "* ... Mi stai raggiungendo. Sono ancora qui."
+        "* Stop. Listen to me.",
+        "* All this anger... where does it come from?",
+        "* You can't fight me. It won't work.",
+        "* Do you remember who you were before the dungeon?",
+        "* Your words are reaching me...",
+        "* Keep talking. I hear your voice.",
+        "* ... You are reaching me. I am still here."
     };
 
     public MirrorBlueBoss(float x, float y) {
@@ -42,7 +42,7 @@ public class MirrorBlueBoss extends Boss {
 
     @Override
     public String getName() {
-        return "La Tua Essenza";
+        return "Your Essence";
     }
 
     @Override
