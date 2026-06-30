@@ -1,4 +1,4 @@
-package io.github.crystals_of_the_soul.inventory;
+package io.github.crystals_of_the_soul.model;
 
 import io.github.crystals_of_the_soul.model.NormalEnemy;
 import org.junit.jupiter.api.Test;

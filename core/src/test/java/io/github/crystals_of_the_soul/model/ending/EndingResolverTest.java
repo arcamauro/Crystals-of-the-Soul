@@ -1,4 +1,4 @@
-package io.github.crystals_of_the_soul.ending;
+package io.github.crystals_of_the_soul.model.ending;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;

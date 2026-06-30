@@ -1,4 +1,4 @@
-package io.github.crystals_of_the_soul.save;
+package io.github.crystals_of_the_soul.model;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;

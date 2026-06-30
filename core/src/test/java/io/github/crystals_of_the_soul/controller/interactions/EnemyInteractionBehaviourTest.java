@@ -1,14 +1,15 @@
-package io.github.crystals_of_the_soul.inventory;
+package io.github.crystals_of_the_soul.controller.interactions;
 
 import io.github.crystals_of_the_soul.controller.BattleManager;
+import io.github.crystals_of_the_soul.controller.interactions.EnemyInteraction;
 import io.github.crystals_of_the_soul.model.Enemy;
 import io.github.crystals_of_the_soul.model.NormalEnemy;
+import io.github.crystals_of_the_soul.model.Player;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class BattleManagerTest {
+class EnemyInteractionBehaviourTest {
 
     private static class FakeListener
         implements BattleManager.Listener {
@@ -17,7 +18,6 @@ public class BattleManagerTest {
 
         @Override
         public void onBattleStarted(Enemy enemy) {
-
             battleStarted = true;
         }
 
@@ -45,65 +45,43 @@ public class BattleManagerTest {
         @Override
         public void onBattleExited() {}
     }
+
     @Test
-    void startBattleSetsBattleState() {
+    void interactStartsBattle() {
+
+        Player player =
+            new Player(0, 0);
+
+        Enemy enemy =
+            new NormalEnemy(
+                10,
+                10,
+                100
+            );
 
         FakeListener listener =
             new FakeListener();
 
-        BattleManager manager =
+        BattleManager battleManager =
             new BattleManager(listener);
 
-        Enemy enemy =
-            new NormalEnemy(
-                0,
-                0
+        EnemyInteraction interaction =
+            new EnemyInteraction(
+                player,
+                enemy,
+                battleManager
             );
 
-        manager.startBattle(enemy);
+        interaction.interact();
 
         assertTrue(
-            manager.isInBattle()
+            battleManager.isInBattle()
         );
-    }
-    @Test
-    void startBattleSetsCurrentEnemy() {
-
-        FakeListener listener =
-            new FakeListener();
-
-        BattleManager manager =
-            new BattleManager(listener);
-
-        Enemy enemy =
-            new NormalEnemy(
-                0,
-                0
-            );
-
-        manager.startBattle(enemy);
 
         assertEquals(
             enemy,
-            manager.getCurrentEnemy()
+            battleManager.getCurrentEnemy()
         );
-    }
-    @Test
-    void startBattleNotifiesListener() {
-
-        FakeListener listener =
-            new FakeListener();
-
-        BattleManager manager =
-            new BattleManager(listener);
-
-        Enemy enemy =
-            new NormalEnemy(
-                0,
-                0
-            );
-
-        manager.startBattle(enemy);
 
         assertTrue(
             listener.battleStarted

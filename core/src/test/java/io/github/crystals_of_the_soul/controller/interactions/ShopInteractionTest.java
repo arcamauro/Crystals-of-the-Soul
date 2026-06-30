@@ -1,4 +1,4 @@
-package io.github.crystals_of_the_soul.inventory;
+package io.github.crystals_of_the_soul.controller.interactions;
 
 import io.github.crystals_of_the_soul.controller.interactions.ShopInteraction;
 import io.github.crystals_of_the_soul.model.Player;

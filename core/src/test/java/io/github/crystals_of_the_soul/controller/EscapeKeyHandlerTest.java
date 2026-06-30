@@ -1,4 +1,4 @@
-package io.github.crystals_of_the_soul.input;
+package io.github.crystals_of_the_soul.controller;
 
 import io.github.crystals_of_the_soul.controller.EscapeKeyHandler;
 import org.junit.jupiter.api.Test;

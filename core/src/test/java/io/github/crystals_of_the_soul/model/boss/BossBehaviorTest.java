@@ -1,4 +1,4 @@
-package io.github.crystals_of_the_soul.boss;
+package io.github.crystals_of_the_soul.model.boss;
 
 import io.github.crystals_of_the_soul.model.CrystalType;
 import io.github.crystals_of_the_soul.model.boss.GuardianBoss;

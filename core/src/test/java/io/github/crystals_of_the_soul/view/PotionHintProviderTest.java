@@ -1,4 +1,4 @@
-package io.github.crystals_of_the_soul.inventory;
+package io.github.crystals_of_the_soul.view;
 
 import io.github.crystals_of_the_soul.model.Inventory;
 import io.github.crystals_of_the_soul.model.entity.Item;

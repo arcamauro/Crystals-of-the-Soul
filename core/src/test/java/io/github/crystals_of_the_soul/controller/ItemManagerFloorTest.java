@@ -1,4 +1,4 @@
-package io.github.crystals_of_the_soul.item;
+package io.github.crystals_of_the_soul.controller;
 
 import com.badlogic.gdx.utils.Array;
 import io.github.crystals_of_the_soul.controller.ItemManager;
