@@ -528,13 +528,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             nearItemObj = itemManager.getNearItem();
             itemManager.update();
             inventoryManager.update();
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                advanceFloor();
-            }
-            if (inputHandler.isCheatGoldPressed()) {
-                state.gold += 200;
-                hud.updateGold(state.gold);
-            }
+
         }
         boolean nearItem = nearItemObj != null;
         if (nearItem && !nearEnemy && !nearShop) {

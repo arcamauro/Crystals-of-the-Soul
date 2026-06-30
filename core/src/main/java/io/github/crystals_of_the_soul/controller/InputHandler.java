@@ -26,8 +26,5 @@ public class InputHandler {
         return Gdx.input.isKeyJustPressed(Input.Keys.H);
     }
 
-    public boolean isCheatGoldPressed() {
 
-        return Gdx.input.isKeyJustPressed(Input.Keys.L);
-    }
 }
