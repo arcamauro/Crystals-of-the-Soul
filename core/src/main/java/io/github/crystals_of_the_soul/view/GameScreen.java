@@ -24,6 +24,7 @@ import io.github.crystals_of_the_soul.Main;
 import io.github.crystals_of_the_soul.controller.BattleManager;
 import io.github.crystals_of_the_soul.controller.EscapeKeyHandler;
 import io.github.crystals_of_the_soul.controller.CollisionManager;
+import io.github.crystals_of_the_soul.controller.FloorTransitionService;
 import io.github.crystals_of_the_soul.controller.InputHandler;
 import io.github.crystals_of_the_soul.controller.InventoryManager;
 import io.github.crystals_of_the_soul.controller.ItemManager;
@@ -521,6 +522,10 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 advanceFloor();
             }
+            if (inputHandler.isCheatGoldPressed()) {
+                state.gold += 200;
+                hud.updateGold(state.gold);
+            }
         }
     }
 
@@ -641,6 +646,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             placePlayer2Adjacent();
         }
 
+        FloorTransitionService.applyHeal(player);
         spawnEnemies();
         if (itemManager != null) itemManager.clearFloorItems();
         SaveManager.getInstance().autoSave(state);
@@ -889,6 +895,10 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         final int newFloor = floorFromMapKey(destKey);
 
         if (newFloor > state.currentFloor) {
+            if (!FloorTransitionService.canAdvance(enemies)) {
+                hud.showNotification("Sconfiggi tutti i nemici prima di procedere!");
+                return;
+            }
             state.currentFloor = newFloor;
             if (newFloor == 2 && !state.hasCrystal()) {
                 pendingAfterCrystal = () -> doPortalLoad(mapPath);
@@ -916,6 +926,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             player2 = null;
             placePlayer2Adjacent();
         }
+        FloorTransitionService.applyHeal(player);
         spawnEnemies();
         if (itemManager != null) itemManager.clearFloorItems();
         SaveManager.getInstance().autoSave(state);
