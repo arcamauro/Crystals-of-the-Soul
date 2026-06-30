@@ -41,7 +41,7 @@ import io.github.crystals_of_the_soul.model.Player;
 import io.github.crystals_of_the_soul.model.Player2;
 import io.github.crystals_of_the_soul.model.SaveManager;
 import io.github.crystals_of_the_soul.model.ShopNPC;
-import io.github.crystals_of_the_soul.spawn.PlayerSpawnResolver;
+import io.github.crystals_of_the_soul.controller.PlayerSpawnResolver;
 import io.github.crystals_of_the_soul.model.ShopNPCFactory;
 import io.github.crystals_of_the_soul.model.boss.BossFactory;
 import io.github.crystals_of_the_soul.model.boss.MirrorBlueBoss;

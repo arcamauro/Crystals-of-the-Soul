@@ -1,4 +1,4 @@
-package io.github.crystals_of_the_soul.spawn;
+package io.github.crystals_of_the_soul.controller;
 
 import io.github.crystals_of_the_soul.model.PlayerState;
 
