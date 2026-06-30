@@ -39,6 +39,7 @@ import io.github.crystals_of_the_soul.model.Player;
 import io.github.crystals_of_the_soul.model.Player2;
 import io.github.crystals_of_the_soul.model.SaveManager;
 import io.github.crystals_of_the_soul.model.ShopNPC;
+import io.github.crystals_of_the_soul.spawn.PlayerSpawnResolver;
 import io.github.crystals_of_the_soul.model.ShopNPCFactory;
 import io.github.crystals_of_the_soul.model.boss.BossFactory;
 import io.github.crystals_of_the_soul.model.boss.MirrorBlueBoss;
@@ -148,11 +149,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         collisionManager.load(map);
 
         Vector2 spawn = collisionManager.getPlayerSpawn(map);
-        player = new Player(
-            state.getPlayer1(),
-            state.getPlayer1().x != 0 ? state.getPlayer1().x : spawn.x,
-            state.getPlayer1().y != 0 ? state.getPlayer1().y : spawn.y
-        );
+        float[] spawnPos = PlayerSpawnResolver.resolve(state.getPlayer1(), spawn.x, spawn.y);
+        player = new Player(state.getPlayer1(), spawnPos[0], spawnPos[1]);
 
         // Istanzia Player2 se esiste (dal floor 2 in poi)
         if (state.getPlayer2() != null) {
@@ -188,10 +186,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         hud = new GameHud(player.getHp(), this);
         hud.updateGold(state.gold);
         initializeInventoryManager();
-        itemManager = new ItemManager(
-            player,
-            hud
-        );
+        itemManager = new ItemManager(player, hud, spawn.x, spawn.y);
     }
 
     // -------------------------------------------------------------------------
@@ -647,6 +642,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         }
 
         spawnEnemies();
+        if (itemManager != null) itemManager.clearFloorItems();
         SaveManager.getInstance().autoSave(state);
         Gdx.app.log("DEBUG", "Floor: " + state.currentFloor);
     }
@@ -798,22 +794,17 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     }
 
     public void onBuyItem(String itemName, int price) {
-        System.out.println("onBuyItem called: " + itemName + ", price: " + price + ", current gold: " + state.gold);
         if (state.gold >= price) {
             state.gold -= price;
             hud.updateGold(state.gold);
             io.github.crystals_of_the_soul.model.entity.Item item = new io.github.crystals_of_the_soul.model.entity.Item(0, 0, itemName);
             player.getInventory().addItem(item);
-            System.out.println("Item added. Inventory size: " + player.getInventory().getItems().size);
-            
-            // Execute the UseItemInteraction strategy to apply the item effect
-            io.github.crystals_of_the_soul.controller.interactions.UseItemInteraction interaction =
-                new io.github.crystals_of_the_soul.controller.interactions.UseItemInteraction(player, item);
-            boolean canUse = interaction.canInteract();
-            System.out.println("canInteract: " + canUse);
-            if (canUse) {
-                interaction.interact();
-                System.out.println("Applied! Player Attack: " + player.getAttack() + ", Defense: " + player.getDefense());
+            if (!io.github.crystals_of_the_soul.model.item.ItemEffectFactory.isConsumable(itemName)) {
+                io.github.crystals_of_the_soul.controller.interactions.UseItemInteraction interaction =
+                    new io.github.crystals_of_the_soul.controller.interactions.UseItemInteraction(player, item);
+                if (interaction.canInteract()) {
+                    interaction.interact();
+                }
             }
         } else {
             hud.showNotification("Oro insufficiente!");
@@ -926,6 +917,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             placePlayer2Adjacent();
         }
         spawnEnemies();
+        if (itemManager != null) itemManager.clearFloorItems();
         SaveManager.getInstance().autoSave(state);
         Gdx.app.log("Portal", "Crossed to " + mapPath + " (floor " + state.currentFloor + ")");
     }

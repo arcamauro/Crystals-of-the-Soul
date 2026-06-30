@@ -19,16 +19,22 @@ public class ItemManager {
 
     public ItemManager(
         Player player,
-        GameHud hud
+        GameHud hud,
+        float spawnX,
+        float spawnY
     ) {
 
         this.player = player;
         this.hud = hud;
 
         items = new Array<>();
-        spawnDebugPotion();
+        spawnDebugPotion(spawnX, spawnY);
     }
-    private void spawnDebugPotion() { items.add( new Item( 50, 50, "Pozione" ) ); }
+    private void spawnDebugPotion(float x, float y) { items.add(new Item(x, y, "Pozione")); }
+
+    public void clearFloorItems() {
+        items.clear();
+    }
     public void update() {
 
         boolean nearItem = false;
@@ -61,7 +67,7 @@ public class ItemManager {
             items.removeValue(collectedItem, true);
         }
 
-        hud.setInteractVisible(nearItem);
+        if (hud != null) hud.setInteractVisible(nearItem);
     }
     public boolean isNear(Item item) {
 

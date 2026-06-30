@@ -2,9 +2,11 @@
 package io.github.crystals_of_the_soul.model;
 
 public class Player {
+    public static final int MAX_HP = 100;
+
     private float x, y;
     private float speed = 200f;
-    private int hp = 100;
+    private int hp = MAX_HP;
     private Inventory inventory;
     private PlayerState state;
 
@@ -70,11 +72,15 @@ public class Player {
         }
     }
 
+    public boolean isAtFullHp() {
+        return hp >= MAX_HP;
+    }
+
     public void heal(int amount) {
         hp += amount;
 
-        if (hp > 100)
-            hp = 100;
+        if (hp > MAX_HP)
+            hp = MAX_HP;
 
         if (state != null) {
             state.health = hp;

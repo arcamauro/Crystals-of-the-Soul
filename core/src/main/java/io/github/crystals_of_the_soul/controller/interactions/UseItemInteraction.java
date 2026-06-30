@@ -16,7 +16,9 @@ public class UseItemInteraction implements InteractionStrategy {
 
     @Override
     public boolean canInteract() {
-        return player.getInventory().getItems().contains(item, true);
+        if (!player.getInventory().getItems().contains(item, true)) return false;
+        if (ItemEffectFactory.isConsumable(item.getName()) && player.isAtFullHp()) return false;
+        return true;
     }
 
     @Override
