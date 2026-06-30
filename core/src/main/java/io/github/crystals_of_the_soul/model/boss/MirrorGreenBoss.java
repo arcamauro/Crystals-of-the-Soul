@@ -24,7 +24,8 @@ public class MirrorGreenBoss extends Boss {
 
     @Override
     public boolean isDefeated() {
-        return hp <= 0;
+        // GREEN crystal can resolve the fight either way: spare by talking or kill by depleting HP.
+        return hp <= 0 || talkCount >= 4;
     }
 
     @Override

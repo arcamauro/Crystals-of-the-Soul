@@ -50,10 +50,11 @@ Assets: `assets/maps/` contains 15 `.tmx` TiledMap files (5 floors × crystal co
 
 **Boss defeat conditions vary by type** (not all are HP-based):
 - PROTECTOR: 5 talks
-- GUARDIAN: 3 talks + 3 attacks
+- GUARDIAN: depends on crystal — RED: 5 attacks; BLUE: 5 talks; GREEN: either (5 talks to spare OR 5 attacks to kill)
 - MIRROR_RED: 7 talks
 - MIRROR_BLUE: deal all remaining HP in a single attack
-- ASSASSIN / ARCHER / MIRROR_GREEN: HP depletion
+- MIRROR_GREEN: either (4 talks to spare OR HP depletion to kill)
+- ASSASSIN / ARCHER: HP depletion
 
 **Save system:** JSON-based, auto-saves on floor transition, manual save via pause menu. `SaveManager` writes to a local file and `SaveIntegrity` validates on load. On resume, the more-recent of auto/manual save is used.
 

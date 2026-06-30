@@ -40,7 +40,8 @@ public class GuardianBoss extends Boss {
         if (hp <= 0) return true;
         switch (crystal) {
             case RED:   return attackCount >= 5;
-            case GREEN: return talkCount >= 3 && attackCount >= 3;
+            // GREEN crystal can resolve the fight either way: spare by talking or kill by attacking.
+            case GREEN: return talkCount >= 5 || attackCount >= 5;
             case BLUE:  return talkCount >= 5;
             default:    return false;
         }
