@@ -44,7 +44,7 @@ public class Inventory {
     public Item findFirstPotion() {
         for (Item item : items) {
             String name = item.getName();
-            if (name.contains("Potion") || name.contains("Elixir") || name.contains("Super")) {
+            if (io.github.crystals_of_the_soul.model.item.ItemEffectFactory.isConsumable(name)) {
                 return item;
             }
         }

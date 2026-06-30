@@ -4,24 +4,27 @@ public class ItemEffectFactory {
 
     public static boolean isConsumable(String name) {
         if (name == null) return false;
-        return name.contains("Potion") || name.contains("Elixir") || name.contains("Super");
+        String lower = name.toLowerCase();
+        return lower.contains("potion") || lower.contains("elixir") || lower.contains("super")
+            || lower.contains("pozione") || lower.contains("elisir");
     }
 
     public static ItemEffect getEffect(String name) {
         if (name == null) return null;
-        if (name.contains("Sword")) {
+        String lower = name.toLowerCase();
+        if (lower.contains("sword") || lower.contains("spada")) {
             return new SwordEffect();
         }
-        if (name.contains("Armor")) {
+        if (lower.contains("armor") || lower.contains("armatura")) {
             return new ArmorEffect();
         }
-        if (name.contains("Elixir")) {
+        if (lower.contains("elixir") || lower.contains("elisir")) {
             return new ElixirEffect();
         }
-        if (name.contains("Super")) {
+        if (lower.contains("super")) {
             return new SuperPotionEffect();
         }
-        if (name.contains("Potion")) {
+        if (lower.contains("potion") || lower.contains("pozione")) {
             return new PotionEffect();
         }
         return null;

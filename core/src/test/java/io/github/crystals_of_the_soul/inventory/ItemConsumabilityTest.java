@@ -36,4 +36,15 @@ class ItemConsumabilityTest {
     void nullIsNotConsumable() {
         assertFalse(ItemEffectFactory.isConsumable(null));
     }
+
+    @Test
+    void caseInsensitiveAndLocalizedItemsAreConsumable() {
+        assertTrue(ItemEffectFactory.isConsumable("potion"));
+        assertTrue(ItemEffectFactory.isConsumable("pozione"));
+        assertTrue(ItemEffectFactory.isConsumable("elisir"));
+        assertTrue(ItemEffectFactory.isConsumable("elixir"));
+        assertTrue(ItemEffectFactory.isConsumable("super potion"));
+        assertTrue(ItemEffectFactory.isConsumable("POTION"));
+        assertTrue(ItemEffectFactory.isConsumable("POZIONE"));
+    }
 }
