@@ -61,6 +61,8 @@ public class GameHud {
     private Label notificationLabel;
     private float notificationTimer;
 
+    private Label potionHintLabel;
+
     private boolean paused = false;
 
     public GameHud(int initialHp, Callbacks callbacks) {
@@ -97,10 +99,14 @@ public class GameHud {
         goldLabel = new Label("Oro: 20", skin);
         interactLabel = new Label("Premi E per interagire", skin);
 
+        potionHintLabel = new Label("", skin);
+        potionHintLabel.setVisible(false);
+
         hudTable.add(playerHpLabel).row();
         hudTable.add(playerStatsLabel).row();
         hudTable.add(player2HpLabel).row();
         hudTable.add(goldLabel).row();
+        hudTable.add(potionHintLabel).row();
         hudTable.add(interactLabel);
 
         notificationLabel = new Label("", skin);
@@ -338,6 +344,15 @@ public class GameHud {
 
     public void updateGold(int gold) {
         goldLabel.setText("Oro: " + gold);
+    }
+
+    public void updatePotionHint(String hintText) {
+        if (hintText == null) {
+            potionHintLabel.setVisible(false);
+        } else {
+            potionHintLabel.setText(hintText);
+            potionHintLabel.setVisible(true);
+        }
     }
 
     public void setInteractVisible(boolean visible) {

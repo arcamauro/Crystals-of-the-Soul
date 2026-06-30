@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.github.crystals_of_the_soul.Main;
 import io.github.crystals_of_the_soul.controller.BattleManager;
+import io.github.crystals_of_the_soul.controller.EscapeKeyHandler;
 import io.github.crystals_of_the_soul.controller.CollisionManager;
 import io.github.crystals_of_the_soul.controller.InputHandler;
 import io.github.crystals_of_the_soul.controller.InventoryManager;
@@ -210,7 +211,11 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            togglePause();
+            switch (EscapeKeyHandler.resolve(inShop, hud.isCrystalDialogueShowing(), battleManager.isInBattle())) {
+                case CLOSE_SHOP: onCloseShop(); break;
+                case TOGGLE_PAUSE: togglePause(); break;
+                default: break;
+            }
         }
 
         hud.act(delta);
@@ -514,6 +519,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         }
 
         hud.setInteractVisible(nearEnemy || nearShop);
+        hud.updatePotionHint(PotionHintProvider.getHintText(player.getInventory()));
         if (!inShop) {
             itemManager.update();
             inventoryManager.update();
