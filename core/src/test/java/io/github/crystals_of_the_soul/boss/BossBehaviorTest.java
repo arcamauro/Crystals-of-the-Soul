@@ -32,22 +32,29 @@ class BossBehaviorTest {
     }
 
     @Test
-    void guardianGreenNeedsBothTalksAndAttacks() {
+    void guardianGreenCanBeSparedByTalking() {
         GuardianBoss boss = new GuardianBoss(0, 0, CrystalType.GREEN);
 
-        // 3 dialoghi da soli non bastano.
+        // Il cristallo verde può risparmiare parlando: 5 dialoghi.
+        for (int i = 0; i < 4; i++) {
+            boss.onTalk();
+            assertFalse(boss.isDefeated());
+        }
         boss.onTalk();
-        boss.onTalk();
-        boss.onTalk();
-        assertFalse(boss.isDefeated());
+        assertTrue(boss.isDefeated(), "Risparmiato al quinto dialogo");
+    }
 
-        // Servono anche 3 attacchi.
-        boss.onAttack();
-        boss.onAttack();
-        assertFalse(boss.isDefeated());
+    @Test
+    void guardianGreenCanBeKilledByAttacking() {
+        GuardianBoss boss = new GuardianBoss(0, 0, CrystalType.GREEN);
 
+        // ...oppure ucciderlo combattendo: 5 attacchi.
+        for (int i = 0; i < 4; i++) {
+            boss.onAttack();
+            assertFalse(boss.isDefeated());
+        }
         boss.onAttack();
-        assertTrue(boss.isDefeated());
+        assertTrue(boss.isDefeated(), "Ucciso al quinto attacco");
     }
 
     @Test
@@ -138,13 +145,15 @@ class BossBehaviorTest {
     }
 
     @Test
-    void mirrorGreenTalkingDoesNotDefeatIt() {
+    void mirrorGreenCanBeSparedByTalking() {
         MirrorGreenBoss boss = new MirrorGreenBoss(0, 0);
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 3; i++) {
             boss.onTalk();
+            assertFalse(boss.isDefeated());
         }
-        assertFalse(boss.isDefeated());
+        boss.onTalk(); // 4° dialogo: risparmiato
+        assertTrue(boss.isDefeated());
     }
 
     // --- Comportamento di base condiviso da Boss ---
