@@ -25,7 +25,7 @@ class InventoryTest {
         Player player = new Player(0, 0);
         player.takeDamage(50);
         Inventory inventory = player.getInventory();
-        inventory.addItem(new Item(0, 0, "Pozione"));
+        inventory.addItem(new Item(0, 0, "Potion"));
 
         boolean used = usePotion(inventory, player);
 
@@ -47,7 +47,7 @@ class InventoryTest {
     void potionCannotHealBeyondMaximumHp() {
         Player player = new Player(0, 0);
         Inventory inventory = player.getInventory();
-        inventory.addItem(new Item(0, 0, "Pozione"));
+        inventory.addItem(new Item(0, 0, "Potion"));
 
         usePotion(inventory, player);
 
@@ -59,7 +59,7 @@ class InventoryTest {
         Player player = new Player(0, 0);
         player.takeDamage(80);
         Inventory inventory = player.getInventory();
-        inventory.addItem(new Item(0, 0, "Super Pozione"));
+        inventory.addItem(new Item(0, 0, "Super Potion"));
 
         boolean used = usePotion(inventory, player);
 
@@ -72,7 +72,7 @@ class InventoryTest {
         Player player = new Player(0, 0);
         player.takeDamage(90);
         Inventory inventory = player.getInventory();
-        inventory.addItem(new Item(0, 0, "Elisir di Forza"));
+        inventory.addItem(new Item(0, 0, "Elixir"));
 
         boolean used = usePotion(inventory, player);
 
@@ -84,7 +84,7 @@ class InventoryTest {
     void useSwordIncreasesPlayerAttack() {
         Player player = new Player(0, 0);
         int initialAttack = player.getAttack();
-        Item item = new Item(0, 0, "Spada");
+        Item item = new Item(0, 0, "Sword");
         player.getInventory().addItem(item);
 
         UseItemInteraction interaction = new UseItemInteraction(player, item);
@@ -99,7 +99,7 @@ class InventoryTest {
     void useArmorIncreasesPlayerDefense() {
         Player player = new Player(0, 0);
         int initialDefense = player.getDefense();
-        Item item = new Item(0, 0, "Armatura");
+        Item item = new Item(0, 0, "Armor");
         player.getInventory().addItem(item);
 
         UseItemInteraction interaction = new UseItemInteraction(player, item);

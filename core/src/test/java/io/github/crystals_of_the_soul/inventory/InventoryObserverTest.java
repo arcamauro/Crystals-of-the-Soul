@@ -23,7 +23,7 @@ class InventoryObserverTest {
     void observerIsNotifiedWhenPotionIsUsed() {
         Player player = new Player(0, 0);
         Inventory inventory = player.getInventory();
-        inventory.addItem(new Item(0, 0, "Pozione"));
+        inventory.addItem(new Item(0, 0, "Potion"));
 
         FakeObserver observer = new FakeObserver();
         inventory.setObserver(observer);

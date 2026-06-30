@@ -18,36 +18,36 @@ class PotionHintProviderTest {
     @Test
     void returnsHintWithNameWhenPotionPresent() {
         Inventory inventory = new Inventory();
-        inventory.addItem(new Item(0, 0, "Pozione"));
-        assertEquals("[H] Pozione", PotionHintProvider.getHintText(inventory));
+        inventory.addItem(new Item(0, 0, "Potion"));
+        assertEquals("[H] Potion", PotionHintProvider.getHintText(inventory));
     }
 
     @Test
     void returnsHintWithSuperPotionName() {
         Inventory inventory = new Inventory();
-        inventory.addItem(new Item(0, 0, "Super Pozione"));
-        assertEquals("[H] Super Pozione", PotionHintProvider.getHintText(inventory));
+        inventory.addItem(new Item(0, 0, "Super Potion"));
+        assertEquals("[H] Super Potion", PotionHintProvider.getHintText(inventory));
     }
 
     @Test
     void returnsHintWithElixirName() {
         Inventory inventory = new Inventory();
-        inventory.addItem(new Item(0, 0, "Elisir di Forza"));
-        assertEquals("[H] Elisir di Forza", PotionHintProvider.getHintText(inventory));
+        inventory.addItem(new Item(0, 0, "Elixir"));
+        assertEquals("[H] Elixir", PotionHintProvider.getHintText(inventory));
     }
 
     @Test
     void returnsNullWhenOnlyNonPotionItemsPresent() {
         Inventory inventory = new Inventory();
-        inventory.addItem(new Item(0, 0, "Spada"));
+        inventory.addItem(new Item(0, 0, "Sword"));
         assertNull(PotionHintProvider.getHintText(inventory));
     }
 
     @Test
     void returnsFirstPotionNameWhenMultipleItemsPresent() {
         Inventory inventory = new Inventory();
-        inventory.addItem(new Item(0, 0, "Spada"));
-        inventory.addItem(new Item(0, 0, "Pozione"));
-        assertEquals("[H] Pozione", PotionHintProvider.getHintText(inventory));
+        inventory.addItem(new Item(0, 0, "Sword"));
+        inventory.addItem(new Item(0, 0, "Potion"));
+        assertEquals("[H] Potion", PotionHintProvider.getHintText(inventory));
     }
 }

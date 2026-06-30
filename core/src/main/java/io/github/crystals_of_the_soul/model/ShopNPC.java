@@ -1,13 +1,13 @@
 package io.github.crystals_of_the_soul.model;
 
-public abstract class ShopNPC {
-    protected final float x;
-    protected final float y;
-    protected final String name;
-    protected final int potionPrice;
-    protected final String itemName;
-    protected final String dialogue;
-    protected final int imageIndex;
+public class ShopNPC {
+    private final float x;
+    private final float y;
+    private final String name;
+    private final int potionPrice;
+    private final String itemName;
+    private final String dialogue;
+    private final int imageIndex;
 
     public ShopNPC(float x, float y, String name, int potionPrice, String itemName, String dialogue, int imageIndex) {
         this.x = x;

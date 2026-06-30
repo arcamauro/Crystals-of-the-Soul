@@ -116,7 +116,7 @@ class Player2BattleBehaviorTest {
         bm.startBattle(enemy2);
         bm.onTalk(p2);
         // talkCount is incremented by 1 (Player 1) + 1 (Archer) = 2.
-        assertEquals("* Il nemico abbassa la guardia...", enemy2.getDialogue(), "Archer should double the talk progress");
+        assertEquals("* The enemy lowers their guard...", enemy2.getDialogue(), "Archer should double the talk progress");
     }
 
     @Test

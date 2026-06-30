@@ -12,7 +12,7 @@ class UseItemInteractionTest {
     @Test
     void potionCannotBeUsedAtFullHp() {
         Player player = new Player(0, 0);
-        Item potion = new Item(0, 0, "Pozione");
+        Item potion = new Item(0, 0, "Potion");
         player.getInventory().addItem(potion);
 
         assertFalse(new UseItemInteraction(player, potion).canInteract());
@@ -22,7 +22,7 @@ class UseItemInteractionTest {
     void potionCanBeUsedWhenDamaged() {
         Player player = new Player(0, 0);
         player.takeDamage(10);
-        Item potion = new Item(0, 0, "Pozione");
+        Item potion = new Item(0, 0, "Potion");
         player.getInventory().addItem(potion);
 
         assertTrue(new UseItemInteraction(player, potion).canInteract());
@@ -31,7 +31,7 @@ class UseItemInteractionTest {
     @Test
     void superPotionCannotBeUsedAtFullHp() {
         Player player = new Player(0, 0);
-        Item potion = new Item(0, 0, "Super Pozione");
+        Item potion = new Item(0, 0, "Super Potion");
         player.getInventory().addItem(potion);
 
         assertFalse(new UseItemInteraction(player, potion).canInteract());
@@ -40,7 +40,7 @@ class UseItemInteractionTest {
     @Test
     void elixirCannotBeUsedAtFullHp() {
         Player player = new Player(0, 0);
-        Item potion = new Item(0, 0, "Elisir di Forza");
+        Item potion = new Item(0, 0, "Elixir");
         player.getInventory().addItem(potion);
 
         assertFalse(new UseItemInteraction(player, potion).canInteract());
@@ -49,7 +49,7 @@ class UseItemInteractionTest {
     @Test
     void swordCanAlwaysBeUsedRegardlessOfHp() {
         Player player = new Player(0, 0);
-        Item sword = new Item(0, 0, "Spada");
+        Item sword = new Item(0, 0, "Sword");
         player.getInventory().addItem(sword);
 
         assertTrue(new UseItemInteraction(player, sword).canInteract());
@@ -58,7 +58,7 @@ class UseItemInteractionTest {
     @Test
     void armorCanAlwaysBeUsedRegardlessOfHp() {
         Player player = new Player(0, 0);
-        Item armor = new Item(0, 0, "Armatura");
+        Item armor = new Item(0, 0, "Armor");
         player.getInventory().addItem(armor);
 
         assertTrue(new UseItemInteraction(player, armor).canInteract());

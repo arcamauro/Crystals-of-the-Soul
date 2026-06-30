@@ -9,27 +9,27 @@ class ItemConsumabilityTest {
 
     @Test
     void potionIsConsumable() {
-        assertTrue(ItemEffectFactory.isConsumable("Pozione"));
+        assertTrue(ItemEffectFactory.isConsumable("Potion"));
     }
 
     @Test
     void superPotionIsConsumable() {
-        assertTrue(ItemEffectFactory.isConsumable("Super Pozione"));
+        assertTrue(ItemEffectFactory.isConsumable("Super Potion"));
     }
 
     @Test
     void elixirIsConsumable() {
-        assertTrue(ItemEffectFactory.isConsumable("Elisir di Forza"));
+        assertTrue(ItemEffectFactory.isConsumable("Elixir"));
     }
 
     @Test
     void swordIsNotConsumable() {
-        assertFalse(ItemEffectFactory.isConsumable("Spada"));
+        assertFalse(ItemEffectFactory.isConsumable("Sword"));
     }
 
     @Test
     void armorIsNotConsumable() {
-        assertFalse(ItemEffectFactory.isConsumable("Armatura"));
+        assertFalse(ItemEffectFactory.isConsumable("Armor"));
     }
 
     @Test
