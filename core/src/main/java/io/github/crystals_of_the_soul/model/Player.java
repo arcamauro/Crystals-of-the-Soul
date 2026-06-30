@@ -32,7 +32,9 @@ public class Player {
     }
 
     public int takeDamage(int damage) {
-        int actualDamage = Math.max(0, damage - getDefense());
+        int reductions = getDefense() / 5;
+        double reduced = damage / Math.pow(2, reductions);
+        int actualDamage = Math.max(1, (int) Math.ceil(reduced));
         hp -= actualDamage;
 
         if (hp < 0)

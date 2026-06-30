@@ -83,6 +83,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
     private float portalCooldown = 0f;
     private Runnable pendingAfterCrystal;
+    private String currentMapPath;
 
     private float accumulator = 0f;
     private static final float TIME_STEP = 1f / 60f;
@@ -90,6 +91,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     private InventoryManager inventoryManager;
     private ItemManager itemManager;
     private final Vector2 tempDir = new Vector2();
+    private final com.badlogic.gdx.math.Vector3 worldToScreen = new com.badlogic.gdx.math.Vector3();
 
     public GameScreen(Main game, AssetManager assets) {
         this.game = game;
@@ -145,7 +147,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         // Ensure default collision mapping (no rotation/offset) to avoid breaking maps
         collisionManager.setRotateTileObjects90(false);
         collisionManager.setTileObjectYOffset(0);
-        map = assets.get(state.getCurrentMapPath(), TiledMap.class);
+        currentMapPath = state.getCurrentMapPath();
+        map = assets.get(currentMapPath, TiledMap.class);
         mapRenderer = new OrthogonalTiledMapRenderer(map);
         collisionManager.load(map);
 
@@ -187,7 +190,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         hud = new GameHud(player.getHp(), this);
         hud.updateGold(state.gold);
         initializeInventoryManager();
-        itemManager = new ItemManager(player, hud, spawn.x, spawn.y);
+        itemManager = new ItemManager(player, spawn.x, spawn.y);
     }
 
     // -------------------------------------------------------------------------
@@ -200,7 +203,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         if (!hud.isPaused()) {
             if (battleManager.isInBattle()) {
-                renderBattle();
+                renderBattle(delta);
             } else if (!hud.isCrystalDialogueShowing()) {
                 renderWorld(delta);
             }
@@ -481,11 +484,14 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         boolean nearEnemy = false;
         boolean nearShop = false;
+        float hintWorldX = 0, hintWorldY = 0;
 
         // Verifica prossimità nemici
         for (Enemy enemy : enemies) {
             if (Vector2.dst2(player.getX(), player.getY(), enemy.getX(), enemy.getY()) < 900f) {
                 nearEnemy = true;
+                hintWorldX = enemy.getX() + 16f;
+                hintWorldY = enemy.getY() + 36f;
                 if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                     EnemyInteraction interaction = new EnemyInteraction(player, enemy, battleManager);
                     interaction.interact();
@@ -500,6 +506,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             for (final ShopNPC shop : shops) {
                 if (Vector2.dst2(player.getX(), player.getY(), shop.getX(), shop.getY()) < 900f) {
                     nearShop = true;
+                    hintWorldX = shop.getX() + 16f;
+                    hintWorldY = shop.getY() + 36f;
                     if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                         ShopInteraction interaction = new ShopInteraction(player, shop, new ShopInteraction.Listener() {
                             @Override
@@ -514,9 +522,10 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             }
         }
 
-        hud.setInteractVisible(nearEnemy || nearShop);
         hud.updatePotionHint(PotionHintProvider.getHintText(player.getInventory()));
+        io.github.crystals_of_the_soul.model.entity.Item nearItemObj = null;
         if (!inShop) {
+            nearItemObj = itemManager.getNearItem();
             itemManager.update();
             inventoryManager.update();
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -527,9 +536,24 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
                 hud.updateGold(state.gold);
             }
         }
+        boolean nearItem = nearItemObj != null;
+        if (nearItem && !nearEnemy && !nearShop) {
+            hintWorldX = nearItemObj.getX() + 8f;
+            hintWorldY = nearItemObj.getY() + 20f;
+        }
+
+        boolean showHint = !inShop && (nearEnemy || nearShop || nearItem);
+        if (showHint) {
+            worldToScreen.set(hintWorldX, hintWorldY, 0);
+            camera.project(worldToScreen);
+            hud.showInteractHint(worldToScreen.x, worldToScreen.y);
+        } else {
+            hud.hideInteractHint();
+        }
     }
 
-    private void renderBattle() {
+    private void renderBattle(float delta) {
+        hud.hideInteractHint();
         battleManager.tickEnemyTurn(player, player2);
 
         // Aggiorna HUD in tempo reale per la battaglia
@@ -566,11 +590,14 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             shapeRenderer.rect(w * 0.6f, h * 0.45f, 120, 120);
         }
 
-        shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.rect(w * 0.1f, h * 0.38f, 96, 96);
+        // Fallback rect for player 1 when animated sprite is unavailable
+        if (playerSprite == null) {
+            shapeRenderer.setColor(Color.WHITE);
+            shapeRenderer.rect(w * 0.1f, h * 0.38f, 96, 96);
+        }
 
-        // Disegna Player 2 (colore di classe o grigio se KO)
-        if (player2 != null) {
+        // Fallback rect for player 2 when animated sprite is unavailable
+        if (player2 != null && player2Sprite == null) {
             if (player2.getHp() <= 0) {
                 shapeRenderer.setColor(Color.GRAY);
             } else {
@@ -594,13 +621,21 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         shapeRenderer.end();
 
+        SpriteBatch batch = game.batch;
+        batch.setProjectionMatrix(hud.getStage().getCamera().combined);
+        batch.begin();
         if (hasEnemyTexture) {
-            SpriteBatch batch = game.batch;
-            batch.setProjectionMatrix(hud.getStage().getCamera().combined);
-            batch.begin();
             batch.draw(enemyTex, w * 0.6f, h * 0.45f, 120f, 120f);
-            batch.end();
         }
+        if (playerSprite != null) {
+            playerSprite.update(delta, 0, 0);
+            playerSprite.draw(batch, w * 0.1f, h * 0.38f, 96f, 96f);
+        }
+        if (player2 != null && player2Sprite != null) {
+            player2Sprite.update(delta, 0, 0);
+            player2Sprite.draw(batch, w * 0.22f, h * 0.38f, 80f, 80f);
+        }
+        batch.end();
     }
 
     // -------------------------------------------------------------------------
@@ -629,7 +664,8 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     }
 
     private void doAdvanceFloorLoad() {
-        map = assets.get(state.getCurrentMapPath(), TiledMap.class);
+        currentMapPath = state.getCurrentMapPath();
+        map = assets.get(currentMapPath, TiledMap.class);
         mapRenderer.getMap().dispose();
         mapRenderer = new OrthogonalTiledMapRenderer(map);
         collisionManager.load(map);
@@ -714,6 +750,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         }
         state.gold += 10;
         hud.updateGold(state.gold);
+        state.defeatedEnemies.add(enemyKey(enemy.getX(), enemy.getY()));
         enemies.removeValue(enemy, true);
     }
 
@@ -725,13 +762,24 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         }
         state.gold += 10;
         hud.updateGold(state.gold);
+        state.defeatedEnemies.add(enemyKey(enemy.getX(), enemy.getY()));
         enemies.removeValue(enemy, true);
     }
 
     @Override
     public void onBossDefeated() {
-        state.assignCrystal();
-        game.setScreen(new EndingScreen(game, state));
+        if (state.currentFloor == 5) {
+            state.assignCrystal();
+            game.setScreen(new EndingScreen(game, state));
+        } else {
+            // Floor 4 Guardian: end the battle and let the player advance
+            Enemy boss = battleManager.getCurrentEnemy();
+            state.defeatedEnemies.add(enemyKey(boss.getX(), boss.getY()));
+            enemies.removeValue(boss, true);
+            if (player2 != null) player2.notifyBattleEnded();
+            hud.hideBattle();
+            Gdx.input.setInputProcessor(null);
+        }
     }
 
     @Override
@@ -927,6 +975,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             placePlayer2Adjacent();
         }
         FloorTransitionService.applyHeal(player);
+        currentMapPath = mapPath;
         spawnEnemies();
         if (itemManager != null) itemManager.clearFloorItems();
         SaveManager.getInstance().autoSave(state);
@@ -951,16 +1000,21 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         }
     }
 
+    private String enemyKey(float x, float y) {
+        return currentMapPath + ":" + (int) x + ":" + (int) y;
+    }
+
     private void spawnEnemies() {
         enemies.clear();
         shops.clear();
 
-        for (CollisionManager.ShopSpawnData s : collisionManager.getShopSpawns(map, state.getCurrentMapPath())) {
+        for (CollisionManager.ShopSpawnData s : collisionManager.getShopSpawns(map, currentMapPath)) {
             shops.add(ShopNPCFactory.create(s.position.x, s.position.y, s.shopType));
         }
 
         // Carichiamo i boss/mini-boss dal layer Boss/boss
         for (CollisionManager.BossSpawnData b : collisionManager.getBossSpawns(map)) {
+            if (state.defeatedEnemies.contains(enemyKey(b.position.x, b.position.y))) continue;
             if (b.isBoss) {
                 if (state.hasCrystal()) {
                     enemies.add(BossFactory.forFloor(state.getCrystal(), state.currentFloor).createBoss(b.position.x, b.position.y));
@@ -982,6 +1036,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
 
         // Carichiamo i nemici normali dal layer NPC
         for (CollisionManager.EnemySpawnData s : collisionManager.getEnemySpawnsWithData(map)) {
+            if (state.defeatedEnemies.contains(enemyKey(s.position.x, s.position.y))) continue;
             NormalEnemy e = new NormalEnemy(s.position.x, s.position.y);
             String sprite = "Skeleton"; // default
             if ("orco".equalsIgnoreCase(s.aspetto) || "orco".equalsIgnoreCase(s.type)) {

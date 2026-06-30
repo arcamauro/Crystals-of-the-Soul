@@ -80,11 +80,11 @@ public class GameHud {
         stage.addActor(pauseTable);
         stage.addActor(shopTable);
         stage.addActor(crystalDialogueTable);
+        stage.addActor(interactLabel);
 
         pauseTable.setVisible(false);
         battleTable.setVisible(false);
         shopTable.setVisible(false);
-        interactLabel.setVisible(false);
         crystalDialogueTable.setVisible(false);
     }
 
@@ -97,17 +97,18 @@ public class GameHud {
         playerStatsLabel = new Label("ATK: 10 | DEF: 0", skin);
         player2HpLabel = new Label("", skin);
         goldLabel = new Label("Oro: 20", skin);
-        interactLabel = new Label("Premi E per interagire", skin);
+        interactLabel = new Label("Press E to interact", skin);
 
         potionHintLabel = new Label("", skin);
         potionHintLabel.setVisible(false);
+
+        interactLabel.setVisible(false);
 
         hudTable.add(playerHpLabel).row();
         hudTable.add(playerStatsLabel).row();
         hudTable.add(player2HpLabel).row();
         hudTable.add(goldLabel).row();
         hudTable.add(potionHintLabel).row();
-        hudTable.add(interactLabel);
 
         notificationLabel = new Label("", skin);
         notificationLabel.setVisible(false);
@@ -355,8 +356,14 @@ public class GameHud {
         }
     }
 
-    public void setInteractVisible(boolean visible) {
-        interactLabel.setVisible(visible);
+    public void showInteractHint(float stageX, float stageY) {
+        interactLabel.pack();
+        interactLabel.setPosition(stageX - interactLabel.getWidth() / 2f, stageY);
+        interactLabel.setVisible(true);
+    }
+
+    public void hideInteractHint() {
+        interactLabel.setVisible(false);
     }
 
     public void showSaveConfirm() {

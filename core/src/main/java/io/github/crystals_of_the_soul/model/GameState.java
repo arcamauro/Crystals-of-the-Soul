@@ -10,6 +10,9 @@ public class GameState {
     public int spareCount;
     public int gold;
 
+    // --- Defeated enemies (persisted so they stay gone after save/load) ---
+    public java.util.HashSet<String> defeatedEnemies = new java.util.HashSet<>();
+
     // --- Crystal ---
     private CrystalType crystal;
 

@@ -37,11 +37,12 @@ public class GuardianBoss extends Boss {
 
     @Override
     public boolean isDefeated() {
+        if (hp <= 0) return true;
         switch (crystal) {
             case RED:   return attackCount >= 5;
             case GREEN: return talkCount >= 3 && attackCount >= 3;
             case BLUE:  return talkCount >= 5;
-            default:    return hp <= 0;
+            default:    return false;
         }
     }
 

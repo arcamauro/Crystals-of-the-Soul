@@ -25,6 +25,7 @@ public class SaveManager {
         json.setOutputType(JsonWriter.OutputType.json);
         json.setUsePrototypes(false);
         json.addClassTag("PlayerState", PlayerState.class);
+        json.setElementType(GameState.class, "defeatedEnemies", String.class);
     }
 
     /**
