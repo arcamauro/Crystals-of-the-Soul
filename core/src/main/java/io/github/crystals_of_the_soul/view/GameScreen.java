@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.GL20;
 
 import io.github.crystals_of_the_soul.Main;
 import io.github.crystals_of_the_soul.controller.BattleManager;
@@ -74,6 +75,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     private Array<ShopNPC> shops;
     private Texture[] shopTextures;
     private java.util.Map<String, Texture> enemyTextures;
+    private Texture potionTexture;
     private boolean inShop = false;
     private ShopNPC activeShop;
 
@@ -184,6 +186,12 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             }
         }
 
+        try {
+            potionTexture = new Texture(Gdx.files.internal("sprites/potion.png"));
+        } catch (Exception e) {
+            Gdx.app.log("GameScreen", "Failed to load potion texture: " + e.getMessage());
+        }
+
         spawnEnemies();
 
         battleManager = new BattleManager(this);
@@ -263,6 +271,9 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             }
             enemyTextures.clear();
         }
+        if (potionTexture != null) {
+            potionTexture.dispose();
+        }
         // Dispose del player caricato tramite AnimationManager (se presente)
         AnimationManager.dispose("Player");
         if (player2SpriteKey != null) AnimationManager.dispose(player2SpriteKey);
@@ -272,24 +283,20 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     // Rendering
     // -------------------------------------------------------------------------
     private void renderItems() {
-
         for (Item item : itemManager.getItems()) {
-
-            if (itemManager.isNear(item)) {
-
-                shapeRenderer.setColor(Color.YELLOW);
-
-            } else {
-
-                shapeRenderer.setColor(Color.GREEN);
+            boolean isPotion = item.getName().toLowerCase().contains("potion") || 
+                               item.getName().toLowerCase().contains("pozione") || 
+                               item.getName().toLowerCase().contains("elixir");
+            
+            if (!isPotion) {
+                if (itemManager.isNear(item)) {
+                    shapeRenderer.setColor(Color.YELLOW);
+                    shapeRenderer.rect(item.getX(), item.getY(), 16, 16);
+                } else {
+                    shapeRenderer.setColor(Color.GREEN);
+                    shapeRenderer.rect(item.getX(), item.getY(), 16, 16);
+                }
             }
-
-            shapeRenderer.rect(
-                item.getX(),
-                item.getY(),
-                16,
-                16
-            );
         }
     }
 
@@ -384,6 +391,28 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             }
         }
 
+        // Disegna gli effetti di glow sotto le pozioni prima di disegnare le sprite (layer inferiore)
+        if (itemManager != null) {
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            for (Item item : itemManager.getItems()) {
+                boolean isPotion = item.getName().toLowerCase().contains("potion") || 
+                                   item.getName().toLowerCase().contains("pozione") || 
+                                   item.getName().toLowerCase().contains("elixir");
+                if (isPotion && itemManager.isNear(item)) {
+                    Gdx.gl.glEnable(GL20.GL_BLEND);
+                    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+                    
+                    float alpha = 0.3f + 0.15f * (float) Math.sin(state.playTime * 6.0f);
+                    shapeRenderer.setColor(1f, 1f, 0f, alpha);
+                    shapeRenderer.circle(item.getX() + 8f, item.getY() + 8f, 8f);
+                    
+                    Gdx.gl.glDisable(GL20.GL_BLEND);
+                }
+            }
+            shapeRenderer.end();
+        }
+
         // Disegna il player con SpriteBatch condiviso
         SpriteBatch batch = game.batch;
         batch.setProjectionMatrix(camera.combined);
@@ -425,6 +454,17 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             }
             if (tex != null) {
                 batch.draw(tex, enemy.getX(), enemy.getY(), 32f, 32f);
+            }
+        }
+
+        // Disegna gli item sul terreno
+        if (itemManager != null && potionTexture != null) {
+            for (Item item : itemManager.getItems()) {
+                if (item.getName().toLowerCase().contains("potion") || 
+                    item.getName().toLowerCase().contains("pozione") || 
+                    item.getName().toLowerCase().contains("elixir")) {
+                    batch.draw(potionTexture, item.getX(), item.getY(), 16f, 16f);
+                }
             }
         }
         batch.end();
