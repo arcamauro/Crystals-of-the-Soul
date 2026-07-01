@@ -78,6 +78,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
     private Texture potionTexture;
     private boolean inShop = false;
     private ShopNPC activeShop;
+    private Texture backgroundTexture;
 
     private CollisionManager collisionManager;
     private BattleManager battleManager;
@@ -192,6 +193,13 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             Gdx.app.log("GameScreen", "Failed to load potion texture: " + e.getMessage());
         }
 
+        try {
+            backgroundTexture = new Texture(Gdx.files.internal("sprites/background.png"));
+            backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+        } catch (Exception e) {
+            Gdx.app.log("GameScreen", "Failed to load background texture: " + e.getMessage());
+        }
+
         spawnEnemies();
 
         battleManager = new BattleManager(this);
@@ -274,6 +282,9 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         if (potionTexture != null) {
             potionTexture.dispose();
         }
+        if (backgroundTexture != null) {
+            backgroundTexture.dispose();
+        }
         // Dispose del player caricato tramite AnimationManager (se presente)
         AnimationManager.dispose("Player");
         if (player2SpriteKey != null) AnimationManager.dispose(player2SpriteKey);
@@ -351,6 +362,18 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         // Camera updates and map rendering (per frame)
         camera.position.set(player.getX(), player.getY(), 0);
         camera.update();
+
+        if (backgroundTexture != null && !hud.isCrystalDialogueShowing()) {
+            SpriteBatch batch = game.batch;
+            batch.setProjectionMatrix(hud.getStage().getCamera().combined);
+            batch.begin();
+            float w = Gdx.graphics.getWidth();
+            float h = Gdx.graphics.getHeight();
+            float u = camera.position.x / backgroundTexture.getWidth() * 0.5f;
+            float v = -camera.position.y / backgroundTexture.getHeight() * 0.5f;
+            batch.draw(backgroundTexture, 0, 0, w, h, u, v, u + w / backgroundTexture.getWidth(), v + h / backgroundTexture.getHeight());
+            batch.end();
+        }
 
         mapRenderer.setView(camera);
         mapRenderer.render();
@@ -616,18 +639,66 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
             }
         }
 
+        float p1OriginalWidth = 32f, p1OriginalHeight = 32f;
+        if (playerSprite != null && playerSprite.getFrame() != null) {
+            p1OriginalWidth = playerSprite.getFrame().getRegionWidth();
+            p1OriginalHeight = playerSprite.getFrame().getRegionHeight();
+        }
+
+        float p2OriginalWidth = 32f, p2OriginalHeight = 32f;
+        if (player2 != null && player2Sprite != null && player2Sprite.getFrame() != null) {
+            p2OriginalWidth = player2Sprite.getFrame().getRegionWidth();
+            p2OriginalHeight = player2Sprite.getFrame().getRegionHeight();
+        }
+
+        float enemyOriginalWidth = 32f, enemyOriginalHeight = 32f;
+        if (hasEnemyTexture) {
+            enemyOriginalWidth = enemyTex.getWidth();
+            enemyOriginalHeight = enemyTex.getHeight();
+        }
+
+        // Determiniamo la scala in modo da mantenere le proporzioni (aspect ratio)
+        float p1Scale = (h * 0.35f) / p1OriginalHeight;
+        float p1Width = p1OriginalWidth * p1Scale;
+        float p1Height = p1OriginalHeight * p1Scale;
+
+        float p2Scale = (h * 0.28f) / p2OriginalHeight;
+        float p2Width = p2OriginalWidth * p2Scale;
+        float p2Height = p2OriginalHeight * p2Scale;
+
+        float enemyScale = (h * 0.45f) / enemyOriginalHeight;
+        // Impediamo che nemici troppo larghi escano dallo schermo
+        float enemyMaxWidth = w * 0.4f;
+        if (enemyOriginalWidth * enemyScale > enemyMaxWidth) {
+            enemyScale = enemyMaxWidth / enemyOriginalWidth;
+        }
+        float enemyWidth = enemyOriginalWidth * enemyScale;
+        float enemyHeight = enemyOriginalHeight * enemyScale;
+
+        // Allineamento al suolo e centri orizzontali
+        float groundY = h * 0.38f;
+        
+        float p1X = w * 0.22f - (p1Width / 2f);
+        float p1Y = groundY;
+
+        float p2X = w * 0.08f - (p2Width / 2f);
+        float p2Y = groundY - (h * 0.05f); // sfalsato leggermente in profondità
+
+        float enemyX = w * 0.75f - (enemyWidth / 2f);
+        float enemyY = groundY;
+
         shapeRenderer.setProjectionMatrix(hud.getStage().getCamera().combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         if (!hasEnemyTexture) {
             shapeRenderer.setColor(Color.RED);
-            shapeRenderer.rect(w * 0.6f, h * 0.45f, 120, 120);
+            shapeRenderer.rect(enemyX, enemyY, enemyWidth, enemyHeight);
         }
 
         // Fallback rect for player 1 when animated sprite is unavailable
         if (playerSprite == null) {
             shapeRenderer.setColor(Color.WHITE);
-            shapeRenderer.rect(w * 0.1f, h * 0.38f, 96, 96);
+            shapeRenderer.rect(p1X, p1Y, p1Width, p1Height);
         }
 
         // Fallback rect for player 2 when animated sprite is unavailable
@@ -650,7 +721,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
                         break;
                 }
             }
-            shapeRenderer.rect(w * 0.22f, h * 0.38f, 80, 80);
+            shapeRenderer.rect(p2X, p2Y, p2Width, p2Height);
         }
 
         shapeRenderer.end();
@@ -659,15 +730,15 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
         batch.setProjectionMatrix(hud.getStage().getCamera().combined);
         batch.begin();
         if (hasEnemyTexture) {
-            batch.draw(enemyTex, w * 0.6f, h * 0.45f, 120f, 120f);
+            batch.draw(enemyTex, enemyX, enemyY, enemyWidth, enemyHeight);
         }
         if (playerSprite != null) {
             playerSprite.update(delta, 0, 0);
-            playerSprite.draw(batch, w * 0.1f, h * 0.38f, 96f, 96f);
+            playerSprite.draw(batch, p1X, p1Y, p1Width, p1Height);
         }
         if (player2 != null && player2Sprite != null) {
             player2Sprite.update(delta, 0, 0);
-            player2Sprite.draw(batch, w * 0.22f, h * 0.38f, 80f, 80f);
+            player2Sprite.draw(batch, p2X, p2Y, p2Width, p2Height);
         }
         batch.end();
     }
