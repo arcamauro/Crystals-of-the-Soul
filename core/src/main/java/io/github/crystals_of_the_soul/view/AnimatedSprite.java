@@ -1,8 +1,5 @@
 package io.github.crystals_of_the_soul.view;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
@@ -30,28 +27,25 @@ public class AnimatedSprite {
 
     public AnimatedSprite() {}
 
+    // Estensioni immagine supportate, provate in quest'ordine.
+    private static final String[] EXTENSIONS = {".png", ".jpg", ".jpeg"};
+    // Numero massimo di frame numerati cercati per direzione (<dir>1..<dir>N).
+    private static final int MAX_NUMBERED_FRAMES = 16;
+
     public static AnimatedSprite fromFolder(String basePath) {
         AnimatedSprite s = new AnimatedSprite();
-        // Proviamo nomi comuni italiani/inglesi
-        s.animDown = s.loadAnimationTry(basePath, new String[]{"sotto","Sotto","down","south"});
-        s.animLeft = s.loadAnimationTry(basePath, new String[]{"sinistra","Sinistra","left","west"});
-        s.animRight = s.loadAnimationTry(basePath, new String[]{"destra","Destra","right","east"});
-        s.animUp = s.loadAnimationTry(basePath, new String[]{"sopra","Sopra","up","north"});
+        // Le cartelle direzione sono in minuscolo; teniamo alcune varianti per robustezza.
+        s.animDown = s.loadDirection(basePath, new String[]{"sotto", "down", "south"});
+        s.animLeft = s.loadDirection(basePath, new String[]{"sinistra", "left", "west"});
+        s.animRight = s.loadDirection(basePath, new String[]{"destra", "right", "east"});
+        s.animUp = s.loadDirection(basePath, new String[]{"sopra", "up", "north"});
 
-        // still (case-insensitive): cerca qualsiasi file con nome "still" ignorando il case
-        FileHandle baseDir = Gdx.files.internal(basePath);
-        if (baseDir.exists() && baseDir.isDirectory()) {
-            FileHandle[] children = baseDir.list();
-            if (children != null) {
-                for (FileHandle fh : children) {
-                    if (fh.name().toLowerCase().startsWith("still") && (fh.name().toLowerCase().endsWith(".png") || fh.name().toLowerCase().endsWith(".jpg") || fh.name().toLowerCase().endsWith(".jpeg"))) {
-                        Texture t = new Texture(fh);
-                        s.textures.add(t);
-                        s.still = new TextureRegion(t);
-                        break;
-                    }
-                }
-            }
+        // still: carica per nome esplicito (funziona anche dentro un JAR).
+        FileHandle stillHandle = firstExisting(basePath + "/still", basePath + "/STILL");
+        if (stillHandle != null) {
+            Texture t = new Texture(stillHandle);
+            s.textures.add(t);
+            s.still = new TextureRegion(t);
         }
 
         // Se non abbiamo caricato alcuna texture, ritorniamo null per indicare assenza
@@ -60,52 +54,46 @@ public class AnimatedSprite {
         return s;
     }
 
-    private Animation<TextureRegion> loadAnimationTry(String basePath, String[] names) {
-        for (String n : names) {
-            // prova a trovare la directory sia con nome diretto che ignorando case
-            Animation<TextureRegion> a = loadAnimation(resolveDirIgnoreCase(basePath, n));
-            if (a != null) return a;
+    /**
+     * Carica l'animazione di una direzione senza elencare la cartella (FileHandle.list()
+     * non funziona per risorse impacchettate in un JAR). I frame vengono cercati per nome
+     * esplicito: "<dir>/<dir>.png" seguito da "<dir>/<dir>1.png", "<dir>/<dir>2.png", ...
+     */
+    private Animation<TextureRegion> loadDirection(String basePath, String[] dirNames) {
+        for (String dir : dirNames) {
+            String stem = basePath + "/" + dir + "/" + dir;
+            Array<TextureRegion> frames = new Array<>();
+            // frame base senza numero (es. "destra.png")
+            addFrameIfExists(frames, stem);
+            // frame numerati contigui (es. "destra1.png", "destra2.png", ...)
+            for (int i = 1; i <= MAX_NUMBERED_FRAMES; i++) {
+                if (!addFrameIfExists(frames, stem + i)) break;
+            }
+            if (frames.size > 0) {
+                return new Animation<>(frameDuration, frames, Animation.PlayMode.LOOP);
+            }
         }
         return null;
     }
 
-    private Animation<TextureRegion> loadAnimation(FileHandle dir) {
-        if (dir == null || !dir.exists() || !dir.isDirectory()) return null;
-
-        FileHandle[] files = dir.list();
-        if (files == null || files.length == 0) return null;
-
-        // Ordina per nome per avere ordine stabile
-        Arrays.sort(files, Comparator.comparing(FileHandle::name));
-
-        Array<TextureRegion> frames = new Array<>();
-        for (FileHandle fh : files) {
-            String name = fh.name().toLowerCase();
-            if (!(name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg"))) continue;
-            Texture t = new Texture(fh);
-            textures.add(t);
-            frames.add(new TextureRegion(t));
-        }
-
-        if (frames.size == 0) return null;
-        return new Animation<>(frameDuration, frames, Animation.PlayMode.LOOP);
+    /** Aggiunge un frame se esiste un file con lo stem dato e una delle estensioni supportate. */
+    private boolean addFrameIfExists(Array<TextureRegion> frames, String stem) {
+        FileHandle fh = firstExisting(stem);
+        if (fh == null) return false;
+        Texture t = new Texture(fh);
+        textures.add(t);
+        frames.add(new TextureRegion(t));
+        return true;
     }
 
-    /**
-     * Risolve una directory figlia di basePath cercando il nome ignorando il case.
-     * Restituisce il FileHandle della directory trovata, oppure null.
-     */
-    private FileHandle resolveDirIgnoreCase(String basePath, String childName) {
-        FileHandle baseDir = Gdx.files.internal(basePath);
-        if (!baseDir.exists() || !baseDir.isDirectory()) return null;
-        FileHandle[] children = baseDir.list();
-        if (children == null) return null;
-        for (FileHandle fh : children) {
-            if (fh.isDirectory() && fh.name().equalsIgnoreCase(childName)) return fh;
+    /** Restituisce il primo file esistente tra gli stem forniti, provando ogni estensione. */
+    private static FileHandle firstExisting(String... stems) {
+        for (String stem : stems) {
+            for (String ext : EXTENSIONS) {
+                FileHandle fh = Gdx.files.internal(stem + ext);
+                if (fh.exists()) return fh;
+            }
         }
-        // fallback: try direct path (useful quando basePath already includes child)
-        FileHandle direct = Gdx.files.internal(basePath + "/" + childName);
-        if (direct.exists() && direct.isDirectory()) return direct;
         return null;
     }
 

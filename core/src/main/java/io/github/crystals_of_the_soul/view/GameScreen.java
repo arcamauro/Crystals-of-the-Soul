@@ -131,7 +131,7 @@ public class GameScreen implements Screen, BattleManager.Listener, GameHud.Callb
                 Texture right2 = new Texture(Gdx.files.internal("sprites/Player/destra/destra.png"));
                 Texture up1 = new Texture(Gdx.files.internal("sprites/Player/sopra/sopra1.png"));
                 Texture up2 = new Texture(Gdx.files.internal("sprites/Player/sopra/sopra.png"));
-                Texture still = new Texture(Gdx.files.internal("sprites/Player/STILL.png"));
+                Texture still = new Texture(Gdx.files.internal("sprites/Player/still.png"));
 
                 playerTextures.addAll(down1, down2, left1, left2, right1, right2, up1, up2, still);
 
