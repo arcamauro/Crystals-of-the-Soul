@@ -200,7 +200,7 @@ Crystals-of-the-Soul/
 └── gradlew / gradlew.bat Gradle wrapper
 ```
 
-## Team & Contributions
+## Contributions
 
 Built by a team of three:
 
