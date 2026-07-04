@@ -204,7 +204,7 @@ Crystals-of-the-Soul/
 
 Built by a team of three:
 
-- **Arcangelo Mauro** — save/load system with tamper-integrity validation (`SaveManager`), screen architecture, morality system (`GameState`, crystal assignment, ending resolution), and the boss hierarchy
+- **Arcangelo Mauro** — save/load system with tamper-integrity validation, screen architecture, morality system, and the boss hierarchy
 - **Claudio Russo** — player infrastructure: movement, combat actions, item and enemy interactions, and the inventory system
 - **Giovanni Romano** — level structure and the companion (Player 2) system, including the follow-AI that tracks the player's movement
 
